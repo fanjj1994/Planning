@@ -9,6 +9,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
 
+message("Project Name: ${PROJECT_NAME}")
 # CMAKE_COMPILER_IS_GNUCXX is abandoned by CMake >= 3.21
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
