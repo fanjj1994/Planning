@@ -10,12 +10,37 @@ set(DEPENDS
   "base_msgs"
 )
 
-# TODO: add node
+# add dynamic library
+add_library(global_planner SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/global_planner_normal/global_planner_normal.cpp
+)
 
-# TODO: add dynamic library
+# add node
+add_executable(global_path_server
+  ${CMAKE_CURRENT_SOURCE_DIR}/global_path_server.cpp
+)
 
-# TODO: add dependencies
+set(PROJECT_TARGETS
+  global_planner
+  global_path_server
+)
 
-# TODO: install dynamic lib, node and relevant directory
+# add dependencies
+foreach(target ${PROJECT_TARGETS})
+  ament_target_dependencies(${target} ${DEPENDS})
+endforeach()
 
+target_link_libraries(global_path_server
+  config_reader
+  global_planner
+)
+
+# install dynamic lib, node and relevant directory
+install(TARGETS
+  global_planner
+  LIBRARY DESTINATION lib)
+
+install(TARGETS
+  global_path_server
+  DESTINATION lib/${PLANNING_PACKAGE_NAME})
 

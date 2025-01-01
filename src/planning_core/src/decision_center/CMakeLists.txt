@@ -8,11 +8,27 @@ set(DEPENDS
 
 
 
-# TODO: add dynamic library
+# add dynamic library
+add_library(decision_center SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/decision_center.cpp
+)
+
+set(target
+  decision_center
+)
 
 # TODO: add dependencies
+ament_target_dependencies(${target} ${DEPENDS})
 
+# TODO: add link libraries
+# target_link_libraries(${target} 
+#   config_reader
+#   vehicle_info
+# )
 
-# TODO: install dynamic lib, node and relevant directory
+# install dynamic lib, node and relevant directory
+install(TARGETS ${target}
+  LIBRARY DESTINATION lib 
+)
 
 

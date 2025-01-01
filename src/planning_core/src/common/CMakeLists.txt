@@ -16,9 +16,30 @@ set(MATH_DEPENDS
   "nav_msgs"
 )
 
-# TODO: add dynamic library
+# add dynamic library
+add_library(config_reader SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/config_reader/config_reader.cpp
+)
 
+add_library(mathlibs SHARED
+  ${CMAKE_CURRENT_SOURCE_DIR}/math/curve.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/math/polynomial_curve.cpp
+)
 
-# TODO: install dynamic lib, node and relevant directory
+set(config_target
+  config_reader)
 
+set(math_target
+  mathlibs)
 
+# add dependencies
+ament_target_dependencies(${config_target} ${CONFIG_DEPENDS})
+ament_target_dependencies(${math_target} ${MATH_DEPENDS})
+
+target_link_libraries(${config_target} yaml-cpp)
+target_link_libraries(${math_target} Eigen3::Eigen)
+
+# install dynamic lib, node and relevant directory
+install(TARGETS ${config_target} ${math_target}
+  LIBRARY DESTINATION lib
+)

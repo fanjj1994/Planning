@@ -66,16 +66,6 @@ add_subdirectory(src/pnc_map_creator)
 add_subdirectory(src/reference_line)
 add_subdirectory(src/vehicle_info)
 
-add_executable(planning_node src/planning_node.cpp)
-target_include_directories(planning_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(planning_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(
-  planning_node
-  "rclcpp"
-)
-
 install(DIRECTORY
   config launch urdf rviz
   DESTINATION share/${PROJECT_NAME})

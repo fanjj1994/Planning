@@ -10,11 +10,28 @@ set(DEPENDS
   "tf2_ros"
 )
 
+# add node
+message("current planning_node source dir: " ${CMAKE_CURRENT_SOURCE_DIR})
 
-# TODO: add node
+add_executable(planning_node
+  ${CMAKE_CURRENT_SOURCE_DIR}/planning_node.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/planning_process.cpp
+)
 
-# TODO: add dependencies
+set(target 
+  planning_node
+)
 
-# TODO: install dynamic lib, node and relevant directory
+# add dependencies
+ament_target_dependencies(${target} 
+  ${DEPENDS}
+)
 
+# target_link_libraries(${target}
+#   config_reader
+# )
 
+# install dynamic lib, node and relevant directory
+install(TARGETS 
+  ${target}
+  DESTINATION lib/${PLANNING_PACKAGE_NAME})
