@@ -3,14 +3,16 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class PolynomialCurve
-  {
-  public:
-    PolynomialCurve() = default;
-    ~PolynomialCurve() = default;
+namespace Planning
+{
+    class PolynomialCurve
+    {
+    public:
+        PolynomialCurve() = default;
+        ~PolynomialCurve() = default;
 
-  private:
-  };
-} // namespace Planning
-#endif // !POLYNOMIAL_CURVE_H_
+    private:
+
+    };
+}  // namespace Planning
+#endif  // !POLYNOMIAL_CURVE_H_

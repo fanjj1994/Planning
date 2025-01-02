@@ -3,16 +3,17 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class TPMoveCmd : public rclcpp::Node
-  {
-  public:
-    TPMoveCmd();
-    TPMoveCmd(const TPMoveCmd &other) = delete;
-    TPMoveCmd &operator=(const TPMoveCmd &other) = delete;
-    ~TPMoveCmd() = default;
+namespace Planning
+{
+    class TPMoveCmd: public rclcpp::Node
+    {
+    public:
+        TPMoveCmd();
+        TPMoveCmd(const TPMoveCmd &other) = delete;
+        TPMoveCmd &operator=(const TPMoveCmd &other) = delete;
+        ~TPMoveCmd() = default;
+    private:
 
-  private:
-  };
-} // namespace Planning
-#endif // ! TP_MOVE_CMD_H_
+    };
+}  // namespace Planning
+#endif  // ! TP_MOVE_CMD_H_

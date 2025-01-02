@@ -3,15 +3,18 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class GlobalPathServer : public rclcpp::Node
-  {
-  public:
-    GlobalPathServer();
-    GlobalPathServer(const GlobalPathServer&) = delete;
-    ~GlobalPathServer() = default;
+namespace Planning
+{
+    class GlobalPathServer : public rclcpp::Node
+    {
+    public:
+        GlobalPathServer();
+        GlobalPathServer(const GlobalPathServer&) = delete;
+        ~GlobalPathServer() = default;
 
-  private:
-  };
-} // namespace Planning
-#endif // ! GLOABAL_PATH_SERVER_H_
+
+    private:
+
+    };
+}  // namespace Planning
+#endif  // ! GLOABAL_PATH_SERVER_H_

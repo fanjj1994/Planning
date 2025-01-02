@@ -3,16 +3,17 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class LocalPathPlanner
-  {
-  public:
-    LocalPathPlanner();
-    LocalPathPlanner(const LocalPathPlanner&) = delete;
-    LocalPathPlanner operator=(const LocalPathPlanner&) = delete;
-    ~LocalPathPlanner() = default;
+namespace Planning
+{
+    class LocalPathPlanner
+    {
+    public:
+        LocalPathPlanner();
+        LocalPathPlanner(const LocalPathPlanner&) = delete;
+        LocalPathPlanner operator=(const LocalPathPlanner&) = delete;
+        ~LocalPathPlanner() = default;
+    private:
 
-  private:
-  };
-} // namespace Planning
-#endif // ! LOCAL_PATH_PLANNER_H_
+    };
+}  // namespace Planning
+#endif  // ! LOCAL_PATH_PLANNER_H_

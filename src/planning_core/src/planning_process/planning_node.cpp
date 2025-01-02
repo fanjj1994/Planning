@@ -1,5 +1,5 @@
 #include "planning_process.h"
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   RCLCPP_INFO(rclcpp::get_logger("planning_node"), "planning start");

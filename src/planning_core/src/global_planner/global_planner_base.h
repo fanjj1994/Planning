@@ -3,13 +3,15 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class GlobalPlannerBase
-  {
-  public:
-    GlobalPlannerBase();
+namespace Planning
+{
+class GlobalPlannerBase
+    {
+    public:
+        GlobalPlannerBase();
 
-  private:
-  };
-} // namespace Planning
-#endif // ! GLOABL_PLANNER_BASE_H_
+    private:
+
+    };
+}  // namespace Planning
+#endif  // ! GLOABL_PLANNER_BASE_H_

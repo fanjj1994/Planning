@@ -9,30 +9,10 @@ set(DEPENDS
   "base_msgs"
 )
 
-# add dynamic lib
-add_library(reference_line SHARED
-  ${CMAKE_CURRENT_SOURCE_DIR}/reference_line_creator.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/reference_line_smoother.cpp
-)
+# TODO: add dynamic lib
 
-set(target
-  reference_line
-)
+# TODO: add dependencies
 
-# add dependencies
-ament_target_dependencies(${target}
-  ${DEPENDS}
-)
+# TODO: install dynamic lib, node and relevant directory
 
-target_link_libraries(${target}
-  config_reader
-  mathlibs
-  Eigen3::Eigen
-  OsqpEigen::OsqpEigen
-)
 
-# install dynamic lib, node and relevant directory
-install(TARGETS 
-  ${target}
-  LIBRARY DESTINATION lib
-)

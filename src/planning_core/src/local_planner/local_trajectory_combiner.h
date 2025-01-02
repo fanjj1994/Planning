@@ -3,16 +3,17 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class LocalTrajectoryCombiner
-  {
-  public:
-    LocalTrajectoryCombiner();
-    LocalTrajectoryCombiner(const LocalTrajectoryCombiner&) = delete;
-    LocalTrajectoryCombiner operator=(const LocalTrajectoryCombiner&) = delete;
-    ~LocalTrajectoryCombiner() = default;
+namespace Planning
+{
+    class LocalTrajectoryCombiner
+    {
+    public:
+        LocalTrajectoryCombiner();
+        LocalTrajectoryCombiner(const LocalTrajectoryCombiner&) = delete;
+        LocalTrajectoryCombiner operator=(const LocalTrajectoryCombiner&) = delete;
+        ~LocalTrajectoryCombiner() = default;
+    private:
 
-  private:
-  };
-} // namespace Planning
-#endif // ! LOCAL_TRAJECTORY_COMBINER_H_
+    };
+}  // namespace Planning
+#endif  // ! LOCAL_TRAJECTORY_COMBINER_H_

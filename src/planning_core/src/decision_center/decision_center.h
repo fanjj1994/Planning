@@ -3,14 +3,16 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class DecisionCenter
-  {
-  public:
-    DecisionCenter();
-    ~DecisionCenter() = default;
+namespace Planning
+{
+    class DecisionCenter
+    {
+    public:
+        DecisionCenter();
+        ~DecisionCenter() = default;
 
-  private:
-  };
-} // namespace Planning
-#endif // ! DECISION_CENTER_H_
+    private:
+
+    };
+}  // namespace Planning
+#endif  // ! DECISION_CENTER_H_

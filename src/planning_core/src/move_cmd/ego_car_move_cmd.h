@@ -3,16 +3,17 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning {
-  class EgoCarMoveCmd : public rclcpp::Node
-  {
-  public:
-    EgoCarMoveCmd();
-    EgoCarMoveCmd(const EgoCarMoveCmd &other) = delete;
-    EgoCarMoveCmd &operator=(const EgoCarMoveCmd &other) = delete;
-    ~EgoCarMoveCmd() = default;
+namespace Planning
+{
+    class EgoCarMoveCmd: public rclcpp::Node
+    {
+    public:
+        EgoCarMoveCmd();
+        EgoCarMoveCmd(const EgoCarMoveCmd &other) = delete;
+        EgoCarMoveCmd &operator=(const EgoCarMoveCmd &other) = delete;
+        ~EgoCarMoveCmd() = default;
+    private:
 
-  private:
-  };
-} // namespace Planning
-#endif // ! EGO_CAR_MOVE_CMD_H_
+    };
+}  // namespace Planning
+#endif  // ! EGO_CAR_MOVE_CMD_H_
