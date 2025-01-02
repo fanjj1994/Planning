@@ -6,8 +6,12 @@ The project is organized as follows:
 ```
 ├── build
 ├── doc
+│   └── UtilizeClangFormat.md
 ├── install
+├── log
 ├── README.md
+├── scripts
+│   └── format_all.sh
 └── src
     ├── base_msgs
     │   ├── CMakeLists.txt
@@ -85,14 +89,30 @@ The project is organized as follows:
         │   │   └── planning_process.h
         │   ├── pnc_map_creator
         │   │   ├── CMakeLists.txt
+        │   │   ├── pnc_map_creator_base.h
+        │   │   ├── pnc_map_server.cpp
+        │   │   ├── pnc_map_server.h
         │   │   ├── pnc_map_straight
+        │   │   │   ├── pnc_map_creator_straight.cpp
+        │   │   │   └── pnc_map_creator_straight.h
         │   │   └── pnc_map_sturn
+        │   │       ├── pnc_map_creator_sturn.cpp
+        │   │       └── pnc_map_creator_sturn.h
         │   ├── reference_line
-        │   │   └── CMakeLists.txt
+        │   │   ├── CMakeLists.txt
+        │   │   ├── reference_line_creator.cpp
+        │   │   ├── reference_line_creator.h
+        │   │   ├── reference_line_smoother.cpp
+        │   │   └── reference_line_smoother.h
         │   └── vehicle_info
         │       ├── CMakeLists.txt
         │       ├── ego_car
-        │       └── traffic_participants
+        │       │   ├── ego_car_base.cpp
+        │       │   └── ego_car_base.h
+        │       ├── traffic_participants
+        │       │   ├── tp_base.cpp
+        │       │   └── tp_base.h
+        │       └── vehicle_info_base.h
         └── urdf
             ├── ego_car_model
             └── tp_model
