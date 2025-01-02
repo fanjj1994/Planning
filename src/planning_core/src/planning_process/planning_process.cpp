@@ -1,17 +1,16 @@
 #include "planning_process.h"
 
-namespace Planning
-{
-    PlanningProcess::PlanningProcess() : Node("planning_node")
-    {
-        // Initialize the planning process
-        RCLCPP_INFO(this->get_logger(), "PlanningProcess initialized!");
-        RCLCPP_INFO(this->get_logger(), "Planning_node created!");
-    }
+namespace Planning {
+  PlanningProcess::PlanningProcess() : Node("planning_node")
+  {
+    // Initialize the planning process
+    RCLCPP_INFO(this->get_logger(), "PlanningProcess initialized!");
+    RCLCPP_INFO(this->get_logger(), "Planning_node created!");
+  }
 
-    boolean PlanningProcess::process()
-    {
-        return true;
-    }
+  boolean PlanningProcess::process()
+  {
+    return true;
+  }
 
-}  // namespace Planning
+} // namespace Planning

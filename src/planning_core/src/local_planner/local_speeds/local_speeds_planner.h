@@ -3,17 +3,16 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-namespace Planning
-{
-    class LocalSpeedsPlanner
-    {
-    public:
-        LocalSpeedsPlanner();
-        LocalSpeedsPlanner(const LocalSpeedsPlanner&) = delete;
-        LocalSpeedsPlanner operator=(const LocalSpeedsPlanner&) = delete;
-        ~LocalSpeedsPlanner() = default;
-    private:
+namespace Planning {
+  class LocalSpeedsPlanner
+  {
+  public:
+    LocalSpeedsPlanner();
+    LocalSpeedsPlanner(const LocalSpeedsPlanner&) = delete;
+    LocalSpeedsPlanner operator=(const LocalSpeedsPlanner&) = delete;
+    ~LocalSpeedsPlanner() = default;
 
-    };
-}  // namespace Planning
-#endif  // ! LOCAL_SPEEDS_PLANNER_H_
+  private:
+  };
+} // namespace Planning
+#endif // ! LOCAL_SPEEDS_PLANNER_H_

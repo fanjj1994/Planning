@@ -32,3 +32,4 @@ SpacesInSquareBrackets: false
 DerivePointerAlignment: true
 FixNamespaceComments: true
 PackConstructorInitializers: CurrentLine
+#make sure this file is in the root directory of the whole project
