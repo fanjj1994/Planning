@@ -2,6 +2,8 @@
 #define TP_MOVE_CMD_H_
 
 #include "rclcpp/rclcpp.hpp"
+#include "config_reader.h"
+#include "ego_car_base.h"
 
 namespace Planning {
   class TPMoveCmd : public rclcpp::Node

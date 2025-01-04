@@ -2,6 +2,7 @@
 #define CURVE_H_
 
 #include "rclcpp/rclcpp.hpp"
+#include <cmath>
 
 namespace Planning {
   class Curve

@@ -2,6 +2,8 @@
 #define EGO_CAR_MOVE_CMD_H_
 
 #include "rclcpp/rclcpp.hpp"
+#include "config_reader.h"
+#include "tp_base.h"
 
 namespace Planning {
   class EgoCarMoveCmd : public rclcpp::Node

@@ -28,13 +28,13 @@ ament_target_dependencies(${target}
   ${DEPENDS}
 )
 
-# TODO: add dependencies
-# target_link_libraries(${target}
-#   config_reader
-#   mathlibs
-#   vehicle_info
-#   decision_center
-# )
+# add dependencies
+target_link_libraries(${target}
+  config_reader
+  mathlibs
+  vehicle_info
+  decision_center
+)
 
 # install dynamic lib, node and relevant directory
 install(TARGETS 

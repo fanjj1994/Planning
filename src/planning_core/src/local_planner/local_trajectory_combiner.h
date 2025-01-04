@@ -2,6 +2,7 @@
 #define LOCAL_TRAJECTORY_COMBINER_H_
 
 #include "rclcpp/rclcpp.hpp"
+#include "config_reader.h"
 
 namespace Planning {
   class LocalTrajectoryCombiner

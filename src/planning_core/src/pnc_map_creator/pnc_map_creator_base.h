@@ -2,6 +2,7 @@
 #define PNC_MAP_CREATOR_BASE_H_
 
 #include "rclcpp/rclcpp.hpp"
+#include "config_reader.h"
 
 namespace Planning {
   class PNCMapCreatorBase

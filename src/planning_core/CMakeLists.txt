@@ -24,6 +24,7 @@ set(PLANNING_PACKAGE_NAME ${PROJECT_NAME})
 include_directories(
   /usr/local/include/eigen-3.4.0
   src/common/config_reader
+  src/common/common_type
   src/common/math
   src/decision_center
   src/global_planner

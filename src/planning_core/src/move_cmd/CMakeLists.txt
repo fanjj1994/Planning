@@ -28,11 +28,10 @@ set(MOVE_TARGETS
 # add dependencies
 foreach(target ${MOVE_TARGETS})
   ament_target_dependencies(${target} ${DEPENDS})
-  # TODO: add more dependencies
-  # target_link_libraries(${target}
-  #   config_reader
-  #   vehicle_info
-  # )
+  target_link_libraries(${target}
+    config_reader
+    vehicle_info
+  )
 endforeach()
 
 

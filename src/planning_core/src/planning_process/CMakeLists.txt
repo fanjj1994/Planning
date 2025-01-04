@@ -27,9 +27,13 @@ ament_target_dependencies(${target}
   ${DEPENDS}
 )
 
-# target_link_libraries(${target}
-#   config_reader
-# )
+target_link_libraries(${target}
+  config_reader
+  decision_center
+  vehicle_info
+  reference_line
+  local_planner
+)
 
 # install dynamic lib, node and relevant directory
 install(TARGETS 

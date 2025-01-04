@@ -1,0 +1,69 @@
+vehicle:
+  main_car:
+    id: 0                           #　car id
+    frame: "base_footprint"         #　coordinate name
+    length: 3.0                     #　ego car length
+    width: 1.5                      #  ego car width
+    pose_x: 0.0                     #  ego car x
+    pose_y: 0.0                     #　ego car y
+    pose_theta: 0.0                 #　ego car heading
+    speed_init: 1.0                  #　ego car init speed
+  obs_car1:
+    id: 1                           #　car id
+    frame: "base_footprint_obs1"    #  coordinate name
+    length: 3.0                     #　obs car length
+    width: 1.6                      #  obs car width
+    pose_x: 60.0                    #  obs car x
+    pose_y: 0.0                     #　obs car y
+    pose_theta: 0.0                 #  obs car heading
+    speed_init: 0.0                  #  obs car init speed
+  obs_car2:
+    id: 2
+    frame: "base_footprint_obs2" 
+    length: 3.0
+    width: 1.6
+    pose_x: 120.0
+    pose_y: 16.0
+    pose_theta: 1.0
+    speed_init: 0.0
+  obs_car3:
+    id: 3
+    frame: "base_footprint_obs3"
+    length: 3.0
+    width: 1.6
+    pose_x: 85.0
+    pose_y: 4.0
+    pose_theta: 0.0
+    speed_init: 0.0
+
+pnc_map: 
+  frame: "map"                      
+  type: 3                           #　enum,　0:straight, 1:turn1, 2:turn2, 3:sturn
+  road_length: 250.0                #  road length
+  road_half_width: 4.0              #  half width of road
+  segment_len: 0.5                  #　segment length
+  speed_limit: 1.0                  #  speed limit
+
+global_path:
+  type: 0                           # enum,　0:normal, 1: astar
+
+local_path:
+  curve_type: 2                     #　enum,　0:first order polynomial, 1:third order polynomial, 2:fifth order polynomial
+  path_size: 80                     # path point size
+
+local_speed: 
+  speed_size: 100                   #　velocity point
+
+reference_line:
+  type: 0                           # enum,　0:normal, 1:stich
+  front_size: 200                   #　front size point size
+  back_size: 80                     #  back size point size
+
+decision:
+  safe_dis_l: 0.5                   #　lateral safe margin
+  safe_dis_s: 10.0                  #　longitudinal safe margin
+
+planning_process:
+  obs_dis: 100.0                    #　obs detection radius
+
+move_cmd:
