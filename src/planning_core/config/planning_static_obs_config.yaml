@@ -1,5 +1,5 @@
 vehicle:
-  main_car:
+  ego_car:
     id: 0                           #　car id
     frame: "base_footprint"         #　coordinate name
     length: 3.0                     #　ego car length
