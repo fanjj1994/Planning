@@ -24,10 +24,10 @@ namespace Planning {
   {
     std_string frame_{ "" };
     uint8 type_{ 0U };
-    float32 road_length{ 0.0F };     // uint: m
-    float32 road_half_width{ 0.0F }; // uint: m
-    float32 segment_len{ 0.0F };     // uint: m
-    float32 speed_limit{ 0.0F };     // uint: m/s
+    float32 road_length_{ 0.0F };     // uint: m
+    float32 road_half_width_{ 0.0F }; // uint: m
+    float32 segment_len_{ 0.0F };     // uint: m
+    float32 speed_limit_{ 0.0F };     // uint: m/s
   };
 
   struct ReferenceLineStruct

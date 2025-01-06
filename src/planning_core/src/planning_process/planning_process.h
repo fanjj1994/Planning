@@ -27,6 +27,7 @@ namespace Planning {
     boolean process();
 
   private:
+    std::unique_ptr<ConfigReader> configReaderProcess;
   };
 } // namespace Planning
 #endif // !PLANNING_PROCESS_H_
