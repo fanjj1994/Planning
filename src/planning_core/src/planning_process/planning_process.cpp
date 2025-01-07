@@ -11,7 +11,6 @@ namespace Planning {
     configReaderProcess = std::make_unique<ConfigReader>();
     configReaderProcess->readProcessConfig();
     auto obsDis = configReaderProcess->getProcess().obs_dis_;
-    RCLCPP_INFO(this->get_logger(), "obs_dis: %f", obsDis);
   }
 
   boolean PlanningProcess::process()

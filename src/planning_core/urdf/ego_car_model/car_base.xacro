@@ -1,0 +1,47 @@
+<!-- Chassis -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Car dimensions -->
+    <xacro:property name="car_length" value="3.0"/>
+    <xacro:property name="car_width" value="1.5"/>
+    <xacro:property name="car_height" value="0.6"/>
+
+    <!-- Ground clearance -->
+    <xacro:property name="ground_height" value="0.2"/>
+
+    <!-- Include subfile, must be after parameter definitions so subfile can use parent file parameters -->
+    <xacro:include filename="car_wheels.xacro"/>
+
+    <!-- Color -->
+    <material name="yellow">
+        <color rgba="0.9 0.6 0.0 0.7"/>
+    </material>
+
+    <!-- Root coordinate -->
+    <link name="map"/>
+
+    <!-- Chassis projection point in map -->
+    <link name="base_footprint"/>
+
+    <!-- Chassis -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${car_length} ${car_width} ${car_height}"/>
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+    </link>
+
+    <!-- Projection point linked to map -->
+    <joint name="footprint_to_map" type="fixed">
+        <parent link="map"/>
+        <child link="base_footprint"/>
+    </joint>
+
+    <!-- Chassis linked to projection point -->
+    <joint name="base_to_footprint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0.0 0.0 ${car_height / 2.0 + ground_height}"/>
+    </joint>
+</robot>

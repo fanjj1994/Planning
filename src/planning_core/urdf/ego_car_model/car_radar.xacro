@@ -1,0 +1,33 @@
+<!-- Radar -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Radar dimensions -->
+    <xacro:property name="radar_radius" value="0.2"/>
+    <xacro:property name="radar_height" value="0.2"/>
+
+    <!-- Radar offset -->
+    <xacro:property name="radar_joint_x" value="0.0"/>
+    <xacro:property name="radar_joint_y" value="0.0"/>
+    <xacro:property name="radar_joint_z" value="${car_height / 2.0 + radar_height / 2.0}"/>
+
+    <!-- Color -->
+    <material name="blue">
+        <color rgba="0.2 0.0 0.7 0.8"/>
+    </material>
+
+    <!-- Radar geometry -->
+    <link name="radar">
+        <visual>
+            <geometry>
+                <cylinder radius="${radar_radius}" length="${radar_height}"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+    </link>
+
+    <!-- Radar attached to base_link -->
+    <joint name="radar2base_link" type="fixed">
+        <parent link="base_link"/>
+        <child link="radar"/>
+        <origin xyz="${radar_joint_x} ${radar_joint_y} ${radar_joint_z}"/>
+    </joint>
+</robot>
