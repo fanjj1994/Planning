@@ -1,11 +1,11 @@
 #include "planning_process.h"
 
 namespace Planning {
-  PlanningProcess::PlanningProcess() : Node("planning_node")
+  PlanningProcess::PlanningProcess() : Node("planning_process")
   {
     // Initialize the planning process
     RCLCPP_INFO(this->get_logger(), "PlanningProcess initialized!");
-    RCLCPP_INFO(this->get_logger(), "Planning_node created!");
+    RCLCPP_INFO(this->get_logger(), "PlanningProcess created!");
 
     // Read config file for planning process
     configReaderProcess = std::make_unique<ConfigReader>();
