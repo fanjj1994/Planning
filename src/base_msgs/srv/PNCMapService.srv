@@ -1,0 +1,5 @@
+# 地图服务
+
+int32 map_type  # 请求: 地图类型
+---
+PNCMap pnc_map  # 响应: 地图
