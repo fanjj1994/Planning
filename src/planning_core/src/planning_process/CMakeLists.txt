@@ -13,13 +13,13 @@ set(DEPENDS
 # add node
 message("current planning_node source dir: " ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(planning_node
-  ${CMAKE_CURRENT_SOURCE_DIR}/planning_node.cpp
+add_executable(planning_process
+  ${CMAKE_CURRENT_SOURCE_DIR}/planning_process_main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/planning_process.cpp
 )
 
 set(target 
-  planning_node
+  planning_process
 )
 
 # add dependencies

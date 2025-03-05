@@ -51,8 +51,8 @@ local_path:
   curve_type: 2                     #　enum,　0:first order polynomial, 1:third order polynomial, 2:fifth order polynomial
   path_size: 80                     # path point size
 
-local_speed: 
-  speed_size: 100                   #　velocity point
+local_speeds: 
+  speeds_size: 100                   #　velocity point
 
 reference_line:
   type: 0                           # enum,　0:normal, 1:stich
@@ -60,8 +60,8 @@ reference_line:
   back_size: 80                     #  back size point size
 
 decision:
-  safe_dis_l: 0.5                   #　lateral safe margin
-  safe_dis_s: 10.0                  #　longitudinal safe margin
+  safe_dis_lat: 0.5                   #　lateral safe margin
+  safe_dis_lon: 10.0                  #　longitudinal safe margin
 
 planning_process:
   obs_dis: 100.0                    #　obs detection radius
