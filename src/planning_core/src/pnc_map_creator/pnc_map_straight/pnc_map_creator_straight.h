@@ -12,6 +12,8 @@ namespace Planning {
     PNCMapCreatorStraight(const PNCMapCreatorStraight&) = delete;
     ~PNCMapCreatorStraight() = default;
 
+    base_msgs::msg::PNCMap createPNCMap() override;
+
   private:
   };
 } // namespace Planning

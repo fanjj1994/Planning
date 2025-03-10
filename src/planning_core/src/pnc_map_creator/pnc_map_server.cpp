@@ -4,6 +4,46 @@ namespace Planning {
   PNCMapServer::PNCMapServer() : Node("pnc_map_server_node")
   {
     RCLCPP_INFO(this->get_logger(), "PNCMapServer is running");
+
+    // map publisher init
+    mapPublisher = this->create_publisher<base_msgs::msg::PNCMap>("pnc_map", 10U);
+    mapRvizPublisher = this->create_publisher<visualization_msgs::msg::MarkerArray>("pnc_map_marker_array", 10U);
+
+    // map server init
+    mapServer = this->create_service<base_msgs::srv::PNCMapService>(
+        "pnc_map_server",
+        std::bind(&PNCMapServer::responsePNCMapCallBack, this, std::placeholders::_1, std::placeholders::_2));
+  }
+
+  // response & publish map
+  void PNCMapServer::responsePNCMapCallBack(const std::shared_ptr<base_msgs::srv::PNCMapService::Request> request,
+                                            const std::shared_ptr<base_msgs::srv::PNCMapService::Response> response)
+  {
+    // Step1: receive request
+    switch (request->map_type)
+    {
+    case static_cast<uint8>(PNCMapType::Straight):
+      mapCreator = std::make_shared<PNCMapCreatorStraight>();
+      break;
+    case static_cast<uint8>(PNCMapType::STurn):
+      mapCreator = std::make_shared<PNCMapCreatorSTurn>();
+      break;
+    default:
+      break;
+    }
+
+    // Step2: respond & create map
+    const auto pncMap = mapCreator->createPNCMap();
+    response->pnc_map = pncMap;
+
+    // Step3: publish map (planning node)
+    mapPublisher->publish(pncMap);
+    RCLCPP_INFO(this->get_logger(), "PNCMapServer: publish map");
+
+    // Step4: publish map (rviz)
+    const auto pncMapMarkerArray = mapCreator->getPNCMapMarkerArray();
+    mapRvizPublisher->publish(pncMapMarkerArray); // publish map for rviz
+    RCLCPP_INFO(this->get_logger(), "PNCMapServer: publish map for rviz");
   }
 
 } // namespace Planning
