@@ -13,21 +13,11 @@ namespace Planning {
 
   enum class PNCMapType : uint8
   {
-    Straight = 0U,
-    Turn = 1U,
-    STurn = 2U,
-    Cross = 3U,
-    Road = 4U,
-    RoadEnd = 5U,
-    RoadStart = 6U,
-    RoadCross = 7U,
-    RoadTurn = 8U,
-    RoadSTurn = 9U,
-    RoadCrossTurn = 10U,
-    RoadCrossSTurn = 11U,
-    RoadCrossTurnSTurn = 12U,
-    RoadCrossTurnSTurnEnd = 13U,
-    Default = 255U
+    STRAIGHT = 0U,
+    TURN = 1U,
+    STURN = 2U,
+    CROSS = 3U,
+    DEFAULT = 255U
   };
 
   class PNCMapCreatorBase

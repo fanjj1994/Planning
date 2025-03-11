@@ -5,11 +5,11 @@ namespace Planning {
   {
     RCLCPP_INFO(this->get_logger(), "PNCMapServer is running");
 
-    // map publisher init
+    // map publisher
     mapPublisher = this->create_publisher<base_msgs::msg::PNCMap>("pnc_map", 10U);
     mapRvizPublisher = this->create_publisher<visualization_msgs::msg::MarkerArray>("pnc_map_marker_array", 10U);
 
-    // map server init
+    // map server
     mapServer = this->create_service<base_msgs::srv::PNCMapService>(
         "pnc_map_server",
         std::bind(&PNCMapServer::responsePNCMapCallBack, this, std::placeholders::_1, std::placeholders::_2));
@@ -22,14 +22,15 @@ namespace Planning {
     // Step1: receive request
     switch (request->map_type)
     {
-    case static_cast<uint8>(PNCMapType::Straight):
+    case static_cast<uint8>(PNCMapType::STRAIGHT):
       mapCreator = std::make_shared<PNCMapCreatorStraight>();
       break;
-    case static_cast<uint8>(PNCMapType::STurn):
+    case static_cast<uint8>(PNCMapType::STURN):
       mapCreator = std::make_shared<PNCMapCreatorSTurn>();
       break;
     default:
-      break;
+      RCLCPP_WARN(this->get_logger(), "PNCMapServer: Undefined map type!");
+      return;
     }
 
     // Step2: respond & create map
