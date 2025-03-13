@@ -23,7 +23,7 @@
 namespace Planning {
   static constexpr uint8 PROCESS_FAILURE{ 255U };
 
-  using namespace::std::chrono_literals;
+  using namespace ::std::chrono_literals; // for 1s block
 
   class PlanningProcess : public rclcpp::Node
   {
@@ -32,15 +32,9 @@ namespace Planning {
     ~PlanningProcess() = default;
     boolean process();
 
-    inline base_msgs::msg::PNCMap getPNCMap() const
-    {
-      return pncMap;
-    }
+    inline base_msgs::msg::PNCMap getPNCMap() const { return pncMap; }
 
-    inline nav_msgs::msg::Path getGlobalPath() const
-    {
-      return globalPath;
-    }
+    inline nav_msgs::msg::Path getGlobalPath() const { return globalPath; }
 
   private:
     std::unique_ptr<ConfigReader> configReaderProcess;
@@ -53,7 +47,7 @@ namespace Planning {
     rclcpp::Client<base_msgs::srv::GlobalPathService>::SharedPtr globalPathClient;
 
     boolean initPlanning();
-    
+
     template <typename T>
     boolean connectServer(const T &client); // pnc map or global path client
 
