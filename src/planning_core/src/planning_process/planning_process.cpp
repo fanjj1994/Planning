@@ -20,7 +20,7 @@ namespace Planning {
   boolean PlanningProcess::process()
   {
     // set 1 second timer to wait rviz2 & xacro to be ready
-    rclcpp::Rate rate(1s);
+    rclcpp::Rate rate(1.0);
     rate.sleep();
 
     if (initPlanning() == false)
