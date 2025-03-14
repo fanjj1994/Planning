@@ -69,8 +69,8 @@ def generate_launch_description():
     # launch planning node
     planning_process = Node(
         package="planning_core",
-        executable="planning_node",
-        name="planning_node"
+        executable="planning_process",
+        name="planning_process"
     )
 
     # node group

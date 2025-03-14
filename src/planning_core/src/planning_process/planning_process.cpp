@@ -4,7 +4,6 @@ namespace Planning {
   PlanningProcess::PlanningProcess() : Node("planning_process")
   {
     // Initialize the planning process
-    RCLCPP_INFO(this->get_logger(), "PlanningProcess initialized!");
     RCLCPP_INFO(this->get_logger(), "PlanningProcess created!");
 
     // Read config file for planning process
