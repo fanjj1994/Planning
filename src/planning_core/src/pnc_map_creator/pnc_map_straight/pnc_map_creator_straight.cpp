@@ -64,9 +64,9 @@ namespace Planning {
     pncMap.left_boundary = pncMap.midline;
     pncMap.left_boundary.id = 1;
     pncMap.left_boundary.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    pncMap.midline.color.r = 1.0;  // red
-    pncMap.midline.color.g = 0.0;  // green
-    pncMap.midline.color.b = 0.0;  // blue
+    pncMap.left_boundary.color.r = 1.0;  // red
+    pncMap.left_boundary.color.g = 1.0;  // green
+    pncMap.left_boundary.color.b = 1.0;  // blue
 
     // right boundary format
     pncMap.right_boundary = pncMap.left_boundary;
