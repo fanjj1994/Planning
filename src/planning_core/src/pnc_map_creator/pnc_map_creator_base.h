@@ -7,6 +7,7 @@
 #include "base_msgs/msg/pnc_map.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 #include "visualization_msgs/msg/marker_array.hpp"
+#include <cmath>
 #include "common_type.h"
 
 namespace Planning {
@@ -14,9 +15,7 @@ namespace Planning {
   enum class PNCMapType : uint8
   {
     STRAIGHT = 0U,
-    TURN = 1U,
-    STURN = 2U,
-    CROSS = 3U,
+    STURN = 1U,
     DEFAULT = 255U
   };
 

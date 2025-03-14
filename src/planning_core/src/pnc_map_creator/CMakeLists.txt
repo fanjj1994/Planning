@@ -39,6 +39,11 @@ foreach(target ${PROJECT_TARGETS})
   )
 endforeach()
 
+# link libraries
+target_link_libraries(pnc_map_creator
+  config_reader
+)
+
 target_link_libraries(pnc_map_server
   config_reader
   pnc_map_creator

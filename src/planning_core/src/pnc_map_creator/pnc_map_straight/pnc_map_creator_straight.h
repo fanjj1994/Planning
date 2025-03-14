@@ -15,6 +15,8 @@ namespace Planning {
     base_msgs::msg::PNCMap createPNCMap() override;
 
   private:
+    void initPNCMap();
+    void drawStraightX(const float64 &length, const float64 &plugFlag, const float64 &ratio = 1.0);
   };
 } // namespace Planning
 #endif // ! PNC_MAP_CREATOR_STRAIGHT_H_
