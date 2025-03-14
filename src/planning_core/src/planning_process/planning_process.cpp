@@ -30,7 +30,10 @@ namespace Planning {
     }
 
     // planning main process
-
+    else
+    {
+      RCLCPP_INFO(this->get_logger(), "init complete. Start planning process main function!");
+    }
     return true;
   }
 
