@@ -52,11 +52,25 @@ def generate_launch_description():
         arguments=["-d", rviz_conf_path]
     )
 
+    # launch pnc map server
+    pnc_map_server = Node(
+        package="planning_core",
+        executable="pnc_map_server",
+        name="pnc_map_server"
+    )
+
+    # launch global path server
+    global_path_server = Node(
+        package="planning_core",
+        executable="global_path_server",
+        name="global_path_server"
+    )
+
     # launch planning node
     planning_process = Node(
         package="planning_core",
-        executable="planning_node",
-        name="planning_node"
+        executable="planning_process",
+        name="planning_process"
     )
 
     # node group
@@ -80,7 +94,9 @@ def generate_launch_description():
     planning = GroupAction(
         actions=[
             PushRosNamespace("planning_core"),
-            planning_process
+            planning_process,
+            pnc_map_server,
+            global_path_server
         ]
     )
 

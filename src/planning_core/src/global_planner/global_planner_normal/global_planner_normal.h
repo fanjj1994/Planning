@@ -12,6 +12,8 @@ namespace Planning {
     GlobalPlannerNormal& operator=(const GlobalPlannerNormal&) = delete;
     ~GlobalPlannerNormal() = default;
 
+    nav_msgs::msg::Path searchGlobalPath(const base_msgs::msg::PNCMap&) override;
+
   private:
   };
 } // namespace Planning
