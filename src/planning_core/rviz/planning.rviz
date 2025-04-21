@@ -10,6 +10,7 @@ Panels:
         - /RobotModel1
         - /RobotModel1/Description Topic1
         - /MarkerArray1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 649
   - Class: rviz_common/Selection
@@ -184,13 +185,26 @@ Visualization Manager:
       Enabled: true
       Name: MarkerArray
       Namespaces:
-        {}
+        pnc_map: true
       Topic:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /planning_core/pnc_map_marker_array
+      Value: true
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Marker
+      Namespaces:
+        {}
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /planning_core/global_path_rviz
       Value: true
   Enabled: true
   Global Options:
@@ -238,7 +252,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 11.498475074768066
+      Distance: 20.0316162109375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
