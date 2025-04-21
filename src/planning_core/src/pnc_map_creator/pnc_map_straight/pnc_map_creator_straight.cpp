@@ -12,13 +12,12 @@ namespace Planning {
     pCenter.x = -3.0;
     pCenter.y = pncMapConfig->getPNCMap().road_half_width_ / 2.0;
     pCenter.z = 0.0;
-    
+
     // length step
     lengthStep = pncMapConfig->getPNCMap().segment_len_;
 
     // Map Init
     initPNCMap();
-
   }
 
   base_msgs::msg::PNCMap PNCMapCreatorStraight::createPNCMap()
@@ -35,7 +34,8 @@ namespace Planning {
     pncMapMarkerArray.markers.emplace_back(pncMap.left_boundary);
     pncMapMarkerArray.markers.emplace_back(pncMap.right_boundary);
 
-    RCLCPP_INFO(rclcpp::get_logger("pnc_map"), "PNCMapCreatorStraight is finished, center line has %ld points", pncMap.midline.points.size());
+    RCLCPP_INFO(rclcpp::get_logger("pnc_map"), "PNCMapCreatorStraight is finished, center line has %ld points",
+                pncMap.midline.points.size());
     return base_msgs::msg::PNCMap();
   }
 
@@ -45,7 +45,7 @@ namespace Planning {
     pncMap.header.stamp = rclcpp::Clock().now();
     pncMap.road_length = pncMapConfig->getPNCMap().road_length_;
     pncMap.road_half_width = pncMapConfig->getPNCMap().road_half_width_;
-    
+
     // center line format
     pncMap.midline.header = pncMap.header;
     pncMap.midline.ns = "pnc_map";
@@ -64,9 +64,9 @@ namespace Planning {
     pncMap.left_boundary = pncMap.midline;
     pncMap.left_boundary.id = 1;
     pncMap.left_boundary.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    pncMap.left_boundary.color.r = 1.0;  // red
-    pncMap.left_boundary.color.g = 1.0;  // green
-    pncMap.left_boundary.color.b = 1.0;  // blue
+    pncMap.left_boundary.color.r = 1.0; // red
+    pncMap.left_boundary.color.g = 1.0; // green
+    pncMap.left_boundary.color.b = 1.0; // blue
 
     // right boundary format
     pncMap.right_boundary = pncMap.left_boundary;
@@ -75,7 +75,7 @@ namespace Planning {
 
   void PNCMapCreatorStraight::drawStraightX(const float64 &length, const float64 &plusFlag, const float64 &ratio)
   {
-    float64 lenRuler { 0.0 };
+    float64 lenRuler{ 0.0 };
     while (lenRuler < length)
     {
       pLeft.x = pCenter.x;

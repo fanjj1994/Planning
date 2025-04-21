@@ -38,7 +38,7 @@ vehicle:
 
 pnc_map: 
   frame: "map"                      
-  type: 0                           #　enum,　0:straight, 1:sturn
+  type: 1                           #　enum,　0:straight, 1:sturn
   road_length: 250.0                #  road length
   road_half_width: 4.0              #  half width of road
   segment_len: 0.5                  #　segment length
