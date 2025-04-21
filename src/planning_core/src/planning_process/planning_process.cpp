@@ -77,11 +77,11 @@ namespace Planning {
   {
     // classify client type
     std_string serverName;
-    if constexpr (std::is_same_v < T, rclcpp::Client<base_msgs::srv::PNCMapService>::SharedPtr> == true)
+    if constexpr (std::is_same_v<T, rclcpp::Client<base_msgs::srv::PNCMapService>::SharedPtr> == true)
     {
       serverName = "pnc_map";
     }
-    else if constexpr (std::is_same_v < T, rclcpp::Client<base_msgs::srv::GlobalPathService>::SharedPtr> == true)
+    else if constexpr (std::is_same_v<T, rclcpp::Client<base_msgs::srv::GlobalPathService>::SharedPtr> == true)
     {
       serverName = "global_path";
     }
@@ -91,9 +91,9 @@ namespace Planning {
     }
 
     // wait_for_server
-    while (!client->wait_for_service(1s))   // wait for 1 second
+    while (!client->wait_for_service(1s)) // wait for 1 second
     {
-      if (!rclcpp::ok())    // Ctrl+C to stop
+      if (!rclcpp::ok()) // Ctrl+C to stop
       {
         RCLCPP_ERROR(this->get_logger(), "Interruped while waiting for the %s server.", serverName.c_str());
         return false;
@@ -115,10 +115,11 @@ namespace Planning {
     auto result = pncMapClient->async_send_request(request);
 
     // identify response status
-    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS)
+    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) ==
+        rclcpp::FutureReturnCode::SUCCESS)
     {
       RCLCPP_INFO(this->get_logger(), "Map server responds successfully!");
-      pncMap = result.get()->pnc_map;   // get the map from the response
+      pncMap = result.get()->pnc_map; // get the map from the response
       return true;
     }
     else
@@ -142,10 +143,11 @@ namespace Planning {
     auto result = globalPathClient->async_send_request(request);
 
     // identify response status
-    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS)
+    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) ==
+        rclcpp::FutureReturnCode::SUCCESS)
     {
       RCLCPP_INFO(this->get_logger(), "Global path server responds successfully!");
-      globalPath = result.get()->global_path;   // get the global path from the response
+      globalPath = result.get()->global_path; // get the global path from the response
       return true;
     }
     else
