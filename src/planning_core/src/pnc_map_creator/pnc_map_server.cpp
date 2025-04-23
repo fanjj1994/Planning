@@ -24,9 +24,11 @@ namespace Planning {
     {
     case static_cast<uint8>(PNCMapType::STRAIGHT):
       mapCreator = std::make_shared<PNCMapCreatorStraight>();
+      RCLCPP_INFO(this->get_logger(), "Straight Map Creator is selected");
       break;
     case static_cast<uint8>(PNCMapType::STURN):
       mapCreator = std::make_shared<PNCMapCreatorSTurn>();
+      RCLCPP_INFO(this->get_logger(), "STurn Map Creator is selected");
       break;
     default:
       RCLCPP_WARN(this->get_logger(), "PNCMapServer: Undefined map type!");
@@ -36,6 +38,11 @@ namespace Planning {
     // Step2: respond & create map
     const auto pncMap = mapCreator->createPNCMap();
     response->pnc_map = pncMap;
+
+    if (pncMap.midline.points.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "PNCMapCreator failed to generate midline points!");
+    }
 
     // Step3: publish map (planning node)
     mapPublisher->publish(pncMap);
