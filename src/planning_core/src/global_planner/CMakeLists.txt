@@ -35,6 +35,10 @@ target_link_libraries(global_path_server
   global_planner
 )
 
+target_link_libraries(global_planner
+  config_reader
+)
+
 # install dynamic lib, node and relevant directory
 install(TARGETS
   global_planner

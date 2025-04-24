@@ -42,7 +42,7 @@ namespace Planning {
     RCLCPP_INFO(rclcpp::get_logger("pnc_map"), "PNCMapCreatorSTurn is finished, center line has %ld points",
                 pncMap.midline.points.size());
 
-    return base_msgs::msg::PNCMap();
+    return pncMap;
   }
 
   void PNCMapCreatorSTurn::initPNCMap()

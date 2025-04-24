@@ -139,6 +139,11 @@ namespace Planning {
     request->pnc_map = pncMap;
     request->global_planner_type = configReaderProcess->getGlobalPath().type_;
 
+    if (request->pnc_map.midline.points.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "PNCMap is empty before sending to GlobalPathServer");
+    }
+
     // receive response
     auto result = globalPathClient->async_send_request(request);
 

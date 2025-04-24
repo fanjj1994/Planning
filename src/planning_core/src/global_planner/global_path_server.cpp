@@ -6,8 +6,8 @@ namespace Planning {
     RCLCPP_INFO(this->get_logger(), "GlobalPathServer is running");
 
     // global path publisher
-    globalPathPublisher = this->create_publisher<nav_msgs::msg::Path>("global_path", 10);
-    globalPathRvizPublisher = this->create_publisher<visualization_msgs::msg::Marker>("global_path_rviz", 10);
+    globalPathPublisher = this->create_publisher<nav_msgs::msg::Path>("global_path", 10U);
+    globalPathRvizPublisher = this->create_publisher<visualization_msgs::msg::Marker>("global_path_rviz", 10U);
 
     // global path rviz publisher
     globalPathServer = this->create_service<base_msgs::srv::GlobalPathService>(
@@ -55,7 +55,26 @@ namespace Planning {
   visualization_msgs::msg::Marker GlobalPathServer::path2Marker(const nav_msgs::msg::Path& path) // path to marker
   {
     visualization_msgs::msg::Marker pathRviz;
-    // TODO: path2Marker implementation
+    pathRviz.header = path.header;
+    pathRviz.ns = "global_path"; // namespace
+    pathRviz.id = 0; // id
+    pathRviz.action = visualization_msgs::msg::Marker::ADD;
+    pathRviz.type = visualization_msgs::msg::Marker::LINE_STRIP;
+    pathRviz.scale.x = 0.05; // line width
+    pathRviz.color.a = 1.0; // alpha
+    pathRviz.color.r = 0.8; // red
+    pathRviz.color.g = 0.0; // green
+    pathRviz.color.b = 0.0; // blue
+    pathRviz.lifetime = rclcpp::Duration::max(); // lifetime
+    pathRviz.frame_locked = true; // frame locked
+    
+    geometry_msgs::msg::Point tmpPts;
+    for (const auto & pose : path.poses)
+    {
+      tmpPts.x = pose.pose.position.x;
+      tmpPts.y = pose.pose.position.y;
+      pathRviz.points.emplace_back(tmpPts);
+    }
     return pathRviz;
   }
 
