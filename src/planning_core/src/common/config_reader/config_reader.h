@@ -7,154 +7,191 @@
 #include "common_type.h"
 #include <unordered_map>
 
-namespace Planning {
-  struct VehicleStruct
+namespace Planning
+{
+struct VehicleStruct
+{
+  uint8 id_{ 0U };
+  std_string frame_{ "" };
+  float32 length_{ 0.0F };  // uint: m
+  float32 width_{ 0.0F };   // uint: m
+  float32 pose_x_{ 0.0F };  // uint: m
+  float32 pose_y_{ 0.0F };  // uint: m
+  float32 pose_theta_{ 0.0F };
+  float32 speed_init_{ 0.0F };
+};
+
+struct PNCMapStruct
+{
+  std_string frame_{ "" };
+  uint8 type_{ 0U };
+  float32 road_length_{ 0.0F };      // uint: m
+  float32 road_half_width_{ 0.0F };  // uint: m
+  float32 segment_len_{ 0.0F };      // uint: m
+  float32 speed_limit_{ 0.0F };      // uint: m/s
+};
+
+struct ReferenceLineStruct
+{
+  uint8 type_{ 0U };
+  uint32 front_size_{ 0U };
+  uint32 back_size_{ 0U };
+};
+
+struct GlobalPathStruct
+{
+  uint8 type_{ 0U };
+};
+
+struct LocalPathStruct
+{
+  uint8 curve_type_{ 0U };
+  uint32 path_size_{ 0U };
+};
+
+struct LocalSpeedsStruct
+{
+  uint32 speeds_size_{ 0U };
+};
+
+struct DecisionStruct
+{
+  float32 safe_dis_lat_{ 0.0F };  // uint: m
+  float32 safe_dis_lon_{ 0.0F };  // uint: m
+};
+
+struct ProcessStruct
+{
+  float32 obs_dis_{ 0.0F };  // uint: s
+};
+
+class ConfigReader
+{
+public:
+  ConfigReader();
+  ConfigReader(const ConfigReader&) = delete;
+  ConfigReader& operator=(const ConfigReader&) = delete;
+  ~ConfigReader() = default;
+
+  // vehicle
+  void readVehiclesConfig();
+
+  void readVehicleConfig(VehicleStruct& vehicle, const std_string& vehicleName);
+
+  inline VehicleStruct getEgoCar() const
   {
-    uint8 id_{ 0U };
-    std_string frame_{ "" };
-    float32 length_{ 0.0F }; // uint: m
-    float32 width_{ 0.0F };  // uint: m
-    float32 pose_x_{ 0.0F }; // uint: m
-    float32 pose_y_{ 0.0F }; // uint: m
-    float32 pose_theta_{ 0.0F };
-    float32 speed_init_{ 0.0F };
-  };
+    return egoCar;
+  }
 
-  struct PNCMapStruct
+  inline VehicleStruct getTpCar1() const
   {
-    std_string frame_{ "" };
-    uint8 type_{ 0U };
-    float32 road_length_{ 0.0F };     // uint: m
-    float32 road_half_width_{ 0.0F }; // uint: m
-    float32 segment_len_{ 0.0F };     // uint: m
-    float32 speed_limit_{ 0.0F };     // uint: m/s
-  };
+    return tpCar1;
+  }
 
-  struct ReferenceLineStruct
+  inline VehicleStruct getTpCar2() const
   {
-    uint8 type_{ 0U };
-    uint32 front_size_{ 0U };
-    uint32 back_size_{ 0U };
-  };
+    return tpCar2;
+  }
 
-  struct GlobalPathStruct
+  inline VehicleStruct getTpCar3() const
   {
-    uint8 type_{ 0U };
-  };
+    return tpCar3;
+  }
 
-  struct LocalPathStruct
+  inline std::unordered_map<uint8, VehicleStruct> getVehiclePairs() const
   {
-    uint8 curve_type_{ 0U };
-    uint32 path_size_{ 0U };
-  };
+    return VehiclePairs;
+  }
 
-  struct LocalSpeedsStruct
+  // pnc_map
+  void readPNCMapConfig();
+
+  inline PNCMapStruct getPNCMap() const
   {
-    uint32 speeds_size_{ 0U };
-  };
+    return pncMap;
+  }
 
-  struct DecisionStruct
+  // global path planning
+  void readGlobalPathConfig();
+
+  inline GlobalPathStruct getGlobalPath() const
   {
-    float32 safe_dis_lat_{ 0.0F }; // uint: m
-    float32 safe_dis_lon_{ 0.0F }; // uint: m
-  };
+    return globalPath;
+  }
 
-  struct ProcessStruct
+  // reference line
+  void readReferenceLineConfig();
+
+  inline ReferenceLineStruct getReferenceLine() const
   {
-    float32 obs_dis_{ 0.0F }; // uint: s
-  };
+    return referenceLine;
+  }
 
-  class ConfigReader
+  // local path planning
+  void readLocalPathConfig();
+
+  inline LocalPathStruct getLocalPath() const
   {
-  public:
-    ConfigReader();
-    ConfigReader(const ConfigReader &) = delete;
-    ConfigReader &operator=(const ConfigReader &) = delete;
-    ~ConfigReader() = default;
+    return localPath;
+  }
 
-    // vehicle
-    void readVehicleConfig();
+  // local speeds planning
+  void readLocalSpeedsConfig();
 
-    void readVehicleConfig(VehicleStruct &vehicle, const std_string &vehicleName);
+  inline LocalSpeedsStruct getLocalSpeeds() const
+  {
+    return localSpeeds;
+  }
 
-    inline VehicleStruct getEgoCar() const { return egoCar; }
+  // decision
+  void readDecisionConfig();
 
-    inline VehicleStruct getTpCar1() const { return tpCar1; }
+  inline DecisionStruct getDecision() const
+  {
+    return decision;
+  }
 
-    inline VehicleStruct getTpCar2() const { return tpCar2; }
+  // process
+  void readProcessConfig();
 
-    inline VehicleStruct getTpCar3() const { return tpCar3; }
+  inline ProcessStruct getProcess() const
+  {
+    return process;
+  }
 
-    inline std::unordered_map<uint8, VehicleStruct> getVehiclePairs() const { return VehiclePairs; }
+  // move_cmd
+  void readMoveCmdConfig();
 
-    // pnc_map
-    void readPNCMapConfig();
+private:
+  YAML::Node planningConfig;
+  // vehicle
+  VehicleStruct egoCar;
+  VehicleStruct tpCar1;
+  VehicleStruct tpCar2;
+  VehicleStruct tpCar3;
 
-    inline PNCMapStruct getPNCMap() const { return pncMap; }
+  std::unordered_map<uint8, VehicleStruct> VehiclePairs;
 
-    // global path planning
-    void readGlobalPathConfig();
+  // pnc_map
+  PNCMapStruct pncMap;
 
-    inline GlobalPathStruct getGlobalPath() const { return globalPath; }
+  // reference_line
+  ReferenceLineStruct referenceLine;
 
-    // reference line
-    void readReferenceLineConfig();
+  // global_path
+  GlobalPathStruct globalPath;
 
-    inline ReferenceLineStruct getReferenceLine() const { return referenceLine; }
+  // local_path
+  LocalPathStruct localPath;
 
-    // local path planning
-    void readLocalPathConfig();
+  // local_speeds
+  LocalSpeedsStruct localSpeeds;
 
-    inline LocalPathStruct getLocalPath() const { return localPath; }
+  // decision
+  DecisionStruct decision;
 
-    // local speeds planning
-    void readLocalSpeedsConfig();
-
-    inline LocalSpeedsStruct getLocalSpeeds() const { return localSpeeds; }
-
-    // decision
-    void readDecisionConfig();
-
-    inline DecisionStruct getDecision() const { return decision; }
-
-    // process
-    void readProcessConfig();
-
-    inline ProcessStruct getProcess() const { return process; }
-
-    // move_cmd
-    void readMoveCmdConfig();
-
-  private:
-    YAML::Node planningConfig;
-    // vehicle
-    VehicleStruct egoCar;
-    VehicleStruct tpCar1;
-    VehicleStruct tpCar2;
-    VehicleStruct tpCar3;
-
-    std::unordered_map<uint8, VehicleStruct> VehiclePairs;
-
-    // pnc_map
-    PNCMapStruct pncMap;
-
-    // reference_line
-    ReferenceLineStruct referenceLine;
-
-    // global_path
-    GlobalPathStruct globalPath;
-
-    // local_path
-    LocalPathStruct localPath;
-
-    // local_speeds
-    LocalSpeedsStruct localSpeeds;
-
-    // decision
-    DecisionStruct decision;
-
-    // process
-    ProcessStruct process;
-  };
-} // namespace Planning
-#endif // !CONFIG_READER_H_
+  // process
+  ProcessStruct process;
+};
+}  // namespace Planning
+#endif  // !CONFIG_READER_H_
