@@ -13,35 +13,48 @@
 
 namespace Planning
 {
-class VehicleInfoBase : public rclcpp::Node
+class VehicleInfoBase
 {
 private:
 protected:
   // vehicle properties
   std::unique_ptr<ConfigReader> vehicleInfoConfigReader;
-  std::string vehicleChildFrame{ "" };  // child frame ID of vehicle
-  float64 vehicleLength{ 0.0 };         // vehicle length
-  float64 vehicleWidth{ 0.0 };          // vehicle width
-  uint8 vehicleID{ 0U };                // vehicle ID
+  std_string vehicleChildFrame;  // child frame ID of vehicle
+  float64 vehicleLength;         // vehicle length
+  float64 vehicleWidth;          // vehicle width
+  uint8 vehicleID;               // vehicle ID
 
   // Cartesian coordinate parameters
-  geometry_msgs::msg::PoseStamped vehiclePose{};  // vehicle pose in map frame
-  float64 vehicleTheta{ 0.0 };
-  float64 vehicleKappa{ 0.0 };
-  float64 vehicleDKappa{ 0.0 };
-  float64 vehicleVelocity{ 0.0 };
-  float64 vehicleAcceleration{ 0.0 };
-  float64 vehicleDAcceleration{ 0.0 };
+  geometry_msgs::msg::PoseStamped vehiclePose;  // vehicle pose in map frame
+  float64 vehicleTheta;
+  float64 vehicleKappa;
+  float64 vehicleDKappa;
+  float64 vehicleVelocity;
+  float64 vehicleAcceleration;
+  float64 vehicleDAcceleration;
 
   // Frenet coordinate parameters
 
 public:
-  VehicleInfoBase();
+  VehicleInfoBase()
+    : vehicleChildFrame("")
+    , vehicleLength(0.0)
+    , vehicleWidth(0.0)
+    , vehicleID(0U)
+    , vehiclePose{}
+    , vehicleTheta(0.0)
+    , vehicleKappa(0.0)
+    , vehicleDKappa(0.0)
+    , vehicleVelocity(0.0)
+    , vehicleAcceleration(0.0)
+    , vehicleDAcceleration(0.0)
+  {
+  }
   VehicleInfoBase(const VehicleInfoBase&) = delete;
   virtual ~VehicleInfoBase() = default;
 
   // inline getters
-  inline std::string getVehicleChildFrame() const
+  inline std_string getVehicleChildFrame() const
   {
     return vehicleChildFrame;
   }
