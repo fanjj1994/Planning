@@ -26,7 +26,7 @@ base_msgs::msg::Referline ReferenceLineCreator::createReferenceLine(const nav_ms
                 global_path_size - 1) ?
                    (global_path_size - 1) :
                    (matchPointIndex + referenceLineConfigReader->getReferenceLine().front_size_);
-  backIndex = (matchPointIndex - referenceLineConfigReader->getReferenceLine().back_size_ <= 0) ?
+  backIndex = (static_cast<int32>(matchPointIndex - referenceLineConfigReader->getReferenceLine().back_size_) <= 0) ?
                   0 :
                   (matchPointIndex - referenceLineConfigReader->getReferenceLine().back_size_);
 

@@ -41,6 +41,7 @@ public:
     // initialize reference line smoother
     referenceLineSmoother = std::make_shared<ReferenceLineSmoother>();
   }
+
   ReferenceLineCreator(const ReferenceLineCreator&) = delete;
   ReferenceLineCreator& operator=(const ReferenceLineCreator&) = delete;
   ~ReferenceLineCreator() = default;
