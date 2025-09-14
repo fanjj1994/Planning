@@ -55,7 +55,18 @@ base_msgs::msg::Referline ReferenceLineCreator::createReferenceLine(const nav_ms
 
 nav_msgs::msg::Path ReferenceLineCreator::referenceLineToRviz()
 {
-  return nav_msgs::msg::Path();
+  referlineRviz.header = referenceLine.header;
+  referlineRviz.poses.clear();
+
+  geometry_msgs::msg::PoseStamped pt_tmp;
+  for (const auto& pt : referenceLine.refer_line)
+  {
+    pt_tmp.header = referlineRviz.header;
+    pt_tmp.pose = pt.pose.pose;
+    referlineRviz.poses.emplace_back(pt_tmp);
+  }
+
+  return referlineRviz;
 }
 
 }  // namespace Planning
