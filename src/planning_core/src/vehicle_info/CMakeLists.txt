@@ -7,6 +7,7 @@ set(DEPENDS
   "geometry_msgs"
   "visualization_msgs"
   "base_msgs"
+  "tf2"
 )
 
 # add dynamic lib
