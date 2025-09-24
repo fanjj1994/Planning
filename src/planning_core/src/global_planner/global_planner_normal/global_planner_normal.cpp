@@ -1,12 +1,13 @@
 #include "global_planner_normal.h"
 
-namespace Planning {
+namespace Planning
+{
   GlobalPlannerNormal::GlobalPlannerNormal()
   {
     RCLCPP_INFO(rclcpp::get_logger("global_path"), "GlobalPlannerNormal is running");
 
     globalPathPlannerConfig = std::make_unique<ConfigReader>();
-    globalPathPlannerConfig->readGlobalPathConfig(); 
+    globalPathPlannerConfig->readGlobalPathConfig();
 
     globalPlannerType = static_cast<uint8>(GlobalPlannerType::NORMAL);
   }
@@ -27,7 +28,7 @@ namespace Planning {
     p_tmp.pose.orientation.w = 0.0;
 
     const uint8 midLineSize = pncMap.midline.points.size();
-    for (uint8 i = 0U; i < midLineSize; i++) 
+    for (uint8 i = 0U; i < midLineSize; i++)
     {
       p_tmp.pose.position.x = (pncMap.midline.points[i].x + pncMap.right_boundary.points[i].x) / 2.0;
       p_tmp.pose.position.y = (pncMap.midline.points[i].y + pncMap.right_boundary.points[i].y) / 2.0;

@@ -14,68 +14,53 @@
 
 namespace Planning
 {
-class ReferenceLineCreator
-{
-private:
-  std::unique_ptr<ConfigReader> referenceLineConfigReader;  // config reader
-
-  base_msgs::msg::Referline referenceLine;  // reference line for planning
-
-  nav_msgs::msg::Path referlineRviz;  // reference line for rviz display
-
-  std::shared_ptr<ReferenceLineSmoother> referenceLineSmoother;  // reference line smoother
-
-  int16 lastMatchPointIndex;  // last match point index
-  int16 matchPointIndex;      // current match point index
-  int16 frontIndex;           // front index
-  int16 backIndex;            // back index
-
-public:
-  ReferenceLineCreator() : lastMatchPointIndex(-1), matchPointIndex(-1), frontIndex(-1), backIndex(-1)
+  class ReferenceLineCreator
   {
-    RCLCPP_INFO(rclcpp::get_logger("reference_line"), "ReferenceLineCreator is initialized.");
-    // read config file
-    referenceLineConfigReader = std::make_unique<ConfigReader>();
-    referenceLineConfigReader->readReferenceLineConfig();
+  private:
+    std::unique_ptr<ConfigReader> referenceLineConfigReader; // config reader
 
-    // initialize reference line smoother
-    referenceLineSmoother = std::make_shared<ReferenceLineSmoother>();
-  }
+    base_msgs::msg::Referline referenceLine; // reference line for planning
 
-  ReferenceLineCreator(const ReferenceLineCreator&) = delete;
-  ReferenceLineCreator& operator=(const ReferenceLineCreator&) = delete;
-  ~ReferenceLineCreator() = default;
+    nav_msgs::msg::Path referlineRviz; // reference line for rviz display
 
-  // create reference line
-  base_msgs::msg::Referline createReferenceLine(const nav_msgs::msg::Path& globalPath,
-                                                const geometry_msgs::msg::PoseStamped& vehiclePose);
-  // reference line convert to rviz display
-  nav_msgs::msg::Path referenceLineToRviz();
+    std::shared_ptr<ReferenceLineSmoother> referenceLineSmoother; // reference line smoother
 
-  inline base_msgs::msg::Referline getReferenceLine() const
-  {
-    return referenceLine;
-  }
+    int16 lastMatchPointIndex; // last match point index
+    int16 matchPointIndex;     // current match point index
+    int16 frontIndex;          // front index
+    int16 backIndex;           // back index
 
-  inline nav_msgs::msg::Path getReferenceLineRviz() const
-  {
-    return referlineRviz;
-  }
+  public:
+    ReferenceLineCreator() : lastMatchPointIndex(-1), matchPointIndex(-1), frontIndex(-1), backIndex(-1)
+    {
+      RCLCPP_INFO(rclcpp::get_logger("reference_line"), "ReferenceLineCreator is initialized.");
+      // read config file
+      referenceLineConfigReader = std::make_unique<ConfigReader>();
+      referenceLineConfigReader->readReferenceLineConfig();
 
-  inline int16 getMatchPointIndex() const
-  {
-    return matchPointIndex;
-  }
+      // initialize reference line smoother
+      referenceLineSmoother = std::make_shared<ReferenceLineSmoother>();
+    }
 
-  inline int16 getFrontIndex() const
-  {
-    return frontIndex;
-  }
+    ReferenceLineCreator(const ReferenceLineCreator&) = delete;
+    ReferenceLineCreator& operator=(const ReferenceLineCreator&) = delete;
+    ~ReferenceLineCreator() = default;
 
-  inline int16 getBackIndex() const
-  {
-    return backIndex;
-  }
-};
-}  // namespace Planning
-#endif  // ! REFERENCE_LINE_CREATOR_H_
+    // create reference line
+    base_msgs::msg::Referline createReferenceLine(const nav_msgs::msg::Path& globalPath,
+                                                  const geometry_msgs::msg::PoseStamped& vehiclePose);
+    // reference line convert to rviz display
+    nav_msgs::msg::Path referenceLineToRviz();
+
+    inline base_msgs::msg::Referline getReferenceLine() const { return referenceLine; }
+
+    inline nav_msgs::msg::Path getReferenceLineRviz() const { return referlineRviz; }
+
+    inline int16 getMatchPointIndex() const { return matchPointIndex; }
+
+    inline int16 getFrontIndex() const { return frontIndex; }
+
+    inline int16 getBackIndex() const { return backIndex; }
+  };
+} // namespace Planning
+#endif // ! REFERENCE_LINE_CREATOR_H_

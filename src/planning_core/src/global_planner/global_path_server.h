@@ -8,7 +8,8 @@
 #include "geometry_msgs/msg/point.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 
-namespace Planning {
+namespace Planning
+{
   class GlobalPathServer : public rclcpp::Node
   {
   public:

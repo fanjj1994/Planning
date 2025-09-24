@@ -4,7 +4,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "pnc_map_creator_base.h"
 
-namespace Planning {
+namespace Planning
+{
   class PNCMapCreatorStraight : public PNCMapCreatorBase
   {
   public:

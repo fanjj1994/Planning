@@ -7,7 +7,8 @@
 #include <OsqpEigen/OsqpEigen.h>
 #include <cmath>
 
-namespace Planning {
+namespace Planning
+{
   class ReferenceLineSmoother
   {
   public:

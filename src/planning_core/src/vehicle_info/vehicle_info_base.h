@@ -13,107 +13,74 @@
 
 namespace Planning
 {
-class VehicleInfoBase
-{
-private:
-protected:
-  // vehicle properties
-  std::unique_ptr<ConfigReader> vehicleInfoConfigReader;
-  std_string vehicleChildFrame;  // child frame ID of vehicle
-  float64 vehicleLength;         // vehicle length
-  float64 vehicleWidth;          // vehicle width
-  uint8 vehicleID;               // vehicle ID
-
-  // Cartesian coordinate parameters
-  geometry_msgs::msg::PoseStamped vehiclePose;  // vehicle pose in map frame
-  float64 vehicleTheta;
-  float64 vehicleKappa;
-  float64 vehicleDKappa;
-  float64 vehicleVelocity;
-  float64 vehicleAcceleration;
-  float64 vehicleDAcceleration;
-
-  // Frenet coordinate parameters
-
-public:
-  VehicleInfoBase()
-    : vehicleChildFrame("")
-    , vehicleLength(0.0)
-    , vehicleWidth(0.0)
-    , vehicleID(0U)
-    , vehiclePose{}
-    , vehicleTheta(0.0)
-    , vehicleKappa(0.0)
-    , vehicleDKappa(0.0)
-    , vehicleVelocity(0.0)
-    , vehicleAcceleration(0.0)
-    , vehicleDAcceleration(0.0)
+  class VehicleInfoBase
   {
-  }
-  VehicleInfoBase(const VehicleInfoBase&) = delete;
-  virtual ~VehicleInfoBase() = default;
+  private:
+  protected:
+    // vehicle properties
+    std::unique_ptr<ConfigReader> vehicleInfoConfigReader;
+    std_string vehicleChildFrame; // child frame ID of vehicle
+    float64 vehicleLength;        // vehicle length
+    float64 vehicleWidth;         // vehicle width
+    uint8 vehicleID;              // vehicle ID
 
-  // inline getters
-  inline std_string getVehicleChildFrame() const
-  {
-    return vehicleChildFrame;
-  }
+    // Cartesian coordinate parameters
+    geometry_msgs::msg::PoseStamped vehiclePose; // vehicle pose in map frame
+    float64 vehicleTheta;
+    float64 vehicleKappa;
+    float64 vehicleDKappa;
+    float64 vehicleVelocity;
+    float64 vehicleAcceleration;
+    float64 vehicleDAcceleration;
 
-  inline float64 getVehicleLength() const
-  {
-    return vehicleLength;
-  }
+    // Frenet coordinate parameters
 
-  inline float64 getVehicleWidth() const
-  {
-    return vehicleWidth;
-  }
+  public:
+    VehicleInfoBase()
+        : vehicleChildFrame(""),
+          vehicleLength(0.0),
+          vehicleWidth(0.0),
+          vehicleID(0U),
+          vehiclePose{},
+          vehicleTheta(0.0),
+          vehicleKappa(0.0),
+          vehicleDKappa(0.0),
+          vehicleVelocity(0.0),
+          vehicleAcceleration(0.0),
+          vehicleDAcceleration(0.0)
+    {
+    }
+    VehicleInfoBase(const VehicleInfoBase&) = delete;
+    virtual ~VehicleInfoBase() = default;
 
-  inline uint8 getVehicleID() const
-  {
-    return vehicleID;
-  }
+    // inline getters
+    inline std_string getVehicleChildFrame() const { return vehicleChildFrame; }
 
-  inline geometry_msgs::msg::PoseStamped getVehiclePose() const
-  {
-    return vehiclePose;
-  }
+    inline float64 getVehicleLength() const { return vehicleLength; }
 
-  inline float64 getVehicleTheta() const
-  {
-    return vehicleTheta;
-  }
+    inline float64 getVehicleWidth() const { return vehicleWidth; }
 
-  inline float64 getVehicleKappa() const
-  {
-    return vehicleKappa;
-  }
+    inline uint8 getVehicleID() const { return vehicleID; }
 
-  inline float64 getVehicleDKappa() const
-  {
-    return vehicleDKappa;
-  }
+    inline geometry_msgs::msg::PoseStamped getVehiclePose() const { return vehiclePose; }
 
-  inline float64 getVehicleVelocity() const
-  {
-    return vehicleVelocity;
-  }
+    inline float64 getVehicleTheta() const { return vehicleTheta; }
 
-  inline float64 getVehicleAcceleration() const
-  {
-    return vehicleAcceleration;
-  }
+    inline float64 getVehicleKappa() const { return vehicleKappa; }
 
-  inline float64 getVehicleDAcceleration() const
-  {
-    return vehicleDAcceleration;
-  }
+    inline float64 getVehicleDKappa() const { return vehicleDKappa; }
 
-  // update parameters
-  inline void updateVehiclePose(const geometry_msgs::msg::PoseStamped& currentVehiclePose)
-  {
-    vehiclePose = currentVehiclePose;
-  }
-};
-}  // namespace Planning
-#endif  // ! VEHICLE_INFO_BASE_H_
+    inline float64 getVehicleVelocity() const { return vehicleVelocity; }
+
+    inline float64 getVehicleAcceleration() const { return vehicleAcceleration; }
+
+    inline float64 getVehicleDAcceleration() const { return vehicleDAcceleration; }
+
+    // update parameters
+    inline void updateVehiclePose(const geometry_msgs::msg::PoseStamped& currentVehiclePose)
+    {
+      vehiclePose = currentVehiclePose;
+    }
+  };
+} // namespace Planning
+#endif // ! VEHICLE_INFO_BASE_H_

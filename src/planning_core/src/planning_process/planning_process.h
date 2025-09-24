@@ -28,65 +28,59 @@
 
 namespace Planning
 {
-static constexpr uint8 PROCESS_FAILURE{ 255U };
+  static constexpr uint8 PROCESS_FAILURE{ 255U };
 
-using namespace ::std::chrono_literals;  // for 1s block
+  using namespace ::std::chrono_literals; // for 1s block
 
-class PlanningProcess : public rclcpp::Node
-{
-public:
-  PlanningProcess();
-  ~PlanningProcess() = default;
-  boolean process();
-
-  inline base_msgs::msg::PNCMap getPNCMap() const
+  class PlanningProcess : public rclcpp::Node
   {
-    return pncMap;
-  }
+  public:
+    PlanningProcess();
+    ~PlanningProcess() = default;
+    boolean process();
 
-  inline nav_msgs::msg::Path getGlobalPath() const
-  {
-    return globalPath;
-  }
+    inline base_msgs::msg::PNCMap getPNCMap() const { return pncMap; }
 
-private:
-  std::unique_ptr<ConfigReader> configReaderProcess;
-  std::shared_ptr<VehicleInfoBase> egoCar;  // ego car
-  float64 obsDis;                           // obstacle distance
+    inline nav_msgs::msg::Path getGlobalPath() const { return globalPath; }
 
-  // tf broadcaster: broadcast vehicle's initial information (e.g., pose info) to control module
-  std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tfBroadcaster;
-  // tf listener: listen to the transform between map frame and vehicle frame from control module
-  std::unique_ptr<tf2_ros::Buffer> tfBuffer;
-  std::shared_ptr<tf2_ros::TransformListener> tfListener;
+  private:
+    std::unique_ptr<ConfigReader> configReaderProcess;
+    std::shared_ptr<VehicleInfoBase> egoCar; // ego car
+    float64 obsDis;                          // obstacle distance
 
-  base_msgs::msg::PNCMap pncMap;
-  nav_msgs::msg::Path globalPath;
-  // map client
-  rclcpp::Client<base_msgs::srv::PNCMapService>::SharedPtr pncMapClient;
-  // global path client
-  rclcpp::Client<base_msgs::srv::GlobalPathService>::SharedPtr globalPathClient;
+    // tf broadcaster: broadcast vehicle's initial information (e.g., pose info) to control module
+    std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tfBroadcaster;
+    // tf listener: listen to the transform between map frame and vehicle frame from control module
+    std::unique_ptr<tf2_ros::Buffer> tfBuffer;
+    std::shared_ptr<tf2_ros::TransformListener> tfListener;
 
-  std::shared_ptr<ReferenceLineCreator> referenceLineCreator;                    // reference line creator
-  rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr referenceLineRvizPublisher;  // reference line rviz publisher
-  rclcpp::TimerBase::SharedPtr runtime;                                          // runtime for planning process module
+    base_msgs::msg::PNCMap pncMap;
+    nav_msgs::msg::Path globalPath;
+    // map client
+    rclcpp::Client<base_msgs::srv::PNCMapService>::SharedPtr pncMapClient;
+    // global path client
+    rclcpp::Client<base_msgs::srv::GlobalPathService>::SharedPtr globalPathClient;
 
-  boolean initPlanning();
+    std::shared_ptr<ReferenceLineCreator> referenceLineCreator;                   // reference line creator
+    rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr referenceLineRvizPublisher; // reference line rviz publisher
+    rclcpp::TimerBase::SharedPtr runtime;                                         // runtime for planning process module
 
-  //// spawn vehicle, init and broadcast vehicle's pose
-  void spawnVehicle(const std::shared_ptr<VehicleInfoBase>& vehicle);
+    boolean initPlanning();
 
-  // listen to vehicle's real-time pose from control module
-  void getVehicleLocation(const std::shared_ptr<VehicleInfoBase>& vehicle);
+    //// spawn vehicle, init and broadcast vehicle's pose
+    void spawnVehicle(const std::shared_ptr<VehicleInfoBase>& vehicle);
 
-  // callback function for planning process
-  void planningCallback();
+    // listen to vehicle's real-time pose from control module
+    void getVehicleLocation(const std::shared_ptr<VehicleInfoBase>& vehicle);
 
-  template <typename T>
-  boolean connectServer(const T& client);  // pnc map or global path client
+    // callback function for planning process
+    void planningCallback();
 
-  boolean requestPNCMap();
-  boolean requestGlobalPath();
-};
-}  // namespace Planning
-#endif  // !PLANNING_PROCESS_H_
+    template <typename T>
+    boolean connectServer(const T& client); // pnc map or global path client
+
+    boolean requestPNCMap();
+    boolean requestGlobalPath();
+  };
+} // namespace Planning
+#endif // !PLANNING_PROCESS_H_

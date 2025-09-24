@@ -4,7 +4,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "vehicle_info_base.h"
 
-namespace Planning {
+namespace Planning
+{
   class TP : public VehicleInfoBase
   {
   public:

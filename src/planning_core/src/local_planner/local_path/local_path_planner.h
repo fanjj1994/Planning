@@ -9,7 +9,8 @@
 #include "decision_center.h"
 #include "local_path_smoother.h"
 
-namespace Planning {
+namespace Planning
+{
   class LocalPathPlanner
   {
   public:

@@ -4,7 +4,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "config_reader.h"
 
-namespace Planning {
+namespace Planning
+{
   class LocalPathSmoother
   {
   public:

@@ -1,6 +1,7 @@
 #include "pnc_map_server.h"
 
-namespace Planning {
+namespace Planning
+{
   PNCMapServer::PNCMapServer() : Node("pnc_map_server_node")
   {
     RCLCPP_INFO(this->get_logger(), "PNCMapServer is running");
