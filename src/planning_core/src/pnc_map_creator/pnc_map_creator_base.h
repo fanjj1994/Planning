@@ -10,7 +10,8 @@
 #include <cmath>
 #include "common_type.h"
 
-namespace Planning {
+namespace Planning
+{
 
   enum class PNCMapType : uint8
   {

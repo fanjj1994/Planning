@@ -5,7 +5,8 @@
 #include <cmath>
 #include <Eigen/Dense>
 
-namespace Planning {
+namespace Planning
+{
   class PolynomialCurve
   {
   public:

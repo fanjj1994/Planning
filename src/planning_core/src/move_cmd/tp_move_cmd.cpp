@@ -1,6 +1,7 @@
 #include "tp_move_cmd.h"
 
-namespace Planning {
+namespace Planning
+{
   TPMoveCmd::TPMoveCmd() : Node("tp_move_cmd_node")
   {
     RCLCPP_INFO(this->get_logger(), "TPMoveCmd Node has been created.");

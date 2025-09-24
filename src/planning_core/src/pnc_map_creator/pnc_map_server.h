@@ -7,7 +7,8 @@
 #include "pnc_map_creator_sturn.h"
 #include "common_type.h"
 
-namespace Planning {
+namespace Planning
+{
   class PNCMapServer : public rclcpp::Node
   {
   public:

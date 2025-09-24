@@ -6,7 +6,8 @@
 #include "ego_car_base.h"
 #include "tp_base.h"
 
-namespace Planning {
+namespace Planning
+{
   class DecisionCenter
   {
   public:

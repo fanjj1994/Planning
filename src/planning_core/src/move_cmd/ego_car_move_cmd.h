@@ -5,7 +5,8 @@
 #include "config_reader.h"
 #include "tp_base.h"
 
-namespace Planning {
+namespace Planning
+{
   class EgoCarMoveCmd : public rclcpp::Node
   {
   public:

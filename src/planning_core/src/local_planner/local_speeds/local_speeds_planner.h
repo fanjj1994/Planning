@@ -7,7 +7,8 @@
 #include "decision_center.h"
 #include "local_speeds_smoother.h"
 
-namespace Planning {
+namespace Planning
+{
   class LocalSpeedsPlanner
   {
   public:

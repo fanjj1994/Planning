@@ -8,7 +8,8 @@
 #include "nav_msgs/msg/path.hpp"
 #include "common_type.h"
 
-namespace Planning {
+namespace Planning
+{
 
   enum class GlobalPlannerType : uint8
   {

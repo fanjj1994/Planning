@@ -1,6 +1,7 @@
 #include "global_path_server.h"
 
-namespace Planning {
+namespace Planning
+{
   GlobalPathServer::GlobalPathServer() : Node("global_path_server_node")
   {
     RCLCPP_INFO(this->get_logger(), "GlobalPathServer is running");
@@ -57,19 +58,19 @@ namespace Planning {
     visualization_msgs::msg::Marker pathRviz;
     pathRviz.header = path.header;
     pathRviz.ns = "global_path"; // namespace
-    pathRviz.id = 0; // id
+    pathRviz.id = 0;             // id
     pathRviz.action = visualization_msgs::msg::Marker::ADD;
     pathRviz.type = visualization_msgs::msg::Marker::LINE_STRIP;
-    pathRviz.scale.x = 0.05; // line width
-    pathRviz.color.a = 1.0; // alpha
-    pathRviz.color.r = 0.8; // red
-    pathRviz.color.g = 0.0; // green
-    pathRviz.color.b = 0.0; // blue
+    pathRviz.scale.x = 0.05;                     // line width
+    pathRviz.color.a = 1.0;                      // alpha
+    pathRviz.color.r = 0.8;                      // red
+    pathRviz.color.g = 0.0;                      // green
+    pathRviz.color.b = 0.0;                      // blue
     pathRviz.lifetime = rclcpp::Duration::max(); // lifetime
-    pathRviz.frame_locked = true; // frame locked
-    
+    pathRviz.frame_locked = true;                // frame locked
+
     geometry_msgs::msg::Point tmpPts;
-    for (const auto & pose : path.poses)
+    for (const auto& pose : path.poses)
     {
       tmpPts.x = pose.pose.position.x;
       tmpPts.y = pose.pose.position.y;

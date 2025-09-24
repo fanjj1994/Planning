@@ -5,7 +5,7 @@ UseTab: Never
 AlwaysBreakTemplateDeclarations: true
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterNamespace: false
+  AfterNamespace: true
   AfterFunction: true
   AfterClass: true
   AfterControlStatement: true

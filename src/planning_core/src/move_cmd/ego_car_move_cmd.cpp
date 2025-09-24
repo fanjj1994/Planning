@@ -1,6 +1,7 @@
 #include "ego_car_move_cmd.h"
 
-namespace Planning {
+namespace Planning
+{
   EgoCarMoveCmd::EgoCarMoveCmd() : Node("ego_car_move_cmd_node")
   {
     RCLCPP_INFO(this->get_logger(), "EgoCarMoveCmd Node has been created.");

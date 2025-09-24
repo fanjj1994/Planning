@@ -3,7 +3,8 @@
 
 #include "global_planner_base.h"
 
-namespace Planning {
+namespace Planning
+{
   class GlobalPlannerNormal final : public GlobalPlannerBase
   {
   public:
