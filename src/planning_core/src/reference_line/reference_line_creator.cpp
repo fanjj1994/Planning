@@ -43,6 +43,7 @@ namespace Planning
     }
 
     // smooth reference line
+    referenceLineSmoother->SmoothReferenceLine(referenceLine);
 
     // compute heading, kappa, dkappa for reference line
     Curve::calculateProjectedPointParameters(referenceLine);
