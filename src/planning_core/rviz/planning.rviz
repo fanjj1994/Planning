@@ -7,11 +7,12 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1
-        - /RobotModel1
-        - /RobotModel1/Description Topic1
+        - /EgoCar1/Description Topic1
+        - /tpCar1
+        - /tpCar1/Description Topic1
         - /MarkerArray1
         - /Marker1
-        - /Path1
+        - /ReferenceLine1
       Splitter Ratio: 0.5
     Tree Height: 649
   - Class: rviz_common/Selection
@@ -60,7 +61,19 @@ Visualization Manager:
         All Enabled: true
         base_footprint:
           Value: true
+        base_footprint_tp1:
+          Value: true
+        base_footprint_tp2:
+          Value: true
+        base_footprint_tp3:
+          Value: true
         base_link:
+          Value: true
+        base_link_tp1:
+          Value: true
+        base_link_tp2:
+          Value: true
+        base_link_tp3:
           Value: true
         camera:
           Value: true
@@ -103,6 +116,15 @@ Visualization Manager:
                   {}
               right_rear:
                 {}
+          base_footprint_tp1:
+            base_link_tp1:
+              {}
+          base_footprint_tp2:
+            base_link_tp2:
+              {}
+          base_footprint_tp3:
+            base_link_tp3:
+              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -177,7 +199,64 @@ Visualization Manager:
       Mass Properties:
         Inertia: false
         Mass: false
-      Name: RobotModel
+      Name: EgoCar
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /tp_car/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_footprint_tp1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_footprint_tp2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_footprint_tp3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link_tp1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link_tp2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link_tp3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        map:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: tpCar
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -217,7 +296,7 @@ Visualization Manager:
       Length: 0.30000001192092896
       Line Style: Billboards
       Line Width: 0.10000000149011612
-      Name: Path
+      Name: ReferenceLine
       Offset:
         X: 0
         Y: 0
@@ -281,7 +360,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 107.66561126708984
+      Distance: 17.627155303955078
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -296,10 +375,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.17539820075035095
+      Pitch: 0.6947972178459167
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.020399589091539383
+      Yaw: 4.3135457038879395
     Saved: ~
 Window Geometry:
   Displays:
