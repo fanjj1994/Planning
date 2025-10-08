@@ -1,0 +1,45 @@
+<!-- Chassis -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tp_car">
+    <!-- Color-->
+    <material name="blue">
+        <color rgba="0.2 0.2 0.8 0.9"/>
+    </material>
+
+    <!-- Root coordinate -->
+    <link name="map"/>
+
+    <!-- tp car function -->
+    <xacro:macro name="create_tp_car" params="id car_length car_width car_height color">
+        <!-- projection point of the chasis on the map -->
+        <link name="base_footprint_tp${id}"/> 
+        
+        <!-- chasis-->
+         <link name="base_link_tp${id}">
+            <visual>
+                <geometry>
+                    <box size="${car_length} ${car_width} ${car_height}"/>
+                </geometry>
+                <material name="${color}"/>
+            </visual>
+        </link>
+
+        <!-- projection point to the map -->
+        <joint name="{footprint${id}_to_map" type="fixed">
+            <parent link="map"/>
+            <child link="base_footprint_tp${id}"/>
+        </joint>
+
+        <!-- chasis to the projection point -->
+        <joint name="base_to_footprint${id}" type="fixed">
+            <parent link="base_footprint_tp${id}"/>
+            <child link="base_link_tp${id}"/>
+            <origin xyz="0.0 0.0 ${car_height / 2.0}"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- function call -->
+    <xacro:create_tp_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <xacro:create_tp_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <xacro:create_tp_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+
+</robot>
