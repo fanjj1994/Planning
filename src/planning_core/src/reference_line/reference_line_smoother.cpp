@@ -78,7 +78,7 @@ namespace Planning
         {
           P_tmp.block<2, 2>(i * 2, i * 2) = block4;
           P_tmp.block<2, 2>(i * 2, (i + 1) * 2) = block3;
-          P_tmp.block<2, 2>(i * 2, (i + 1) * 2) = W1;
+          P_tmp.block<2, 2>(i * 2, (i + 2) * 2) = W1;
         }
         else if (i == (ptNum - 2U)) // second last row
         {
