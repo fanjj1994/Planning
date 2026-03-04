@@ -15,6 +15,13 @@ namespace Planning
     // create ego car and other tps
     egoCar = std::make_shared<EgoCar>();
 
+    for (uint i = 0U; i < 3U; i++)
+    {
+      // traffic participant car, ID starts from 1
+      std::shared_ptr<VehicleInfoBase> tpCar = std::make_shared<TP>(i + 1U);
+      TpCars.emplace_back(tpCar);
+    }
+
     // broadcast initial pose for vehicles
     tfBroadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -55,8 +62,15 @@ namespace Planning
   boolean PlanningProcess::initPlanning()
   {
     boolean initPlanningResult = true;
-    // TODO: create Tp
-    spawnVehicle(egoCar); // create ego car
+
+    // create tps
+    for (const auto& tpCar : TpCars)
+    {
+      spawnVehicle(tpCar);
+    }
+
+    // create ego car
+    spawnVehicle(egoCar);
 
     // connect map server
     if (connectServer(pncMapClient) == false)
@@ -107,7 +121,7 @@ namespace Planning
     RCLCPP_INFO(this->get_logger(), "vehicle %s is spawned, x = %.2f, y=%.2f", spawn.child_frame_id.c_str(),
                 spawn.transform.translation.x, spawn.transform.translation.y);
     // broadcast the transform
-    tfBroadcaster->sendTransform(spawn);
+    this->tfBroadcaster->sendTransform(spawn);
   }
 
   void PlanningProcess::getVehicleLocation(const std::shared_ptr<VehicleInfoBase>& vehicle)

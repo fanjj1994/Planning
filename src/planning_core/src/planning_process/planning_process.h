@@ -45,8 +45,10 @@ namespace Planning
 
   private:
     std::unique_ptr<ConfigReader> configReaderProcess;
-    std::shared_ptr<VehicleInfoBase> egoCar; // ego car
-    float64 obsDis;                          // obstacle distance
+    std::shared_ptr<VehicleInfoBase> egoCar;                   // ego car
+    std::vector<std::shared_ptr<VehicleInfoBase>> TpCars;      // other traffic participants (cars)
+    std::vector<std::shared_ptr<VehicleInfoBase>> TpCarsInROI; // other traffic participants (cars) in ROI
+    float64 obsDis;                                            // obstacle distance
 
     // tf broadcaster: broadcast vehicle's initial information (e.g., pose info) to control module
     std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tfBroadcaster;

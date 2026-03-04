@@ -13,10 +13,10 @@ namespace Planning
   {
     uint8 id_{ 0U };
     std_string frame_{ "" };
-    float32 length_{ 0.0F }; // uint: m
-    float32 width_{ 0.0F };  // uint: m
-    float32 pose_x_{ 0.0F }; // uint: m
-    float32 pose_y_{ 0.0F }; // uint: m
+    float32 length_{ 0.0F }; // unit: m
+    float32 width_{ 0.0F };  // unit: m
+    float32 pose_x_{ 0.0F }; // unit: m
+    float32 pose_y_{ 0.0F }; // unit: m
     float32 pose_theta_{ 0.0F };
     float32 speed_init_{ 0.0F };
   };
@@ -25,10 +25,10 @@ namespace Planning
   {
     std_string frame_{ "" };
     uint8 type_{ 0U };
-    float32 road_length_{ 0.0F };     // uint: m
-    float32 road_half_width_{ 0.0F }; // uint: m
-    float32 segment_len_{ 0.0F };     // uint: m
-    float32 speed_limit_{ 0.0F };     // uint: m/s
+    float32 road_length_{ 0.0F };     // unit: m
+    float32 road_half_width_{ 0.0F }; // unit: m
+    float32 segment_len_{ 0.0F };     // unit: m
+    float32 speed_limit_{ 0.0F };     // unit: m/s
   };
 
   struct ReferenceLineStruct
@@ -56,13 +56,13 @@ namespace Planning
 
   struct DecisionStruct
   {
-    float32 safe_dis_lat_{ 0.0F }; // uint: m
-    float32 safe_dis_lon_{ 0.0F }; // uint: m
+    float32 safe_dis_lat_{ 0.0F }; // unit: m
+    float32 safe_dis_lon_{ 0.0F }; // unit: m
   };
 
   struct ProcessStruct
   {
-    float32 obs_dis_{ 0.0F }; // uint: s
+    float32 obs_dis_{ 0.0F }; // unit: s
   };
 
   class ConfigReader
@@ -86,7 +86,7 @@ namespace Planning
 
     inline VehicleStruct getTpCar3() const { return tpCar3; }
 
-    inline std::unordered_map<uint8, VehicleStruct> getVehiclePairs() const { return VehiclePairs; }
+    inline const std::unordered_map<uint8, VehicleStruct>& getVehiclePairs() const { return VehiclePairs; }
 
     // pnc_map
     void readPNCMapConfig();
