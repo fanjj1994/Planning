@@ -39,3 +39,4 @@ log/*
 
 *.pdf
 *.gv
+.txt

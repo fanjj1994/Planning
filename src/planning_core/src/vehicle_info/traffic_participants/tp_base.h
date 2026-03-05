@@ -14,6 +14,8 @@ namespace Planning
     TP &operator=(const TP &) = delete;
     ~TP() = default;
 
+    void vehicleCartesianToFrenet(const base_msgs::msg::Referline &referenceline) override;
+
   private:
   };
 } // namespace Planning

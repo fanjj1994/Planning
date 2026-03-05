@@ -32,4 +32,39 @@ namespace Planning
     vehiclePose.pose.orientation.w = static_cast<float64>(qtn.getW());
   }
 
+  void EgoCar::vehicleCartesianToFrenet(const base_msgs::msg::Referline &referenceline)
+  {
+    // initialize projected point info struct
+    ProjectedPointInfo projectedPoint;
+
+    // initialize Cartesian state struct
+    CartesianState cartesianState;
+    cartesianState.x = vehiclePose.pose.position.x;
+    cartesianState.y = vehiclePose.pose.position.y;
+    cartesianState.theta = vehicleTheta;
+    cartesianState.speed = vehicleVelocity;
+    cartesianState.acceleration = vehicleAcceleration;
+    cartesianState.curvature = vehicleKappa;
+
+    // initialize Frenet state struct
+    FrenetState frenetState;
+
+    // calculate ego car's projected point on the reference line
+    Curve::figureOutProjectedPoint(referenceline, vehiclePose, projectedPoint);
+    RCLCPP_INFO(rclcpp::get_logger("vehicle"),
+                "EgoCar projected point on reference line: rs = %.2f, rx = %.2f, ry = %.2f, rtheta = %.2f, rkappa = "
+                "%.4f, rdkappa = %.6f",
+                projectedPoint.rs, projectedPoint.rx, projectedPoint.ry, projectedPoint.rtheta, projectedPoint.rkappa,
+                projectedPoint.rdkappa);
+
+    // calculate ego car's Frenet state based on its Cartesian state and projected point info on the reference line
+    Curve::CartesianToFrenet(cartesianState, projectedPoint, frenetState);
+
+    RCLCPP_INFO(rclcpp::get_logger("vehicle"),
+                "EgoCar Frenet state: s = %.2f, ds/dt = %.2f, dds/dt = %.2f, l = %.2f, dl/ds = %.4f, dl/dt = %.2f, "
+                "ddl/ds = %.6f, ddl/dt = %.2f",
+                frenetState.s, frenetState.ds_dt, frenetState.dds_dt, frenetState.l, frenetState.dl_ds,
+                frenetState.dl_dt, frenetState.ddl_ds, frenetState.ddl_dt);
+  }
+
 } // namespace Planning
