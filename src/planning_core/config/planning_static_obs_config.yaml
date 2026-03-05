@@ -10,7 +10,7 @@ vehicle:
     speed_init: 1.0 #　ego car init speed
   obs_car1:
     id: 1 #　car id
-    frame: "base_footprint_obs1" #  coordinate name
+    frame: "base_footprint_tp1" #  coordinate name
     length: 3.0 #　obs car length
     width: 1.6 #  obs car width
     pose_x: 60.0 #  obs car x
@@ -19,16 +19,16 @@ vehicle:
     speed_init: 0.0 #  obs car init speed
   obs_car2:
     id: 2
-    frame: "base_footprint_obs2"
+    frame: "base_footprint_tp2"
     length: 3.0
     width: 1.6
     pose_x: 120.0
-    pose_y: 16.0
+    pose_y: 17.0
     pose_theta: 1.0
     speed_init: 0.0
   obs_car3:
     id: 3
-    frame: "base_footprint_obs3"
+    frame: "base_footprint_tp3"
     length: 3.0
     width: 1.6
     pose_x: 85.0

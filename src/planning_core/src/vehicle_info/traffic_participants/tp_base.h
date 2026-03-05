@@ -9,9 +9,9 @@ namespace Planning
   class TP : public VehicleInfoBase
   {
   public:
-    TP();
-    TP(const TP&) = delete;
-    TP& operator=(const TP&) = delete;
+    TP(const uint8 id);
+    TP(const TP &) = delete;
+    TP &operator=(const TP &) = delete;
     ~TP() = default;
 
   private:
