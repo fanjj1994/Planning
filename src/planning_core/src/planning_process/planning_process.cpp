@@ -154,6 +154,16 @@ namespace Planning
     const auto planningStartTime = this->get_clock()->now();
     // get vehicle's real-time pose from control module
     getVehicleLocation(egoCar);
+    TpCars.clear();
+    for (const auto& tpCar : TpCars)
+    {
+      getVehicleLocation(tpCar);
+      if (std::hypot(egoCar->getVehiclePose().pose.position.x - tpCar->getVehiclePose().pose.position.x,
+                     egoCar->getVehiclePose().pose.position.y - tpCar->getVehiclePose().pose.position.y) <= obsDis)
+      {
+        TpCars.emplace_back(tpCar);
+      }
+    }
 
     // create reference line
     const auto referenceLine_ = referenceLineCreator->createReferenceLine(globalPath, egoCar->getVehiclePose());
@@ -166,8 +176,17 @@ namespace Planning
     referenceLineRvizPublisher->publish(referencelineRviz_); // publish
 
     // ego car, tps projected to the reference line
+    egoCar->vehicleCartesianToFrenet(referenceLine_);
+    for (const auto& tpCar : TpCars)
+    {
+      tpCar->vehicleCartesianToFrenet(referenceLine_);
+    }
 
     // tps sort by s value
+    std::sort(TpCars.begin(), TpCars.end(),
+              [](const std::shared_ptr<VehicleInfoBase>& a, const std::shared_ptr<VehicleInfoBase>& b) {
+                return a->getS() < b->getS();
+              });
 
     // path decision making
 

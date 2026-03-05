@@ -34,6 +34,14 @@ namespace Planning
     float64 vehicleDAcceleration;
 
     // Frenet coordinate parameters
+    float64 s;
+    float64 l;
+    float64 ds_dt;
+    float64 dl_dt;
+    float64 dl_ds;
+    float64 dds_dt;
+    float64 ddl_dt;
+    float64 ddl_ds;
 
   public:
     VehicleInfoBase()
@@ -47,7 +55,15 @@ namespace Planning
           vehicleDKappa(0.0),
           vehicleVelocity(0.0),
           vehicleAcceleration(0.0),
-          vehicleDAcceleration(0.0)
+          vehicleDAcceleration(0.0),
+          s(0.0),
+          l(0.0),
+          ds_dt(0.0),
+          dl_dt(0.0),
+          dl_ds(0.0),
+          dds_dt(0.0),
+          ddl_dt(0.0),
+          ddl_ds(0.0)
     {
     }
     VehicleInfoBase(const VehicleInfoBase&) = delete;
@@ -76,11 +92,30 @@ namespace Planning
 
     inline float64 getVehicleDAcceleration() const { return vehicleDAcceleration; }
 
+    inline float64 getS() const { return s; }
+
+    inline float64 getL() const { return l; }
+
+    inline float64 getDsDt() const { return ds_dt; }
+
+    inline float64 getDlDt() const { return dl_dt; }
+
+    inline float64 getDlDs() const { return dl_ds; }
+
+    inline float64 getDdsDt() const { return dds_dt; }
+
+    inline float64 getDdlDt() const { return ddl_dt; }
+
+    inline float64 getDdlDs() const { return ddl_ds; }
+
     // update parameters
     inline void updateVehiclePose(const geometry_msgs::msg::PoseStamped& currentVehiclePose)
     {
       vehiclePose = currentVehiclePose;
     }
+
+    // Coordinate transformation from Cartesian to Frenet, which will be implemented in egoCar and Tps respectively.
+    virtual void vehicleCartesianToFrenet(const base_msgs::msg::Referline& referenceline) = 0;
   };
 } // namespace Planning
 #endif // ! VEHICLE_INFO_BASE_H_
