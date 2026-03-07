@@ -43,6 +43,23 @@ namespace Planning
 
     inline nav_msgs::msg::Path getGlobalPath() const { return globalPath; }
 
+    boolean initPlanning();
+
+    //// spawn vehicle, init and broadcast vehicle's pose
+    void spawnVehicle(const std::shared_ptr<VehicleInfoBase>& vehicle);
+
+    // listen to vehicle's real-time pose from control module
+    void getVehicleLocation(const std::shared_ptr<VehicleInfoBase>& vehicle);
+
+    // callback function for planning process
+    void planningCallback();
+
+    template <typename T>
+    boolean connectServer(const T& client); // pnc map or global path client
+
+    boolean requestPNCMap();
+    boolean requestGlobalPath();
+
   private:
     std::unique_ptr<ConfigReader> configReaderProcess;
     std::shared_ptr<VehicleInfoBase> egoCar;                   // ego car
@@ -65,24 +82,10 @@ namespace Planning
 
     std::shared_ptr<ReferenceLineCreator> referenceLineCreator;                   // reference line creator
     rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr referenceLineRvizPublisher; // reference line rviz publisher
-    rclcpp::TimerBase::SharedPtr runtime;                                         // runtime for planning process module
 
-    boolean initPlanning();
+    std::shared_ptr<DecisionCenter> decisionCenter; // decision center
 
-    //// spawn vehicle, init and broadcast vehicle's pose
-    void spawnVehicle(const std::shared_ptr<VehicleInfoBase>& vehicle);
-
-    // listen to vehicle's real-time pose from control module
-    void getVehicleLocation(const std::shared_ptr<VehicleInfoBase>& vehicle);
-
-    // callback function for planning process
-    void planningCallback();
-
-    template <typename T>
-    boolean connectServer(const T& client); // pnc map or global path client
-
-    boolean requestPNCMap();
-    boolean requestGlobalPath();
+    rclcpp::TimerBase::SharedPtr runtime; // runtime for planning process module
   };
 } // namespace Planning
 #endif // !PLANNING_PROCESS_H_
