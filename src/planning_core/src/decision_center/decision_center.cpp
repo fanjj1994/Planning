@@ -1,6 +1,6 @@
 /**
- * @file decision_center.cpp
- * @brief Implementation of the DecisionCenter class.
+ * \file decision_center.cpp
+ * \brief Implementation of the DecisionCenter class.
  *
  * Translates per-cycle traffic-participant states into a compact ordered list of
  * SLPoint decision waypoints. Each waypoint encodes a behavioral intent (left overtake,
@@ -8,6 +8,7 @@
  * line, together with framing DECISION_START / DECISION_END waypoints consumed by the
  * downstream local path planner.
  */
+ 
 #include "decision_center.h"
 
 namespace Planning
