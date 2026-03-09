@@ -46,8 +46,8 @@ namespace Planning
       localPathPointTmp.ddl_ds = 0.0;
 
       // compute l and dl/ds for localPathPointTmp
-      const uint8 decisionPointSize = static_cast<uint8>(decision->getDecisionPoints().size());
-      for (uint8 j = 0U; j < decisionPointSize - 1U; j++)
+      const int32 decisionPointSize = static_cast<int32>(decision->getDecisionPoints().size());
+      for (int32 j = 0; j < decisionPointSize - 1; j++)
       {
         // check if the local path point is between two decision points
         const float64 segmentStart_s = decision->getDecisionPoints().at(j).s;

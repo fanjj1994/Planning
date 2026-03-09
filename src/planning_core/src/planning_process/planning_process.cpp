@@ -166,14 +166,14 @@ namespace Planning
     const auto planningStartTime = this->get_clock()->now();
     // get vehicle's real-time pose from control module
     getVehicleLocation(egoCar);
-    TpCars.clear();
+    TpCarsInROI.clear();
     for (const auto& tpCar : TpCars)
     {
       getVehicleLocation(tpCar);
       if (std::hypot(egoCar->getVehiclePose().pose.position.x - tpCar->getVehiclePose().pose.position.x,
                      egoCar->getVehiclePose().pose.position.y - tpCar->getVehiclePose().pose.position.y) <= obsDis)
       {
-        TpCars.emplace_back(tpCar);
+        TpCarsInROI.emplace_back(tpCar);
       }
     }
 
@@ -189,19 +189,19 @@ namespace Planning
 
     // ego car, tps projected to the reference line
     egoCar->vehicleCartesianToFrenet(referenceLine_);
-    for (const auto& tpCar : TpCars)
+    for (const auto& tpCar : TpCarsInROI)
     {
       tpCar->vehicleCartesianToFrenet(referenceLine_);
     }
 
     // tps sort by s value
-    std::sort(TpCars.begin(), TpCars.end(),
+    std::sort(TpCarsInROI.begin(), TpCarsInROI.end(),
               [](const std::shared_ptr<VehicleInfoBase>& a, const std::shared_ptr<VehicleInfoBase>& b) {
                 return a->getS() < b->getS();
               });
 
     // path decision making
-    decisionCenter->makePathDecision(egoCar, TpCars);
+    decisionCenter->makePathDecision(egoCar, TpCarsInROI);
 
     // local path planning
     // generate local path in Frenet coordinates
