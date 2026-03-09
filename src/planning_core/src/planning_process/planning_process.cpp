@@ -39,6 +39,15 @@ namespace Planning
 
     // create decision center
     decisionCenter = std::make_shared<DecisionCenter>();
+
+    // create local path planner
+    localPathPlanner = std::make_shared<LocalPathPlanner>();
+
+    // create local speeds planner
+    localSpeedsPlanner = std::make_shared<LocalSpeedsPlanner>();
+
+    // create local path publisher
+    localPathPublisher = this->create_publisher<nav_msgs::msg::Path>("local_path", 10);
   }
 
   boolean PlanningProcess::process()
@@ -175,8 +184,8 @@ namespace Planning
       RCLCPP_ERROR(this->get_logger(), "reference line is empty!");
       return;
     }
-    const auto referencelineRviz_ = referenceLineCreator->referenceLineToRviz();
-    referenceLineRvizPublisher->publish(referencelineRviz_); // publish
+    const auto referencelineRviz = referenceLineCreator->referenceLineToRviz();
+    referenceLineRvizPublisher->publish(referencelineRviz); // publish
 
     // ego car, tps projected to the reference line
     egoCar->vehicleCartesianToFrenet(referenceLine_);
@@ -195,6 +204,15 @@ namespace Planning
     decisionCenter->makePathDecision(egoCar, TpCars);
 
     // local path planning
+    // generate local path in Frenet coordinates
+    const auto localPath_ = localPathPlanner->generateLocalPath(referenceLine_, decisionCenter, egoCar);
+    if (localPath_.local_path.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "local path is empty!");
+      return;
+    }
+    const auto localPathRviz = localPathPlanner->generateLocalPathRviz();
+    localPathPublisher->publish(localPathRviz); // publish
 
     // tps projected to the local path
 

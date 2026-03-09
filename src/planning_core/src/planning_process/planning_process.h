@@ -85,6 +85,11 @@ namespace Planning
 
     std::shared_ptr<DecisionCenter> decisionCenter; // decision center
 
+    std::shared_ptr<LocalPathPlanner> localPathPlanner;     // local path planner
+    std::shared_ptr<LocalSpeedsPlanner> localSpeedsPlanner; // local speeds planner
+
+    rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr localPathPublisher; // local path publisher
+
     rclcpp::TimerBase::SharedPtr runtime; // runtime for planning process module
   };
 } // namespace Planning
