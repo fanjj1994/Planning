@@ -33,9 +33,12 @@ namespace Planning
     // Clear stale decision data from the previous planning cycle before re-computing.
     decisionInitialize();
 
-    // Minimum longitudinal distance required between the ego vehicle and a TP before the decision effect begins or
-    // after which a TP is ignored [m]. Computed each cycle as max(ego_dsDt * decisionMakingLeadPoint, DMMINLENGTH), so
-    // that it scales with ego speed while respecting a minimum decision horizon.
+    // Minimum longitudinal separation required for the ego vehicle to make/prepare a decision with respect to a
+    // traffic participant (TP) [m]. In this implementation it acts as a per-cycle decision horizon/threshold:
+    // - TPs further than this distance behind the ego are ignored (already passed).
+    // - Used as the lead-in/lead-out buffer when placing DECISION_START / DECISION_END waypoints.
+    // Computed each cycle as max(ego_dsDt * decisionMakingLeadPoint, DMMINLENGTH) so it scales with ego speed while
+    // respecting a minimum decision horizon.
     float64 decisionMakingLeastDistance;
 
     // Lateral distance from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
