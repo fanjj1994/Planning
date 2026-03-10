@@ -157,12 +157,12 @@
 
 实现里使用 `road_half_width` 推导左右边界阈值：
 
-- `leftBoundaryDistance = 1.5 * road_half_width`
-- `rightBoundaryDistance = 0.5 * road_half_width`
+- `leftBoundaryDistance = 1.5 * road_half_width`（正值，位于参考线左侧）
+- `rightBoundaryDistance = -(0.5 * road_half_width)`（负值，位于参考线右侧）
 
-并以 `rightBoundaryDistance < tp.l < leftBoundaryDistance` 判定 TP 是否位于“道路走廊”内。
+并以 `rightBoundaryDistance < tp.l < leftBoundaryDistance` 判定 TP 是否位于"道路走廊"内。
 
-> 注：这里的 `l` 正负方向与参考线定义相关，项目实现里左右边界都用正值阈值表达，走廊为一个 `(right, left)` 的区间；理解时以代码判断为准。
+> 注：Frenet 坐标系中 `l` 轴正方向朝左，因此左边界为正值（如 `+6.0m`），右边界为负值（如 `-2.0m`）。走廊范围即 `(rightBoundaryDistance, leftBoundaryDistance)` = `(-2.0, 6.0)`。
 
 #### Step 4：TP 纵向范围过滤（参考线长度 + 后方阈值）
 
@@ -296,7 +296,7 @@ $$
 
 - 地图/道路：`road_half_width = 4.0m`
 	- `leftBoundaryDistance = 1.5 * road_half_width = 6.0m`
-	- `rightBoundaryDistance = 0.5 * road_half_width = 2.0m`
+	- `rightBoundaryDistance = -(0.5 * road_half_width) = -2.0m`（右边界在参考线右侧，Frenet 坐标为负值）
 - 安全距离：`safe_dis_lat = 0.5m`，`safe_dis_lon = 10.0m`
 - 局部路径点数：`local_path.path_size = 80`
 	- `decisionMakingLeadPoint = clamp(80 - 50, 30, 40) = 30`
@@ -308,7 +308,7 @@ $$
 输入一个准静态 TP：
 
 - `tp.s = 60.0m`（在 ego 前方 10m）
-- `tp.l = 2.3m`（满足走廊：`2.0 < 2.3 < 6.0`）
+- `tp.l = 2.3m`（满足走廊：`-2.0 < 2.3 < 6.0`）
 - `tp.ds/dt = 0.0m/s`，`tp.dl/dt = 0.0m/s`（准静态）
 - `tp.width = 1.6m`（`tpHalfWidth = 0.8m`）
 

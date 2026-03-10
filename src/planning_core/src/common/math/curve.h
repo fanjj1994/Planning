@@ -179,6 +179,73 @@ namespace Planning
     static int16 findMatchPointIndex(const base_msgs::msg::Referline &referenceline,
                                      const geometry_msgs::msg::PoseStamped &targetPoint);
 
+    /// \brief  Find the index of the closest point (match point) on a Referline to a given arc-length \c rs.
+    ///         No jump constraint is applied (searches all points).
+    ///
+    /// \details
+    /// This overload searches in the 1D Frenet longitudinal coordinate: it selects the point whose stored
+    /// \c refer_line[i].rs has the smallest absolute difference to the query \c rs.
+    ///
+    /// \note The \c rs field of each reference line point must be pre-populated (e.g., by
+    ///       calculateProjectedPointParameters(base_msgs::msg::Referline&)).
+    ///
+    /// @startuml
+    /// start
+    /// :pathSize = referenceline.refer_line.size();
+    /// if (pathSize <= 1?) then (yes)
+    ///   :return pathSize - 1;
+    ///   stop
+    /// endif
+    /// :minAbsDiff = MAX, closestIndex = -1;
+    /// while (i < pathSize?) is (yes)
+    ///   :absDiff = abs(refer_line[i].rs - rs);
+    ///   if (absDiff < minAbsDiff?) then (yes)
+    ///     :minAbsDiff = absDiff\nclosestIndex = i;
+    ///   endif
+    /// endwhile (no)
+    /// :return closestIndex;
+    /// stop
+    /// @enduml
+    ///
+    /// \param[in]  referenceline  Reference line (base_msgs::Referline)
+    /// \param[in]  rs            Query arc-length along the reference line [m]
+    ///
+    /// \return     int16: Index of the reference line point with \c rs closest to the query (for out-of-range queries,
+    ///             this returns the nearest endpoint). Returns -1 when the reference line is empty.
+    static int16 findMatchPointIndex(const base_msgs::msg::Referline &referenceline, const float64 rs);
+
+    /// \brief  Find the index of the closest point (match point) on a LocalPath to the target point.
+    ///         No jump constraint is applied (searches all points).
+    ///
+    /// \details
+    /// LocalPath stores points in \c localPath.local_path. This overload mirrors the Referline version, but operates on
+    /// the local-planner output message type.
+    ///
+    /// @startuml
+    /// start
+    /// :pathSize = localPath.local_path.size();
+    /// if (pathSize <= 1?) then (yes)
+    ///   :return pathSize - 1;
+    ///   stop
+    /// endif
+    /// :distanceMin = MAX, closestIndex = -1;
+    /// while (i < pathSize?) is (yes)
+    ///   :distance = hypot(local_path[i] - targetPoint);
+    ///   if (distance < distanceMin?) then (yes)
+    ///     :distanceMin = distance\nclosestIndex = i;
+    ///   endif
+    /// endwhile (no)
+    /// :return closestIndex;
+    /// stop
+    /// @enduml
+    ///
+    /// \param[in]  localPath     Local path (base_msgs::LocalPath)
+    /// \param[in]  targetPoint   The target point to project
+    ///
+    /// \return     int16: Index of the closest local path point, or -1 if not found (e.g., empty path)
+    static int16 findMatchPointIndex(const base_msgs::msg::LocalPath &localPath,
+                                     const geometry_msgs::msg::PoseStamped &targetPoint);
+
     /// \brief  Determine the projected point (closest reference line point) for a given target point,
     ///         and populate its geometric parameters (rs, rx, ry, rtheta, rkappa, rdkappa).
     ///
@@ -206,6 +273,39 @@ namespace Planning
                                         const geometry_msgs::msg::PoseStamped &targetPoint,
                                         ProjectedPointInfo &projectedPoint);
 
+    /// \brief  Determine the projected point (closest local path point) for a given target point,
+    ///         and populate its geometric parameters (rs, rx, ry, rtheta, rkappa, rdkappa).
+    ///
+    /// \details
+    /// This is a simplified projection: it selects the closest discrete point on \c localPath.local_path (no segment
+    /// interpolation). The output fields are filled from that LocalPathPoint:
+    /// - \c rs, \c rx, \c ry come from the matched point's accumulated arc-length and position.
+    /// - \c rtheta, \c rkappa, \c rdkappa come from the matched point's pre-computed reference parameters.
+    ///
+    /// @startuml
+    /// start
+    /// :matchPointIndex = findMatchPointIndex(localPath, targetPoint);
+    /// if (matchPointIndex >= 0?) then (yes)
+    ///   :projectedPoint.rs      = local_path[idx].rs;
+    ///   :projectedPoint.rx      = local_path[idx].x;
+    ///   :projectedPoint.ry      = local_path[idx].y;
+    ///   :projectedPoint.rtheta  = local_path[idx].rtheta;
+    ///   :projectedPoint.rkappa  = local_path[idx].rkappa;
+    ///   :projectedPoint.rdkappa = local_path[idx].rdkappa;
+    /// else (no)
+    ///   :LOG error "Failed to find projected point";
+    ///   stop
+    /// endif
+    /// stop
+    /// @enduml
+    ///
+    /// \param[in]  localPath       Local path (base_msgs::LocalPath)
+    /// \param[in]  targetPoint     The target point to project
+    /// \param[out] projectedPoint  Output projected point info populated from the closest local path point
+    static void figureOutProjectedPoint(const base_msgs::msg::LocalPath &localPath,
+                                        const geometry_msgs::msg::PoseStamped &targetPoint,
+                                        ProjectedPointInfo &projectedPoint);
+
     /// \brief  Calculate and populate the geometric parameters (rs, rtheta, rkappa, rdkappa)
     ///         for every point on the reference line using finite-difference approximation.
     ///
@@ -220,7 +320,10 @@ namespace Planning
     /// partition "Step 1: Compute arc-length rs" {
     ///   :rs[0] = 0;
     ///   while (i = 1 .. pathSize-1) is (yes)
-    ///     :rs[i] = rs[i-1] + hypot(point[i] - point[i-1]);
+    ///     :dx = x[i] - x[i-1];
+    ///     :dy = y[i] - y[i-1];
+    ///     :segmentLen = sqrt(dx*dx + dy*dy);  (Euclidean distance between adjacent points)
+    ///     :rs[i] = rs[i-1] + segmentLen;
     ///   endwhile (done)
     /// }
     ///
@@ -236,11 +339,11 @@ namespace Planning
     ///
     /// partition "Step 3: Compute curvature rkappa = dtheta/ds" {
     ///   while (i = 0 .. pathSize-1) is (yes)
-    ///     :distance = hypot(adjacent points);
-    ///     if (distance <= EPSILON?) then (yes)
+    ///     :segmentLen = distance between two adjacent points (sqrt((x2-x1)^2 + (y2-y1)^2));
+    ///     if (segmentLen <= EPSILON?) then (yes)
     ///       :rkappa[i] = 0;
     ///     else (no)
-    ///       :rkappa[i] = (rtheta[i+1] - rtheta[i]) / distance;
+    ///       :rkappa[i] = (rtheta[i+1] - rtheta[i]) / segmentLen;
     ///       note right: last point uses backward diff
     ///     endif
     ///   endwhile (done)
@@ -248,11 +351,11 @@ namespace Planning
     ///
     /// partition "Step 4: Compute curvature derivative rdkappa = dkappa/ds" {
     ///   while (i = 0 .. pathSize-1) is (yes)
-    ///     :distance = hypot(adjacent points);
-    ///     if (distance <= EPSILON?) then (yes)
+    ///     :segmentLen = distance between two adjacent points (sqrt((x2-x1)^2 + (y2-y1)^2));
+    ///     if (segmentLen <= EPSILON?) then (yes)
     ///       :rdkappa[i] = 0;
     ///     else (no)
-    ///       :rdkappa[i] = (rkappa[i+1] - rkappa[i]) / distance;
+    ///       :rdkappa[i] = (rkappa[i+1] - rkappa[i]) / segmentLen;
     ///       note right: last point uses backward diff
     ///     endif
     ///   endwhile (done)
@@ -262,6 +365,61 @@ namespace Planning
     ///
     /// \param[in,out] referenceline  Reference line whose points will have rs, rtheta, rkappa, rdkappa populated
     static void calculateProjectedPointParameters(base_msgs::msg::Referline &referenceline);
+
+    /// \brief  Calculate and populate the geometric parameters (rs, rtheta, rkappa, rdkappa)
+    ///         for every point on a LocalPath.
+    ///
+    /// \details
+    /// This overload mirrors the Referline version but differs in where heading/curvature come from:
+    /// - \c rs is accumulated from the \c localPath.local_path positions (finite differences).
+    /// - \c rtheta and \c rkappa are copied directly from each LocalPathPoint's \c theta and \c kappa fields (the local
+    ///   path is assumed to already carry these values), rather than re-estimating from positions.
+    /// - \c rdkappa is then computed via finite differences with respect to arc-length.
+    ///
+    /// \note Requires at least 3 points to compute a stable derivative; otherwise the function logs an error and
+    ///       returns without modifying the path.
+    ///
+    /// @startuml
+    /// start
+    /// :pathSize = localPath.local_path.size();
+    /// if (pathSize < 3?) then (yes)
+    ///   :LOG error "size < 3";
+    ///   stop
+    /// endif
+    ///
+    /// partition "Step 1: Compute arc-length rs" {
+    ///   :rs[0] = 0;
+    ///   while (i = 1 .. pathSize-1) is (yes)
+    ///     :dx = x[i] - x[i-1];
+    ///     :dy = y[i] - y[i-1];
+    ///     :segmentLen = sqrt(dx*dx + dy*dy);  (Euclidean distance between adjacent points)
+    ///     :rs[i] = rs[i-1] + segmentLen;
+    ///   endwhile (done)
+    /// }
+    ///
+    /// partition "Step 2: Copy heading/curvature" {
+    ///   while (i = 0 .. pathSize-1) is (yes)
+    ///     :rtheta[i] = theta[i];
+    ///     :rkappa[i] = kappa[i];
+    ///   endwhile (done)
+    /// }
+    ///
+    /// partition "Step 3: Compute curvature derivative rdkappa = dkappa/ds" {
+    ///   while (i = 0 .. pathSize-1) is (yes)
+    ///     :segmentLen = distance between two adjacent points (sqrt((x2-x1)^2 + (y2-y1)^2));
+    ///     if (segmentLen <= EPSILON?) then (yes)
+    ///       :rdkappa[i] = 0;
+    ///     else (no)
+    ///       :rdkappa[i] = (rkappa[i+1] - rkappa[i]) / segmentLen;
+    ///       note right: last point uses backward diff
+    ///     endif
+    ///   endwhile (done)
+    /// }
+    /// stop
+    /// @enduml
+    ///
+    /// \param[in,out] localPath  Local path whose points will have rs, rtheta, rkappa, rdkappa populated
+    static void calculateProjectedPointParameters(base_msgs::msg::LocalPath &localPath);
   };
 } // namespace Planning
 #endif // CURVE_H_

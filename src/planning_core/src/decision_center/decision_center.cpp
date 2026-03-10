@@ -40,19 +40,19 @@ namespace Planning
     // - Used as the lead-in/lead-out buffer when placing DECISION_START / DECISION_END waypoints.
     // Computed each cycle as max(ego_dsDt * decisionMakingLeadPoint, DMMINLENGTH) so it scales with ego speed while
     // respecting a minimum decision horizon.
-    float64 decisionMakingLeastDistance;
+    float64 decisionMakingLeastDistance = 0.0;
 
-    // Lateral distance from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
+    // Lateral coordinate from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
     // [m]. Derived at construction as 1.5 x road_half_width, assuming the ego vehicle travels in the center of the
     // right lane on a two-lane road.
     const float64 leftBoundaryDistance =
         static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 1.5f);
 
-    // Lateral distance from the ego vehicle center to the right road boundary in Frenet coordinates (positive value
-    // toward the boundary) [m]. Derived at construction as 0.5 x road_half_width, under the same assumption as
-    // leftBoundaryDistance.
+    // Lateral coordinate of the right road boundary in Frenet frame (negative value, since right of the reference
+    // line is the negative-l direction) [m]. Derived as -(0.5 x road_half_width), assuming the ego vehicle travels
+    // in the center of the right lane on a two-lane road.
     const float64 rightBoundaryDistance =
-        static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 0.5f);
+        -(static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 0.5f));
 
     // Number of path points that constitute the "lead" zone ahead of the ego vehicle [-].
     // Clamped to [LEADPTMINNUM, LEADPTMAXNUM]. Used to scale #decisionMakingLeastDistance with respect to the ego speed
@@ -78,17 +78,22 @@ namespace Planning
         std::max(egoCarInfo->getDsDt() * decisionMakingLeadPoint, static_cast<float64>(DMMINLENGTH)));
 
     // Core: compute decision points based on the traffic participant information and the ego car information
+    RCLCPP_INFO(rclcpp::get_logger("decision_center"), "Decision params: leftBound = %.2f, rightBound = %.2f, refLineEnd=%.2f, dmLeastDist=%.2f, tpCount=%zu",
+                leftBoundaryDistance, rightBoundaryDistance, referenceLineEndDistance, decisionMakingLeastDistance, tpInfoList.size());
     for (const auto& tpInfo : tpInfoList)
     {
       /* Longitudinal separation between the TP and the ego vehicle in Frenet coordinates.
          Positive value means the TP is ahead of the ego vehicle. */
       const float64 distanceToEgoCar = tpInfo->getS() - egoCarInfo->getS();
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "TP[%d]: s=%.2f, l=%.2f, ds_dt=%.2f, dl_dt=%.2f, distToEgo=%.2f",
+                  tpInfo->getVehicleID(), tpInfo->getS(), tpInfo->getL(), tpInfo->getDsDt(), tpInfo->getDlDt(), distanceToEgoCar);
 
       /* Longitudinal range filter: skip TPs that are
          - beyond the reference line end (too far ahead to act on), or
          - more than decisionMakingLeastDistance behind the ego vehicle (already passed). */
       if (distanceToEgoCar > referenceLineEndDistance || distanceToEgoCar < -decisionMakingLeastDistance)
       {
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: longitudinal range");
         continue;
       }
       // Tp is inside the corridor boundary or called road
@@ -169,12 +174,14 @@ namespace Planning
         // tp is moving
         else
         {
+          RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: TP is moving (dl/dt=%.3f, ds/dt=%.2f)", tpInfo->getDlDt(), tpInfo->getDsDt());
           // Todo: add tp is moving decision logic.
         }
       }
       // Tp is not inside the corridor boundary or called road
       else
       {
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: outside corridor (l=%.2f, need %.2f < l < %.2f)", tpInfo->getL(), rightBoundaryDistance, leftBoundaryDistance);
         // do nothing.
       }
     }

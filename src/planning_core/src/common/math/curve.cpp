@@ -161,6 +161,51 @@ namespace Planning
     return closestIndex;
   }
 
+  int16 Curve::findMatchPointIndex(const base_msgs::msg::Referline& referenceline, const float64 rs)
+  {
+    const int16 pathSize = referenceline.refer_line.size();
+    if (pathSize <= 1)
+    {
+      return pathSize - 1;
+    }
+    float64 distanceMin = std::numeric_limits<float64>::max();
+    int16 closestIndex = -1;
+    for (int16 i = 0; i < pathSize; i++)
+    {
+      float64 distance = std::abs(referenceline.refer_line[i].rs - rs);
+      if (distance < distanceMin)
+      {
+        distanceMin = distance;
+        closestIndex = i;
+      }
+    }
+    return closestIndex;
+  }
+
+  int16 Curve::findMatchPointIndex(const base_msgs::msg::LocalPath& localPath,
+                                   const geometry_msgs::msg::PoseStamped& targetPoint)
+  {
+    const int16 pathSize = localPath.local_path.size();
+    if (pathSize <= 1)
+    {
+      return pathSize - 1;
+    }
+    float64 distanceMin = std::numeric_limits<float64>::max();
+    int16 closestIndex = -1;
+
+    for (int16 i = 0; i < pathSize; i++)
+    {
+      float64 distance = std::hypot(localPath.local_path[i].pose.pose.position.x - targetPoint.pose.position.x,
+                                    localPath.local_path[i].pose.pose.position.y - targetPoint.pose.position.y);
+      if (distance < distanceMin)
+      {
+        distanceMin = distance;
+        closestIndex = i;
+      }
+    }
+    return closestIndex;
+  }
+
   void Curve::figureOutProjectedPoint(const base_msgs::msg::Referline& referenceline,
                                       const geometry_msgs::msg::PoseStamped& targetPoint,
                                       ProjectedPointInfo& projectedPoint)
@@ -183,6 +228,29 @@ namespace Planning
     }
   }
 
+  void Curve::figureOutProjectedPoint(const base_msgs::msg::LocalPath& localPath,
+                                      const geometry_msgs::msg::PoseStamped& targetPoint,
+                                      ProjectedPointInfo& projectedPoint)
+  {
+    // simplified: use the closest point on localPath as projected point because the localPath is dense enough
+    const int16 matchPointIndex = findMatchPointIndex(localPath, targetPoint);
+    if (matchPointIndex >= 0)
+    {
+      projectedPoint.rs = localPath.local_path[matchPointIndex].rs;
+      projectedPoint.rx = localPath.local_path[matchPointIndex].pose.pose.position.x;
+      projectedPoint.ry = localPath.local_path[matchPointIndex].pose.pose.position.y;
+      projectedPoint.rtheta = localPath.local_path[matchPointIndex].rtheta;
+      projectedPoint.rkappa = localPath.local_path[matchPointIndex].rkappa;
+      projectedPoint.rdkappa = localPath.local_path[matchPointIndex].rdkappa;
+    }
+    else
+    {
+      RCLCPP_INFO(rclcpp::get_logger("math"), "Failed to find projected point on local path for target point!");
+      return;
+    }
+  }
+
+  // calculate projected point parameters on reference line
   void Curve::calculateProjectedPointParameters(base_msgs::msg::Referline& referenceline)
   {
     const uint16 pathSize = referenceline.refer_line.size();
@@ -298,6 +366,80 @@ namespace Planning
           // use dkappa's definition: dkappa / ds
           referenceline.refer_line[i].rdkappa =
               (referenceline.refer_line[i].rkappa - referenceline.refer_line[i - 1U].rkappa) / distance;
+        }
+      }
+    }
+  }
+
+  // calculate projected point parameters on local path
+  void Curve::calculateProjectedPointParameters(base_msgs::msg::LocalPath& localPath)
+  {
+    const uint16 pathSize = localPath.local_path.size();
+    if (pathSize < 3U)
+    {
+      RCLCPP_ERROR(rclcpp::get_logger("math"),
+                   "Local path size is less than 3, cannot calculate projected point parameters!");
+      return;
+    }
+
+    // calculate rs
+    float64 rs = 0.0;
+    for (uint16 i = 0U; i < pathSize; i++)
+    {
+      if (i == 0U)
+      {
+        rs = 0.0;
+      }
+      else
+      {
+        // std::hypot is similar with sqrt(x^2 + y^2), which calculates two points' distance safely without overflow
+        rs += std::hypot(
+            localPath.local_path[i].pose.pose.position.y - localPath.local_path[i - 1U].pose.pose.position.y,
+            localPath.local_path[i].pose.pose.position.x - localPath.local_path[i - 1U].pose.pose.position.x);
+      }
+      localPath.local_path[i].rs = rs;
+    }
+
+    // give the value to heading and curvature (kappa)
+    for (uint16 i = 0U; i < pathSize; i++)
+    {
+      localPath.local_path[i].rtheta = localPath.local_path[i].theta; // use the heading in local path directly
+      localPath.local_path[i].rkappa = localPath.local_path[i].kappa; // use the curvature in local path directly
+    }
+
+    // calculate dkappa
+    for (uint16 i = 0U; i < pathSize; i++)
+    {
+      if (i < pathSize - 1U) // not the last point
+      {
+        const float64 distance = std::hypot(
+            localPath.local_path[i + 1U].pose.pose.position.y - localPath.local_path[i].pose.pose.position.y,
+            localPath.local_path[i + 1U].pose.pose.position.x - localPath.local_path[i].pose.pose.position.x);
+        if (distance <= EPSILON)
+        {
+          localPath.local_path[i].rdkappa = 0.0; // prevent division by zero
+        }
+        else
+        {
+          // use dkappa's definition: dkappa / ds
+          localPath.local_path[i].rdkappa =
+              (localPath.local_path[i + 1U].rkappa - localPath.local_path[i].rkappa) / distance;
+        }
+      }
+      else // the last point
+      {
+        const float64 distance = std::hypot(
+            localPath.local_path[i].pose.pose.position.y - localPath.local_path[i - 1U].pose.pose.position.y,
+            localPath.local_path[i].pose.pose.position.x - localPath.local_path[i - 1U].pose.pose.position.x);
+        if (distance <= EPSILON)
+        {
+          localPath.local_path[i].rdkappa = 0.0; // prevent division by zero
+        }
+        else
+        {
+          // use dkappa's definition: dkappa / ds
+          localPath.local_path[i].rdkappa =
+              (localPath.local_path[i].rkappa - localPath.local_path[i - 1U].rkappa) / distance;
         }
       }
     }
