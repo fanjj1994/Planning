@@ -27,8 +27,8 @@ namespace Planning
     p_tmp.pose.orientation.z = 0.0;
     p_tmp.pose.orientation.w = 0.0;
 
-    const uint8 midLineSize = pncMap.midline.points.size();
-    for (uint8 i = 0U; i < midLineSize; i++)
+    const uint32 midLineSize = static_cast<uint32>(pncMap.midline.points.size());
+    for (uint32 i = 0U; i < midLineSize; i++)
     {
       p_tmp.pose.position.x = (pncMap.midline.points[i].x + pncMap.right_boundary.points[i].x) / 2.0;
       p_tmp.pose.position.y = (pncMap.midline.points[i].y + pncMap.right_boundary.points[i].y) / 2.0;

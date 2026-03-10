@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "base_msgs/msg/referline.hpp"
+#include "base_msgs/msg/local_trajectory.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "nav_msgs/msg/path.hpp"
@@ -112,6 +113,15 @@ namespace Planning
     inline void updateVehiclePose(const geometry_msgs::msg::PoseStamped& currentVehiclePose)
     {
       vehiclePose = currentVehiclePose;
+    }
+    inline void updateCartesianInfo(const base_msgs::msg::LocalTrajectoryPoint& point)
+    {
+      vehicleTheta = point.path_point.theta;
+      vehicleKappa = point.path_point.kappa;
+      vehicleDKappa = point.path_point.dkappa;
+      // vehicleVelocity = point.speed_point.speed;
+      // vehicleAcceleration = point.speed_point.acceleration;
+      // vehicleDAcceleration = point.speed_point.dacceleration;
     }
 
     // Coordinate transformation from Cartesian to Frenet, which will be implemented in egoCar and Tps respectively.
