@@ -138,7 +138,7 @@ namespace Planning
           {
             /* Target lateral position is the midpoint between the left road boundary and the TP's
                left bounding-box edge, placing the ego vehicle in the center of the available gap. */
-            p.l = leftBoundaryDistance + tpBoundingBoxLeftBoundary / 2.0;
+            p.l = (leftBoundaryDistance + tpBoundingBoxLeftBoundary) / 2.0;
             p.type = SLPointType::DECISION_LEFT_OVERTAKE;
             decisionPoints.emplace_back(p);
           }
@@ -149,7 +149,7 @@ namespace Planning
           {
             /* Target lateral position is the midpoint between the right road boundary and the TP's
                right bounding-box edge. */
-            p.l = rightBoundaryDistance + tpBoundingBoxRightBoundary / 2.0;
+            p.l = (rightBoundaryDistance + tpBoundingBoxRightBoundary) / 2.0;
             p.type = SLPointType::DECISION_RIGHT_OVERTAKE;
             decisionPoints.emplace_back(p);
           }
