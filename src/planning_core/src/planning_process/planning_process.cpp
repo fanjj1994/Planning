@@ -36,6 +36,9 @@ namespace Planning
     // create reference line, reference line rviz publisher
     referenceLineCreator = std::make_shared<ReferenceLineCreator>();
     referenceLineRvizPublisher = this->create_publisher<nav_msgs::msg::Path>("reference_line", 10);
+
+    // create decision center
+    decisionCenter = std::make_shared<DecisionCenter>();
   }
 
   boolean PlanningProcess::process()
@@ -189,6 +192,7 @@ namespace Planning
               });
 
     // path decision making
+    decisionCenter->makePathDecision(egoCar, TpCars);
 
     // local path planning
 
