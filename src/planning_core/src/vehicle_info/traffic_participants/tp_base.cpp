@@ -65,6 +65,15 @@ namespace Planning
                 "ddl/ds = %.6f, ddl/dt = %.2f",
                 frenetState.s, frenetState.ds_dt, frenetState.dds_dt, frenetState.l, frenetState.dl_ds,
                 frenetState.dl_dt, frenetState.ddl_ds, frenetState.ddl_dt);
+    // store computed Frenet state into member variables
+    s = frenetState.s;
+    l = frenetState.l;
+    ds_dt = frenetState.ds_dt;
+    dl_dt = frenetState.dl_dt;
+    dl_ds = frenetState.dl_ds;
+    dds_dt = frenetState.dds_dt;
+    ddl_dt = frenetState.ddl_dt;
+    ddl_ds = frenetState.ddl_ds;
   }
 
 } // namespace Planning

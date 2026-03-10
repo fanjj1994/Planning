@@ -78,17 +78,22 @@ namespace Planning
         std::max(egoCarInfo->getDsDt() * decisionMakingLeadPoint, static_cast<float64>(DMMINLENGTH)));
 
     // Core: compute decision points based on the traffic participant information and the ego car information
+    RCLCPP_INFO(rclcpp::get_logger("decision_center"), "Decision params: leftBound = %.2f, rightBound = %.2f, refLineEnd=%.2f, dmLeastDist=%.2f, tpCount=%zu",
+                leftBoundaryDistance, rightBoundaryDistance, referenceLineEndDistance, decisionMakingLeastDistance, tpInfoList.size());
     for (const auto& tpInfo : tpInfoList)
     {
       /* Longitudinal separation between the TP and the ego vehicle in Frenet coordinates.
          Positive value means the TP is ahead of the ego vehicle. */
       const float64 distanceToEgoCar = tpInfo->getS() - egoCarInfo->getS();
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "TP[%d]: s=%.2f, l=%.2f, ds_dt=%.2f, dl_dt=%.2f, distToEgo=%.2f",
+                  tpInfo->getVehicleID(), tpInfo->getS(), tpInfo->getL(), tpInfo->getDsDt(), tpInfo->getDlDt(), distanceToEgoCar);
 
       /* Longitudinal range filter: skip TPs that are
          - beyond the reference line end (too far ahead to act on), or
          - more than decisionMakingLeastDistance behind the ego vehicle (already passed). */
       if (distanceToEgoCar > referenceLineEndDistance || distanceToEgoCar < -decisionMakingLeastDistance)
       {
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: longitudinal range");
         continue;
       }
       // Tp is inside the corridor boundary or called road
@@ -169,12 +174,14 @@ namespace Planning
         // tp is moving
         else
         {
+          RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: TP is moving (dl/dt=%.3f, ds/dt=%.2f)", tpInfo->getDlDt(), tpInfo->getDsDt());
           // Todo: add tp is moving decision logic.
         }
       }
       // Tp is not inside the corridor boundary or called road
       else
       {
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: outside corridor (l=%.2f, need %.2f < l < %.2f)", tpInfo->getL(), rightBoundaryDistance, leftBoundaryDistance);
         // do nothing.
       }
     }
