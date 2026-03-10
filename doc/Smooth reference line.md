@@ -123,11 +123,13 @@ $$
 
 $\Delta^2 p_1$ 可以改写为 $2\bigl(\tfrac{p_0 + p_2}{2} - p_1\bigr)$，即 $p_1$ 到其两侧邻点中点的偏移向量（乘以 2）：
 
+```text
 p0 ---------- M ---------- p2       M = (p0 + p2) / 2
               |
               | ← Δ²p₁/2 (中点偏移)
               |
               p1
+```
 
 最小化 $\|\Delta^2 p_1\|^2$ 就是在把 $p_1$ 往 $M$ 拉——当 $p_1 = M$ 时三点完全共线且 $p_1$ 恰在中点，偏移为零。因此该代价惩罚的是局部的“折角”和锯齿。
 
@@ -538,3 +540,4 @@ $$
 - Baidu Apollo, *"Reference Line Smoother"*, [https://github.com/ApolloAuto/apollo](https://github.com/ApolloAuto/apollo)
 - OSQP: Operator Splitting Quadratic Program Solver, [https://osqp.org/](https://osqp.org/)
 - S. Boyd & L. Vandenberghe, *Convex Optimization*, Cambridge University Press, 2004
+
