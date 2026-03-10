@@ -46,8 +46,8 @@ namespace Planning
       localPathPointTmp.ddl_ds = 0.0;
 
       // compute l and dl/ds for localPathPointTmp
-      const int32 decisionPointSize = static_cast<int32>(decision->getDecisionPoints().size());
-      for (int32 j = 0; j < decisionPointSize - 1; j++)
+      const uint8 decisionPointSize = static_cast<uint8>(decision->getDecisionPoints().size());
+      for (uint8 j = 0; j < decisionPointSize - 1U; j++)
       {
         // check if the local path point is between two decision points
         const float64 segmentStart_s = decision->getDecisionPoints().at(j).s;
@@ -120,7 +120,7 @@ namespace Planning
     return localPath;
   }
 
-  nav_msgs::msg::Path LocalPathPlanner::generateLocalPathRviz()
+  nav_msgs::msg::Path LocalPathPlanner::localPathToRviz()
   {
     localPathRviz.header = localPath.header;
     localPathRviz.poses.clear();
@@ -137,8 +137,8 @@ namespace Planning
 
   void LocalPathPlanner::initializeLocalPath()
   {
-    localPath.header.frame_id = localPathConfigReader->getPNCMap().frame_;        // set the frame id for local path
-    localPath.header.stamp = rclcpp::Clock().now();                               // set the timestamp for local path
+    localPath.header.frame_id = localPathConfigReader->getPNCMap().frame_; // set the frame id for local path
+    localPath.header.stamp = rclcpp::Clock().now();                        // set the timestamp for local path
     localPath.local_path.clear(); // clear the local path points before generating new ones
   }
 } // namespace Planning

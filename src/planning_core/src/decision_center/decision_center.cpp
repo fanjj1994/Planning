@@ -39,19 +39,19 @@ namespace Planning
     // - Used as the lead-in/lead-out buffer when placing DECISION_START / DECISION_END waypoints.
     // Computed each cycle as max(ego_dsDt * decisionMakingLeadPoint, DMMINLENGTH) so it scales with ego speed while
     // respecting a minimum decision horizon.
-    float64 decisionMakingLeastDistance;
+    float64 decisionMakingLeastDistance = 0.0;
 
-    // Lateral distance from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
+    // Lateral coordinate from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
     // [m]. Derived at construction as 1.5 x road_half_width, assuming the ego vehicle travels in the center of the
     // right lane on a two-lane road.
     const float64 leftBoundaryDistance =
         static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 1.5f);
 
-    // Lateral distance from the ego vehicle center to the right road boundary in Frenet coordinates (positive value
-    // toward the boundary) [m]. Derived at construction as 0.5 x road_half_width, under the same assumption as
-    // leftBoundaryDistance.
+    // Lateral coordinate of the right road boundary in Frenet frame (negative value, since right of the reference
+    // line is the negative-l direction) [m]. Derived as -(0.5 x road_half_width), assuming the ego vehicle travels
+    // in the center of the right lane on a two-lane road.
     const float64 rightBoundaryDistance =
-        static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 0.5f);
+        -(static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 0.5f));
 
     // Number of path points that constitute the "lead" zone ahead of the ego vehicle [-].
     // Clamped to [LEADPTMINNUM, LEADPTMAXNUM]. Used to scale #decisionMakingLeastDistance with respect to the ego speed

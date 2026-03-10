@@ -124,7 +124,7 @@ namespace Planning
     /// This function uses the internally cached \c localPath and copies its poses into \c localPathRviz.
     ///
     /// \return nav_msgs::msg::Path: RViz visualization path.
-    nav_msgs::msg::Path generateLocalPathRviz();
+    nav_msgs::msg::Path localPathToRviz();
 
     /// \brief Initialize internal local path buffer before generating a new local path.
     ///

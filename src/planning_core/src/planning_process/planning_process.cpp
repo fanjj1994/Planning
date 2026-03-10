@@ -211,7 +211,7 @@ namespace Planning
       RCLCPP_ERROR(this->get_logger(), "local path is empty!");
       return;
     }
-    const auto localPathRviz = localPathPlanner->generateLocalPathRviz();
+    const auto localPathRviz = localPathPlanner->localPathToRviz();
     localPathPublisher->publish(localPathRviz); // publish
 
     // tps projected to the local path
