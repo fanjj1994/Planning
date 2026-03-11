@@ -270,10 +270,10 @@ $$
 	- `p.s = p.s - safe_dis_lon`（在预测相遇点前方预留纵向安全距离；实现为减法，表示“提前停车”）
 	- 并 `break`：停车决策优先级最高，直接终止后续 TP 处理。
 
-> 实现细节提示：代码注释中写的是“取中点”，但当前实现的表达式为：
-> - 左绕：`p.l = leftBoundaryDistance + tpLeftEdge / 2`
-> - 右绕：`p.l = rightBoundaryDistance + tpRightEdge / 2`
-> 其结果并非严格的 $(boundary + edge)/2$。如果期望严格几何中点，需要在表达式中加括号。
+> 实现细节提示：代码中的做法是“取中点”:
+> - 左绕：`p.l = (leftBoundaryDistance + tpLeftEdge) / 2.0`
+> - 右绕：`p.l = (rightBoundaryDistance + tpRightEdge) / 2.0`
+
 
 #### Step 9：补齐决策影响区间的 START/END
 

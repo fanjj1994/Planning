@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "base_msgs/msg/pnc_map.hpp"
+#include "base_msgs/msg/local_trajectory.hpp"
 #include "base_msgs/srv/pnc_map_service.hpp"
 #include "base_msgs/srv/global_path_service.hpp"
 #include "nav_msgs/msg/path.hpp"
@@ -89,6 +90,12 @@ namespace Planning
     std::shared_ptr<LocalSpeedsPlanner> localSpeedsPlanner; // local speeds planner
 
     rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr localPathPublisher; // local path publisher
+
+    // local trajectory combiner
+    std::shared_ptr<LocalTrajectoryCombiner> localTrajectoryCombiner;
+
+    // local trajectory publisher
+    rclcpp::Publisher<base_msgs::msg::LocalTrajectory>::SharedPtr localTrajectoryPublisher;
 
     rclcpp::TimerBase::SharedPtr runtime; // runtime for planning process module
   };

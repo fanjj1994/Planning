@@ -48,6 +48,12 @@ namespace Planning
 
     // create local path publisher
     localPathPublisher = this->create_publisher<nav_msgs::msg::Path>("local_path", 10);
+
+    // create local trajectory combiner
+    localTrajectoryCombiner = std::make_shared<LocalTrajectoryCombiner>();
+
+    // create local trajectory publisher
+    localTrajectoryPublisher = this->create_publisher<base_msgs::msg::LocalTrajectory>("local_trajectory", 10);
   }
 
   boolean PlanningProcess::process()
@@ -219,12 +225,21 @@ namespace Planning
     // speeds decision making
 
     // local speeds planning
+    base_msgs::msg::LocalSpeeds localSpeeds_;
 
     // compose trajectory
+    const auto localTrajectory_ = localTrajectoryCombiner->combineLocalTrajectory(localPath_, localSpeeds_);
+    if (localTrajectory_.local_trajectory.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "local trajectory is empty!");
+      return;
+    }
+    localTrajectoryPublisher->publish(localTrajectory_); // publish local trajectory
 
     // update data plotting
 
     // update vehicle's info
+    egoCar->updateCartesianInfo(localTrajectory_.local_trajectory.front());
     RCLCPP_INFO(this->get_logger(), "----------------car state: loc: (%.2f, %.2f), speed: %.2f, a: %.2f, kappa: %.2f",
                 egoCar->getVehiclePose().pose.position.x, egoCar->getVehiclePose().pose.position.y,
                 egoCar->getVehicleVelocity(), egoCar->getVehicleAcceleration(), egoCar->getVehicleKappa());

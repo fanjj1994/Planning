@@ -1,0 +1,64 @@
+name: Clang Format Check
+
+on:
+  pull_request:
+    branches:
+      - development # protected main branch name
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget lsb-release software-properties-common gnupg
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 18
+          sudo apt-get install -y clang-format-18
+          sudo ln -sf /usr/bin/clang-format-18 /usr/bin/clang-format
+
+      # check modified files in this pr
+      - name: Get changed C/C++ files
+        id: changed_files
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD \
+            | grep -E '\.(c|cc|cpp|cxx|h|hpp|hh)$' || true)
+
+          echo "changed_files=$files" >> $GITHUB_OUTPUT
+          echo "Changed files:"
+          echo "$files"
+
+      - name: Run clang-format check
+        if: steps.changed_files.outputs.changed_files != ''
+        run: |
+          failed=0
+          for f in ${{ steps.changed_files.outputs.changed_files }}; do
+            # If the file doesn't exist (e.g., it was deleted), skip it
+            if [ ! -f "$f" ]; then
+              continue
+            fi
+
+            echo "Checking $f"
+            # Compare the file before and after formatting
+            diff -u "$f" <(clang-format "$f") || failed=1
+          done
+
+          if [ "$failed" -ne 0 ]; then
+            echo
+            echo "clang-format check failed!"
+            echo "Please run clang-format locally on the above files and commit the changes."
+            exit 1
+          else
+            echo "All checked files are properly formatted."
+          fi
+
+      - name: No C/C++ files changed
+        if: steps.changed_files.outputs.changed_files == ''
+        run: echo "No C/C++ files changed, skipping clang-format check."

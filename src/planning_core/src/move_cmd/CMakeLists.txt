@@ -34,6 +34,11 @@ foreach(target ${MOVE_TARGETS})
   )
 endforeach()
 
+# macro switch for move_cmd
+option(USE_ACTUAL_POS_MACRO "Enable USE_ACTUAL_POS" OFF)
+if(USE_ACTUAL_POS_MACRO)
+  target_compile_definitions(ego_car_move_cmd PUBLIC USE_ACTUAL_POS)
+endif()
 
 # install dynamic lib, node and relevant directory
 install(TARGETS ${MOVE_TARGETS}
