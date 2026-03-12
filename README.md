@@ -1,10 +1,10 @@
-# STAP (Simple Situation Analysis & Planner)
+# BSAP ( Basic Situation Analysis & Planner)
 
-Welcome to the STAP repository! If you're passionate about robotics or ADAS technology, stick around — this project might be right up your alley.
+Welcome to the BSAP repository! If you're passionate about robotics or ADAS technology, stick around — this project might be right up your alley.
 
 ## Project Overview
 
-STAP is a motion planning project built on top of **ROS 2**, designed for Advanced Driver Assistance Systems (ADAS) research and prototyping. The core of the project is a **Planning module** that follows the basic philosophy of the **EM Planner** — iteratively performing Expectation (path planning) and Maximization (speed planning) steps to generate safe and efficient trajectories.
+BSAP is a motion planning project built on top of **ROS 2**, designed for Advanced Driver Assistance Systems (ADAS) research and prototyping. The core of the project is a **Planning module** that follows the basic philosophy of the **EM Planner** — iteratively performing Expectation (path planning) and Maximization (speed planning) steps to generate safe and efficient trajectories.
 
 In addition to the core planner, the project provides a set of supporting modules:
 
