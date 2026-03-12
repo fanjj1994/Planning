@@ -92,9 +92,9 @@ To get started with the project, follow these steps:
     ```sh
     git clone https://github.com/fanjj1994/BSAP.git
     ```
-2. Navigate to the planning directory:
+2. Navigate to the BSAP directory:
     ```sh
-    cd <your-clone-path>/Planning
+    cd /<your-clone-path>
     ```
 3. Build the project using ROS 2 Humble:
     ```sh
