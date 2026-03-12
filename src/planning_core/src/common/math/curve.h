@@ -36,6 +36,18 @@ namespace Planning
     float64 ddl_dt{ 0.0 }; ///< d^2l/dt^2, lateral acceleration [m/s^2]
   };
 
+  struct FrenetStateOnLocalPath
+  {
+    float64 s_2path{ 0.0 };      ///< longitudinal arc-length along local path [m]
+    float64 ds_dt_2path{ 0.0 };  ///< ds/dt on local path, longitudinal velocity [m/s]
+    float64 dds_dt_2path{ 0.0 }; ///< d^2s/dt^2 on local path, longitudinal acceleration [m/s^2]
+    float64 l_2path{ 0.0 };      ///< lateral offset to local path (left-positive) [m]
+    float64 dl_ds_2path{ 0.0 };  ///< dl/ds on local path, lateral offset rate w.r.t. arc-length (l') [dimensionless]
+    float64 dl_dt_2path{ 0.0 };  ///< dl/dt on local path, lateral velocity [m/s]
+    float64 ddl_ds_2path{ 0.0 }; ///< d^2l/ds^2 on local path, lateral offset second derivative (l'') [1/m]
+    float64 ddl_dt_2path{ 0.0 }; ///< d^2l/dt^2 on local path, lateral acceleration [m/s^2]
+  };
+
   /// \brief Reference line projected point parameters
   struct ProjectedPointInfo
   {
@@ -65,10 +77,10 @@ namespace Planning
     /// \return                   float64: Normalized angle in radians in the range [-pi, pi]
     static float64 NormalizeAngle(const float64 angle);
 
-    /// \brief  Convert Cartesian state to Frenet state.
+    /// \brief  Convert Cartesian state to Frenet state on reference line.
     ///
     /// Given a point's Cartesian state (x, y, theta, v, a, kappa) and its projected point
-    /// on the reference line, compute the corresponding Frenet state (s, l and derivatives).
+    /// on the reference line, compute the corresponding Frenet state (s, l and derivatives) on reference line.
     ///
     /// \par Conversion Formulas (define A = 1 - kappa_r * l, delta_theta = theta - theta_r):
     ///   1. s  = r_s
@@ -88,9 +100,36 @@ namespace Planning
     ///
     /// \param[in]  cartesian       Cartesian state of the point
     /// \param[in]  projectedPoint  Projected point info on the reference line
-    /// \param[out] frenet          Computed Frenet state
+    /// \param[out] frenet          Computed Frenet state on reference line
     static void CartesianToFrenet(const CartesianState &cartesian, const ProjectedPointInfo &projectedPoint,
                                   FrenetState &frenet);
+
+    /// \brief  Convert Cartesian state to Frenet state on local path.
+    ///
+    /// Given a point's Cartesian state (x, y, theta, v, a, kappa) and its projected point
+    /// on the reference line, compute the corresponding Frenet state (s, l and derivatives) on local path.
+    ///
+    /// \par Conversion Formulas (define A = 1 - kappa_r * l, delta_theta = theta - theta_r):
+    ///   1. s  = r_s
+    ///   2. l  = sign(t x d) * |d|,  where t = (cos(theta_r), sin(theta_r)), d = (x-rx, y-ry)
+    ///   3. l' = A * tan(delta_theta)
+    ///   4. l''= -kappa_l_prime * tan(delta_theta)
+    ///           + A * delta_theta_prime / cos^2(delta_theta)
+    ///      where kappa_l_prime   = kappa_r' * l + kappa_r * l'
+    ///            delta_theta_prime = A * kappa / cos(delta_theta) - kappa_r
+    ///   5. sdot  = v * cos(delta_theta) / A
+    ///   6. sddot = (a * cos(delta_theta) - sdot^2 * (l' * delta_theta_prime - kappa_l_prime)) / A
+    ///   7. ldot  = v * sin(delta_theta)
+    ///   8. lddot = a * sin(delta_theta)   (approximate; exact: l'' * sdot^2 + l' * sddot)
+    ///
+    /// \par Solve Order:
+    ///   s, l  ->  l'  ->  l''  ->  sdot  ->  sddot  ->  ldot  ->  lddot
+    ///
+    /// \param[in]  cartesian       Cartesian state of the point
+    /// \param[in]  projectedPoint  Projected point info on the local path
+    /// \param[out] frenet          Computed Frenet state on local path
+    static void CartesianToFrenet(const CartesianState& cartesian, const ProjectedPointInfo& projectedPoint,
+                                FrenetStateOnLocalPath& frenet);
 
     /// \brief  Convert Frenet state to Cartesian state.
     ///

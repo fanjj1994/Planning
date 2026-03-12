@@ -30,10 +30,10 @@ In addition to the core planner, the project provides a set of supporting module
 ## Architecture
 
 ![ArchitectureDiagram](doc/Image/Architecture.png)
-*Figure: architecture diagram for SLAP*
+*Figure: architecture diagram for BSAP*
 
 ![WorkflowDiagram](doc/Image/Workflow.png)
-*Figure: workflow diagram for SLAP*
+*Figure: workflow diagram for BSAP*
 
 ---
 
@@ -90,7 +90,7 @@ To get started with the project, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/fanjj1994/ADAS.git
+    git clone https://github.com/fanjj1994/BSAP.git
     ```
 2. Navigate to the planning directory:
     ```sh

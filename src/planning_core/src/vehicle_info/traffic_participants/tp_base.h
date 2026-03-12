@@ -15,6 +15,9 @@ namespace Planning
     ~TP() = default;
 
     void vehicleCartesianToFrenet(const base_msgs::msg::Referline &referenceline) override;
+    void vehicleCartesianToFrenet2Path(const base_msgs::msg::LocalPath &localPath,
+                                       const base_msgs::msg::Referline &referenceline,
+                                       const std::shared_ptr<VehicleInfoBase> &egoCar) override;
 
   private:
   };

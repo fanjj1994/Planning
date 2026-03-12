@@ -61,7 +61,8 @@ namespace Planning
     Curve::CartesianToFrenet(cartesianState, projectedPoint, frenetState);
 
     RCLCPP_INFO(rclcpp::get_logger("vehicle"),
-                "TP Frenet state: s = %.2f, ds/dt = %.2f, dds/dt = %.2f, l = %.2f, dl/ds = %.4f, dl/dt = %.2f, "
+                "TP Frenet state on reference line: s = %.2f, ds/dt = %.2f, dds/dt = %.2f, l = %.2f, dl/ds = %.4f, "
+                "dl/dt = %.2f, "
                 "ddl/ds = %.6f, ddl/dt = %.2f",
                 frenetState.s, frenetState.ds_dt, frenetState.dds_dt, frenetState.l, frenetState.dl_ds,
                 frenetState.dl_dt, frenetState.ddl_ds, frenetState.ddl_dt);
@@ -76,4 +77,74 @@ namespace Planning
     ddl_ds = frenetState.ddl_ds;
   }
 
+  void TP::vehicleCartesianToFrenet2Path(const base_msgs::msg::LocalPath &localPath,
+                                         const base_msgs::msg::Referline &referenceline,
+                                         const std::shared_ptr<VehicleInfoBase> &egoCar)
+  {
+    // compute corresponding index of local path start & end point on reference line, then process should be unified
+    // under reference line
+    const int16 idxStartInRefLine = Curve::findMatchPointIndex(referenceline, localPath.local_path.front().pose);
+    const int16 idxEndInRefLine = Curve::findMatchPointIndex(referenceline, localPath.local_path.back().pose);
+    // identify if tps exceeds local path range
+    if ((s > referenceline.refer_line[idxEndInRefLine].rs) || (s < referenceline.refer_line[idxStartInRefLine].rs))
+    {
+      s_2path = s - referenceline.refer_line[idxStartInRefLine].rs;
+      ds_dt_2path = ds_dt;
+      l_2path = l - egoCar->getL();
+      dl_ds_2path = dl_ds;
+      dl_dt_2path = dl_dt;
+      dds_dt_2path = dds_dt;
+      ddl_dt_2path = ddl_dt;
+      ddl_ds_2path = ddl_ds;
+      RCLCPP_INFO(rclcpp::get_logger("vehicle"), "TP is out of local path range, s_2path = %.2f", s_2path);
+      return;
+    }
+    else
+    {
+      // tps is inside local path range
+      // initialize projected point info struct
+      ProjectedPointInfo projectedPoint;
+
+      // initialize Cartesian state struct
+      CartesianState cartesianState;
+      cartesianState.x = vehiclePose.pose.position.x;
+      cartesianState.y = vehiclePose.pose.position.y;
+      cartesianState.theta = vehicleTheta;
+      cartesianState.speed = vehicleVelocity;
+      cartesianState.acceleration = vehicleAcceleration;
+      cartesianState.curvature = vehicleKappa;
+
+      // initialize Frenet state struct
+      FrenetStateOnLocalPath frenetStateOnLocalPath;
+
+      // calculate TP's projected point on the local path
+      Curve::figureOutProjectedPoint(localPath, vehiclePose, projectedPoint);
+      RCLCPP_INFO(rclcpp::get_logger("vehicle"),
+                  "TP projected point on local path: rs = %.2f, rx = %.2f, ry = %.2f, rtheta = %.2f, rkappa = "
+                  "%.4f, rdkappa = %.6f",
+                  projectedPoint.rs, projectedPoint.rx, projectedPoint.ry, projectedPoint.rtheta, projectedPoint.rkappa,
+                  projectedPoint.rdkappa);
+
+      // calculate TP's Frenet state based on its Cartesian state and projected point info on the local path
+      Curve::CartesianToFrenet(cartesianState, projectedPoint, frenetStateOnLocalPath);
+
+      RCLCPP_INFO(
+          rclcpp::get_logger("vehicle"),
+          "TP Frenet state on local path: s = %.2f, ds/dt = %.2f, dds/dt = %.2f, l = %.2f, dl/ds = %.4f, dl/dt = %.2f, "
+          "ddl/ds = %.6f, ddl/dt = %.2f",
+          frenetStateOnLocalPath.s_2path, frenetStateOnLocalPath.ds_dt_2path, frenetStateOnLocalPath.dds_dt_2path,
+          frenetStateOnLocalPath.l_2path, frenetStateOnLocalPath.dl_ds_2path, frenetStateOnLocalPath.dl_dt_2path,
+          frenetStateOnLocalPath.ddl_ds_2path, frenetStateOnLocalPath.ddl_dt_2path);
+
+      // store computed Frenet state into member variables
+      s_2path = frenetStateOnLocalPath.s_2path;
+      l_2path = frenetStateOnLocalPath.l_2path;
+      ds_dt_2path = frenetStateOnLocalPath.ds_dt_2path;
+      dl_dt_2path = frenetStateOnLocalPath.dl_dt_2path;
+      dl_ds_2path = frenetStateOnLocalPath.dl_ds_2path;
+      dds_dt_2path = frenetStateOnLocalPath.dds_dt_2path;
+      ddl_dt_2path = frenetStateOnLocalPath.ddl_dt_2path;
+      ddl_ds_2path = frenetStateOnLocalPath.ddl_ds_2path;
+    }
+  }
 } // namespace Planning
