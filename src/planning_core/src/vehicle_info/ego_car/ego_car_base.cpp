@@ -77,4 +77,18 @@ namespace Planning
     ddl_ds = frenetState.ddl_ds;
   }
 
+  void EgoCar::vehicleCartesianToFrenet2Path(const base_msgs::msg::LocalPath &localPath,
+                                             const base_msgs::msg::Referline &referenceline,
+                                             const std::shared_ptr<VehicleInfoBase> &egoCar)
+  {
+    // Ego car does not need to convert Cartesian to Frenet on local path because currently ego motion is simulated in
+    // ego_car_move_cmd component. Therefore, ego car's Frenet state on local path is the same as that on reference
+    // line. However, this function is implemented for the consistency of interface with Tps and potential future use of
+    // ego car's Frenet state on local path.
+    // In the future, if ego car's control component is updated, this function should be refactored.
+    (void)localPath;
+    (void)referenceline;
+    (void)egoCar;
+  }
+
 } // namespace Planning

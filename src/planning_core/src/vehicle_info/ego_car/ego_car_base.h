@@ -10,11 +10,14 @@ namespace Planning
   {
   public:
     EgoCar();
-    EgoCar(const EgoCar&) = delete;
-    EgoCar& operator=(const EgoCar&) = delete;
+    EgoCar(const EgoCar &) = delete;
+    EgoCar &operator=(const EgoCar &) = delete;
     ~EgoCar() = default;
 
-    void vehicleCartesianToFrenet(const base_msgs::msg::Referline& referenceline) override;
+    void vehicleCartesianToFrenet(const base_msgs::msg::Referline &referenceline) override;
+    void vehicleCartesianToFrenet2Path(const base_msgs::msg::LocalPath &localPath,
+                                       const base_msgs::msg::Referline &referenceline,
+                                       const std::shared_ptr<VehicleInfoBase> &egoCar) override;
 
   private:
   };

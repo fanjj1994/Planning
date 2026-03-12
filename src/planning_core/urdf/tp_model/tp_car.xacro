@@ -1,5 +1,6 @@
 <!-- Chassis -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tp_car">
+    <xacro:property name="use_dynamic_tps_config" value="true"/>
     <!-- Color-->
     <material name="blue">
         <color rgba="0.2 0.2 0.8 0.9"/>
@@ -24,7 +25,7 @@
         </link>
 
         <!-- projection point to the map -->
-        <joint name="{footprint${id}_to_map" type="fixed">
+        <joint name="footprint${id}_to_map" type="fixed">
             <parent link="map"/>
             <child link="base_footprint_tp${id}"/>
         </joint>
@@ -38,8 +39,17 @@
     </xacro:macro>
 
     <!-- function call -->
-    <xacro:create_tp_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
-    <xacro:create_tp_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
-    <xacro:create_tp_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <!-- static tps config -->
+    <xacro:if value="${not use_dynamic_tps_config}">
+      <xacro:create_tp_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      <xacro:create_tp_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      <xacro:create_tp_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    </xacro:if>
+    <!-- dynamic tps config -->
+    <xacro:if value="${use_dynamic_tps_config}">
+      <xacro:create_tp_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
+      <xacro:create_tp_car id="2" car_length="6.0" car_width="2.0" car_height="1.2" color="blue"/>
+      <xacro:create_tp_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/>
+    </xacro:if>
 
 </robot>

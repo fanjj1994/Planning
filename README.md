@@ -30,10 +30,10 @@ In addition to the core planner, the project provides a set of supporting module
 ## Architecture
 
 ![ArchitectureDiagram](doc/Image/Architecture.png)
-*Figure: architecture diagram for SLAP*
+*Figure: architecture diagram for BSAP*
 
 ![WorkflowDiagram](doc/Image/Workflow.png)
-*Figure: workflow diagram for SLAP*
+*Figure: workflow diagram for BSAP*
 
 ---
 

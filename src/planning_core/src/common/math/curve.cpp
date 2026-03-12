@@ -67,6 +67,56 @@ namespace Planning
     frenet.ddl_dt = cartesian.acceleration * sin_delta_theta;
   }
 
+  void Curve::CartesianToFrenet(const CartesianState& cartesian, const ProjectedPointInfo& projectedPoint,
+                                FrenetStateOnLocalPath& frenet)
+  {
+    // ================1. calculate longitudinal offset s================
+    frenet.s_2path = projectedPoint.rs;
+
+    // ================2. calculate lateral offset l================
+    const float64 dx = cartesian.x - projectedPoint.rx; // vector from projected point to target point in x direction
+    const float64 dy = cartesian.y - projectedPoint.ry; // vector from projected point to target point in y direction
+
+    const float64 cos_rtheta = std::cos(projectedPoint.rtheta);
+    const float64 sin_rtheta = std::sin(projectedPoint.rtheta);
+
+    // cross product of r's tangent vector and (x-r)
+    const float64 tangentCrossDisp = -sin_rtheta * dx + cos_rtheta * dy;
+    frenet.l_2path = std::copysign(std::hypot(dx, dy), tangentCrossDisp); // lateral offset with sign
+
+    const float64 A = 1.0 - projectedPoint.rkappa * frenet.l_2path; // A = 1 - kappa_r * l
+
+    // ================3. calculate l' = dl/ds================
+    // heading difference between target point and projected point
+    const float64 delta_theta = NormalizeAngle(cartesian.theta - projectedPoint.rtheta);
+    const float64 tan_delta_theta = std::tan(delta_theta);
+    const float64 sin_delta_theta = std::sin(delta_theta);
+    const float64 cos_delta_theta = std::cos(delta_theta);
+    frenet.dl_ds_2path = A * tan_delta_theta; // dl/ds = A * tan(delta_theta)
+
+    //================4. calculate l'' = d(dl/ds)/ds================
+    // kappa_r' * l + kappa_r * l'
+    const float64 kappa_l_prime = projectedPoint.rdkappa * frenet.l_2path + projectedPoint.rkappa * frenet.dl_ds_2path;
+    // delta_theta' = A * curvature / cos(delta_theta) - kappa_r
+    const float64 delta_theta_prime = A * cartesian.curvature / cos_delta_theta - projectedPoint.rkappa;
+
+    frenet.ddl_ds_2path = -kappa_l_prime * tan_delta_theta + A * delta_theta_prime / (cos_delta_theta * cos_delta_theta);
+
+    //================5. calculate sdot = ds/dt================
+    frenet.ds_dt_2path = cartesian.speed * cos_delta_theta / A;
+
+    //================6. calculate sddot = d^2s/dt^2================
+    frenet.dds_dt_2path = (cartesian.acceleration * cos_delta_theta -
+                     (frenet.ds_dt_2path * frenet.ds_dt_2path) * (frenet.dl_ds_2path * delta_theta_prime - kappa_l_prime)) /
+                    A;
+
+    //================7. calculate ldot = dl/dt================
+    frenet.dl_dt_2path = cartesian.speed * sin_delta_theta;
+
+    //================8. calculate lddot = d^2l/dt^2================
+    frenet.ddl_dt_2path = cartesian.acceleration * sin_delta_theta;
+  }
+
   void Curve::FrenetToCartesian(const FrenetState& frenet, const ProjectedPointInfo& projectedPoint,
                                 CartesianState& cartesian)
   {

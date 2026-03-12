@@ -8,7 +8,11 @@ namespace Planning
     std_string configFilePath = ament_index_cpp::get_package_share_directory("planning_core");
 
     // get config file
-    planningConfig = YAML::LoadFile(configFilePath + "/config/planning_static_obs_config.yaml");
+#ifdef USE_DYNAMIC_TPS_CONFIG
+    planningConfig = YAML::LoadFile(configFilePath + "/config/planning_dynamic_tps_config.yaml");
+#else
+    planningConfig = YAML::LoadFile(configFilePath + "/config/planning_static_tps_config.yaml");
+#endif // USE_DYNAMIC_TPS_CONFIG
   }
 
   void ConfigReader::readVehicleConfig(VehicleStruct& vehicle, const std_string& vehicleName)
@@ -107,7 +111,7 @@ namespace Planning
   {
     try
     {
-      readPNCMapConfig();
+      readVehiclesConfig();
       localSpeeds.speeds_size_ = planningConfig["local_speeds"]["speeds_size"].as<uint32>();
     }
     catch (const YAML::Exception& e)

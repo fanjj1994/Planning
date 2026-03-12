@@ -221,6 +221,10 @@ namespace Planning
     localPathPublisher->publish(localPathRviz); // publish
 
     // tps projected to the local path
+    for (const auto& tpCar : TpCarsInROI)
+    {
+      tpCar->vehicleCartesianToFrenet2Path(localPath_, referenceLine_, egoCar);
+    }
 
     // speeds decision making
 
