@@ -8,7 +8,7 @@
 > 说明：本文以工程实现为主，描述与代码保持一致；涉及的关键实现位于：
 > - [DecisionCenter 头文件](../src/planning_core/src/decision_center/decision_center.h)
 > - [DecisionCenter实现](../src/planning_core/src/decision_center/decision_center.cpp)
-> - [决策参数配置](../src/planning_core/config/planning_static_obs_config.yaml)
+> - [决策参数配置](../src/planning_core/config/planning_static_tps_config.yaml)
 > - [决策输出如何被局部路径规划使用](../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
 
 ---
@@ -96,7 +96,7 @@
 - `tpInfoList`：交通参与者列表（每个 TP 提供 Frenet 状态与尺寸、ID）。
 - 配置参数：由 `ConfigReader::readDecisionConfig()` 从 YAML 加载（例如安全距离、道路宽度、参考线长度）。
 
-关键配置来源：../src/planning_core/config/planning_static_obs_config.yaml
+关键配置来源：../src/planning_core/config/planning_static_tps_config.yaml
 
 - `decision.safe_dis_lat`：侧向安全裕度（左右各一份）。
 - `decision.safe_dis_lon`：纵向安全裕度（停车点提前量）。
@@ -290,7 +290,7 @@ $$
 
 ### 3.4 示例场景：按实现流程走一遍
 
-下面给出一个“静态障碍物”的数值示例，帮助把上述 Step 0~9 串起来。示例参数尽量采用本项目默认配置（见 [planning_static_obs_config.yaml](../src/planning_core/config/planning_static_obs_config.yaml)），并以当前代码实现为准（见 [decision_center.cpp](../src/planning_core/src/decision_center/decision_center.cpp)）。
+下面给出一个“静态障碍物”的数值示例，帮助把上述 Step 0~9 串起来。示例参数尽量采用本项目默认配置（见 [planning_static_tps_config.yaml](../src/planning_core/config/planning_static_tps_config.yaml)），并以当前代码实现为准（见 [decision_center.cpp](../src/planning_core/src/decision_center/decision_center.cpp)）。
 
 #### 示例公共配置/假设
 

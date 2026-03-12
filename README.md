@@ -1,149 +1,61 @@
-# Planning
-## Project Structure
+# STAP (Simple Situation Analysis & Planner)
 
-The project is organized as follows:
+Welcome to the STAP repository! If you're passionate about robotics or ADAS technology, stick around — this project might be right up your alley.
 
-```
-├── build
-├── doc
-│   └── UtilizeClangFormat.md
-├── install
-├── log
-├── README.md
-├── scripts
-│   └── format_all.sh
-└── src
-    ├── base_msgs
-    │   ├── CMakeLists.txt
-    │   ├── msgs
-    │   ├── package.xml
-    │   └── srv
-    ├── data_plot
-    │   ├── data_plot
-    │   │   ├── data_plot.py
-    │   │   └── __init__.py
-    │   ├── package.xml
-    │   ├── resource
-    │   │   └── data_plot
-    │   ├── setup.cfg
-    │   ├── setup.py
-    │   └── test
-    │       ├── test_copyright.py
-    │       ├── test_flake8.py
-    │       └── test_pep257.py
-    └── planning_core
-        ├── CMakeLists.txt
-        ├── config
-        ├── launch
-        ├── package.xml
-        ├── rviz
-        ├── src
-        │   ├── common
-        │   │   ├── CMakeLists.txt
-        │   │   ├── common_type
-        │   │   │   └── common_type.h
-        │   │   ├── config_reader
-        │   │   │   ├── config_reader.cpp
-        │   │   │   └── config_reader.h
-        │   │   └── math
-        │   │       ├── curve.cpp
-        │   │       ├── curve.h
-        │   │       ├── polynomial_curve.cpp
-        │   │       └── polynomial_curve.h
-        │   ├── decision_center
-        │   │   ├── CMakeLists.txt
-        │   │   ├── decision_center.cpp
-        │   │   └── decision_center.h
-        │   ├── global_planner
-        │   │   ├── CMakeLists.txt
-        │   │   ├── global_path_server.cpp
-        │   │   ├── global_path_server.h
-        │   │   ├── global_planner_base.h
-        │   │   └── global_planner_normal
-        │   │       ├── global_planner_normal.cpp
-        │   │       └── global_planner_normal.h
-        │   ├── local_planner
-        │   │   ├── CMakeLists.txt
-        │   │   ├── local_path
-        │   │   │   ├── local_path_planner.cpp
-        │   │   │   ├── local_path_planner.h
-        │   │   │   ├── local_path_smoother.cpp
-        │   │   │   └── local_path_smoother.h
-        │   │   ├── local_speeds
-        │   │   │   ├── local_speeds_planner.cpp
-        │   │   │   ├── local_speeds_planner.h
-        │   │   │   ├── local_speeds_smoother.cpp
-        │   │   │   └── local_speeds_smoother.h
-        │   │   ├── local_trajectory_combiner.cpp
-        │   │   └── local_trajectory_combiner.h
-        │   ├── move_cmd
-        │   │   ├── CMakeLists.txt
-        │   │   ├── ego_car_move_cmd.cpp
-        │   │   ├── ego_car_move_cmd.h
-        │   │   ├── tp_move_cmd.cpp
-        │   │   └── tp_move_cmd.h
-        │   ├── planning_process
-        │   │   ├── CMakeLists.txt
-        │   │   ├── planning_node.cpp
-        │   │   ├── planning_process.cpp
-        │   │   └── planning_process.h
-        │   ├── pnc_map_creator
-        │   │   ├── CMakeLists.txt
-        │   │   ├── pnc_map_creator_base.h
-        │   │   ├── pnc_map_server.cpp
-        │   │   ├── pnc_map_server.h
-        │   │   ├── pnc_map_straight
-        │   │   │   ├── pnc_map_creator_straight.cpp
-        │   │   │   └── pnc_map_creator_straight.h
-        │   │   └── pnc_map_sturn
-        │   │       ├── pnc_map_creator_sturn.cpp
-        │   │       └── pnc_map_creator_sturn.h
-        │   ├── reference_line
-        │   │   ├── CMakeLists.txt
-        │   │   ├── reference_line_creator.cpp
-        │   │   ├── reference_line_creator.h
-        │   │   ├── reference_line_smoother.cpp
-        │   │   └── reference_line_smoother.h
-        │   └── vehicle_info
-        │       ├── CMakeLists.txt
-        │       ├── ego_car
-        │       │   ├── ego_car_base.cpp
-        │       │   └── ego_car_base.h
-        │       ├── traffic_participants
-        │       │   ├── tp_base.cpp
-        │       │   └── tp_base.h
-        │       └── vehicle_info_base.h
-        └── urdf
-            ├── ego_car_model
-            └── tp_model
-```
+## Project Overview
 
-## Overview
+STAP is a motion planning project built on top of **ROS 2**, designed for Advanced Driver Assistance Systems (ADAS) research and prototyping. The core of the project is a **Planning module** that follows the basic philosophy of the **EM Planner** — iteratively performing Expectation (path planning) and Maximization (speed planning) steps to generate safe and efficient trajectories.
 
-This project is part of the Advanced Driver Assistance Systems (ADAS) and focuses on the planning module. The planning module is responsible for generating a safe and efficient path for the vehicle to follow. The project depends on ROS 2 Humble and is recommended to run on Ubuntu 22.04.
+In addition to the core planner, the project provides a set of supporting modules:
 
-## Pre-Requistes
+- **Decision Center** — situation analysis and behavioral decision making
+- **Reference Line** — reference line generation and smoothing for Frenet-frame-based planning
+- **Frenet–Cartesian Coordinate Conversion** — bidirectional transformation between Cartesian and Frenet states (including higher-order derivatives)
+- **Motion Simulation** — ego vehicle and traffic participant move-command nodes for closed-loop simulation
+- **Global Path Generator** — service-based global path planners (normal / A\* strategy pattern)
+- **PNC Map Simulator** — map servers that produce lane-level PNC maps (straight road, S-turn, etc.)
+- **Visualization** — an **RViz2** configuration for real-time 3-D visualization and a **matplotlib**-based data plotting package for post-analysis of planning results
 
-Before building the project, ensure you have the following dependencies installed from their GitHub repositories:
+---
 
-- Eigen 3.4.0
-- osqp
-- yaml-cpp
-- matplotlib
 
-You can install these dependencies using the following commands:
+## Required Platform
 
+| Item | Requirement |
+|------|-------------|
+| ROS 2 | **Humble Hawksbill** |
+| OS | Ubuntu **22.04** (recommended) |
+
+
+## Architecture
+
+![ArchitectureDiagram](doc/Image/Architecture.png)
+*Figure: architecture diagram for SLAP*
+
+![WorkflowDiagram](doc/Image/Workflow.png)
+*Figure: workflow diagram for SLAP*
+
+---
+
+## Dependencies
+
+Before building the project, ensure you have the following dependencies installed:
+
+- **Eigen 3.4.0**
+- **osqp**
+- **yaml-cpp**
+- **matplotlib**
 
 ### Install Eigen 3.4.0
-https://eigen.tuxfamily.org
-recommended version: 3.4.0
+
+https://eigen.tuxfamily.org (recommended version: 3.4.0)
+
 ```sh
 sudo mv eigen-3.4.0/ /usr/local/include/
-mkdir build
 ```
 
-
 ### Install osqp
+
 ```sh
 git clone https://github.com/oxfordcontrol/osqp.git
 cd osqp
@@ -155,6 +67,7 @@ cd ../..
 ```
 
 ### Install yaml-cpp
+
 ```sh
 git clone https://github.com/jbeder/yaml-cpp.git
 cd yaml-cpp
@@ -166,6 +79,7 @@ cd ../..
 ```
 
 ### Install matplotlib
+
 ```sh
 pip install matplotlib
 ```
@@ -180,23 +94,74 @@ To get started with the project, follow these steps:
     ```
 2. Navigate to the planning directory:
     ```sh
-    cd /home/fanjj1994/ADAS/planning
+    cd <your-clone-path>/Planning
     ```
 3. Build the project using ROS 2 Humble:
     ```sh
     source /opt/ros/humble/setup.bash
-    mkdir -p build
-    cd build
     colcon build
     ```
+4. Launch the application (requires two launch files):
+    ```sh
+    chmod 777 scripts/start_launch.sh
+    ./scripts/start_launch.sh
+    ```
+    - This script opens two terminals — one launches the planning nodes (PNC map server, global path server, planning process, RViz2) and the other launches the move-command simulation nodes (ego car & traffic participant).
 
-## Running Tests
-
-TBD
+---
 
 ## Contributing
 
-Contributions are welcome! Please read the [contributing guidelines](docs/contributing.md) first.
+Contributions are welcome! Every user in Github has read access. To get write access, please contact: [fanjj1994](https://github.com/fanjj1994) to add you to this repo that has write access. After that, you may need to know the following things:
+
+### Branch & Contribution Policy
+
+The main branch of this repository is **`development`**. Direct commits or force merge to `development` are **not** allowed. All changes must be submitted via **Pull Request** and require approval from reviewer **fanjj1994** before merging.
+
+### Branch Naming Rule
+
+All branches must be named with one of the following prefixes:
+
+| Prefix | Purpose | Merge to `development` |
+|--------|---------|:----------------------:|
+| `feature/` | Develop a new feature (e.g., new global planner, new path planning method) | Yes |
+| `bugfix/` | Fix an existing bug | Yes |
+| `test/` | Add Google Test cases to verify functions | Yes |
+| `doc/` | Add comments, Markdown documentation, or Doxygen to improve readability | Yes |
+| `sandbox/` | Prototype / explore an idea for self-validation only | **No** |
+
+**Examples:**
+
+- Develop the decision module → `feature/Decision`
+- Fix a uint8 overflow wrap-around bug → `bugfix/FixUint8DataOverflow`
+- Add Doxygen comments for A\* global path planner → `doc/AStarComments`
+- Explore replacing the simple map with a grid map → `sandbox/gridmap`
+
+### Release Naming Rule
+
+Release tags follow **Semantic Versioning**: `<major>.<minor>.<patch>`, e.g. `2.1.3` means major version 2, minor version 1, patch version 3.
+
+Optionally, append `-pre` to indicate a **pre-release** version that may be unstable and requires further validation.
+
+In addition, `release/` prefix before `<major>` is required in this project to indicate this is a release tag.
+
+**Examples:**
+
+- `release/1.0.0` — first stable release
+- `release/1.4.2` — stable release with minor features and patches
+- `release/2.0.0-pre` — pre-release of the next major version, not yet fully validated
+
+### Clang-Format
+All C++ source files (*.cpp, *.h, *.hpp, *.cc, *.cxx) in this project must comply with the .clang-format configuration at the repository root. A CI pipeline automatically checks formatting on every pull request — non-compliant code will fail the check and cannot be merged into development.
+
+To format all C++ files locally before committing:
+```sh
+./scripts/format_all.sh
+```
+
+Note: Make sure the PLANNING_ROOT path inside format_all.sh matches your local workspace before running the script.
+
+---
 
 ## Reference
-ROS2 Humble Documentation: https://docs.ros.org/en/humble/index.html
+ - ROS2 Humble Documentation: https://docs.ros.org/en/humble/index.html
