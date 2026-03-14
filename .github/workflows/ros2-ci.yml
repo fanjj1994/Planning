@@ -2,30 +2,30 @@ name: ROS 2 Humble CI
 
 on:
   push:
-    branches: [ development ]
+    branches: [development]
   pull_request:
-    branches: [ development ]
+    branches: [development]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
+
       - name: Setup ROS 2 Humble
         uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: humble
-      
+
       # 缓存 apt 包
       - name: Cache apt packages
         uses: actions/cache@v3
         with:
           path: /var/cache/apt/archives
           key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ros2-ci.yml') }}
-      
+
       # 缓存编译的三方库
       - name: Cache third-party libraries
         uses: actions/cache@v3
@@ -37,7 +37,7 @@ jobs:
             /usr/local/include/osqp
             /usr/local/include/OsqpEigen
           key: ${{ runner.os }}-libs-eigen3.4-osqp1.0-osqpeigen0.10
-      
+
       - name: Install ROS 2 dependencies
         run: |
           sudo apt-get update
@@ -50,9 +50,9 @@ jobs:
             ros-humble-xacro \
             libyaml-cpp-dev \
             python3-pip
-          
+
           pip3 install transforms3d matplotlib
-      
+
       - name: Install third-party libraries
         if: steps.cache-libs.outputs.cache-hit != 'true'
         run: |
@@ -62,21 +62,21 @@ jobs:
           tar -xzf eigen-3.4.0.tar.gz
           cd eigen-3.4.0 && mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release .. && sudo make install
-          
+
           # OSQP 1.0.0
           cd /tmp
           git clone --branch v1.0.0 --depth 1 https://github.com/osqp/osqp.git
           cd osqp && mkdir build && cd build
           cmake -G "Unix Makefiles" .. && cmake --build . && sudo cmake --install .
-          
+
           # osqp-eigen 0.10.0
           cd /tmp
           git clone --branch v0.10.0 --depth 1 https://github.com/robotology/osqp-eigen.git
           cd osqp-eigen && mkdir build && cd build
           cmake .. && make && sudo make install
-          
+
           sudo ldconfig
-      
+
       # 缓存 colcon 构建
       - name: Cache colcon build
         uses: actions/cache@v3
@@ -87,7 +87,7 @@ jobs:
           key: ${{ runner.os }}-colcon-${{ hashFiles('src/**','**/CMakeLists.txt','**/package.xml','**/setup.py','**/setup.cfg') }}
           restore-keys: |
             ${{ runner.os }}-colcon-
-      
+
       - name: Build with colcon (with retry)
         id: colcon-build
         run: |
@@ -109,7 +109,7 @@ jobs:
               --event-handlers console_direct+
           fi
           echo "::endgroup::"
-      
+
       - name: Run tests
         run: |
           source /opt/ros/humble/setup.bash
@@ -117,7 +117,7 @@ jobs:
           colcon test --return-code-on-test-failure
           colcon test-result --verbose
         continue-on-error: true
-      
+
       - name: Upload build artifacts
         if: failure()
         uses: actions/upload-artifact@v3
