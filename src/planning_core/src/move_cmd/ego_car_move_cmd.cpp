@@ -57,9 +57,10 @@ namespace Planning
     }
 
     // value given
-    // temp solution: give speed to const value 1.0. @todo: update the speed based on speeds planning
-    const float64 speed_x = 1.0 * std::cos(trajectoryMsg->local_trajectory.at(closestPointIndex).path_point.theta);
-    const float64 speed_y = 1.0 * std::sin(trajectoryMsg->local_trajectory.at(closestPointIndex).path_point.theta);
+    const float64 speed_x = trajectoryMsg->local_trajectory.at(closestPointIndex).speed_point.speed *
+                            std::cos(trajectoryMsg->local_trajectory.at(closestPointIndex).path_point.theta);
+    const float64 speed_y = trajectoryMsg->local_trajectory.at(closestPointIndex).speed_point.speed *
+                            std::sin(trajectoryMsg->local_trajectory.at(closestPointIndex).path_point.theta);
 
 #ifdef USE_ACTUAL_POS
     // use vehicle state information to update the transform of ego car

@@ -88,7 +88,11 @@ namespace Planning
           dl_ds_2path(0.0),
           dds_dt_2path(0.0),
           ddl_dt_2path(0.0),
-          ddl_ds_2path(0.0)
+          ddl_ds_2path(0.0),
+          t0(0.0),
+          t(0.0),
+          t_in(0.0),
+          t_out(0.0)
 
     {
     }

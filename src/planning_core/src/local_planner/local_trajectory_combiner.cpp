@@ -21,8 +21,7 @@ namespace Planning
     localTrajectory.header = localPath.header;
     localTrajectory.local_trajectory.clear();
 
-    // if (pathSize < 3U || speedsSize < 3U) // @todo: add speed planning and check speeds size as well
-    if (pathSize < 3U)
+    if (pathSize < 3U || speedsSize < 3U)
     {
       RCLCPP_WARN(rclcpp::get_logger("local_trajectory"),
                   "Local path or speeds size is less than 3, too less points to combine a trajectory");
@@ -33,7 +32,11 @@ namespace Planning
     for (uint8 i = 0U; i < pathSize; i++)
     {
       trajectoryPt.path_point = localPath.local_path[i]; // assign path point
-      // trajectoryPt.speed_point = localSpeeds.local_speeds[i]; // @Todo: assign speed point
+      if (i < speedsSize)
+      {
+        trajectoryPt.speed_point = localSpeeds.local_speeds[i]; // assign speed point
+      }
+
       localTrajectory.local_trajectory.emplace_back(trajectoryPt);
     }
 

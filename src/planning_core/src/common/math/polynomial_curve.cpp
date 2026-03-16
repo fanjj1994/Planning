@@ -2,6 +2,32 @@
 
 namespace Planning
 {
+  Eigen::Vector2d PolynomialCurve::computeLinearPolynomialCoefficients(const float64 &start_x, const float64 &start_y,
+                                                                       const float64 &end_x, const float64 &end_y)
+  {
+    Eigen::Matrix2d S;
+    S << 1.0, start_x, 1.0, end_x;
+
+    Eigen::Vector2d Y;
+    Y << start_y, end_y;
+
+    return S.colPivHouseholderQr().solve(Y);
+  }
+
+  Eigen::Vector4d PolynomialCurve::computeCubicPolynomialCoefficients(const float64 &start_x, const float64 &start_y,
+                                                                      const float64 &start_dydx, const float64 &end_x,
+                                                                      const float64 &end_y, const float64 &end_dydx)
+  {
+    Eigen::Matrix4d S;
+    S << 1.0, start_x, start_x * start_x, start_x * start_x * start_x, 0.0, 1.0, 2.0 * start_x, 3.0 * start_x * start_x,
+        1.0, end_x, end_x * end_x, end_x * end_x * end_x, 0.0, 1.0, 2.0 * end_x, 3.0 * end_x * end_x;
+
+    Eigen::Vector4d Y;
+    Y << start_y, start_dydx, end_y, end_dydx;
+
+    return S.colPivHouseholderQr().solve(Y);
+  }
+
   // clang-format off
   Eigen::Vector<float64, 6U> PolynomialCurve::computeQuinticPolynomialCoefficients(const float64 &start_x, const float64 &start_y, 
                                                                                    const float64 &start_dydx, const float64 &start_ddydx,

@@ -128,8 +128,8 @@ namespace Planning
     /// \param[in]  cartesian       Cartesian state of the point
     /// \param[in]  projectedPoint  Projected point info on the local path
     /// \param[out] frenet          Computed Frenet state on local path
-    static void CartesianToFrenet(const CartesianState& cartesian, const ProjectedPointInfo& projectedPoint,
-                                FrenetStateOnLocalPath& frenet);
+    static void CartesianToFrenet(const CartesianState &cartesian, const ProjectedPointInfo &projectedPoint,
+                                  FrenetStateOnLocalPath &frenet);
 
     /// \brief  Convert Frenet state to Cartesian state.
     ///

@@ -77,7 +77,7 @@
 1. 生成参考线（ReferenceLineCreator）。
 2. 将 ego 与 TP（Traffic Participant）投影到参考线，获得 Frenet 状态。
 3. TP 按 `s` 排序（从近到远/从后到前）。
-4. `DecisionCenter::makePathDecision()` 生成 `decisionPoints`。
+4. `DecisionCenter::makePathDecision()` 生成 `pathDecisionPoints`。
 5. `LocalPathPlanner::generateLocalPath()` 使用这些决策点生成连续局部路径。
 
 对应代码：
@@ -106,7 +106,7 @@
 
 #### 输出
 
-输出为内部成员 `decisionPoints`（`std::vector<SLPoint>`），通过 `getDecisionPoints()` 供下游读取。
+输出为内部成员 `pathDecisionPoints`（`std::vector<SLPoint>`），通过 `getPathDecisionPoints()` 供下游读取。
 
 `SLPoint`（见 ../src/planning_core/src/decision_center/decision_center.h ）字段含义：
 
@@ -132,7 +132,7 @@
 
 #### Step 1：清理上一周期决策
 
-- 调用 `decisionInitialize()` 清空 `decisionPoints`，避免历史决策污染当前周期。
+- 调用 `pathDecisionInitialize()` 清空 `pathDecisionPoints`，避免历史决策污染当前周期。
 
 #### Step 2：计算本周期决策视野（纵向）
 
@@ -345,7 +345,7 @@ $$
 - `DECISION_START.s = 60 - 30 = 30m`，`l = 0`
 - 因为最后一个决策不是 STOP，所以追加 `DECISION_END.s = 60 + 30 = 90m`，`l = 0`
 
-最终输出 `decisionPoints`（按顺序）：
+最终输出 `pathDecisionPoints`（按顺序）：
 
 1. `DECISION_START (s=30, l=0)`
 2. `DECISION_LEFT_OVERTAKE (s=60, l=按实现公式计算)`
@@ -369,7 +369,7 @@ $$
 - 插入 `DECISION_START.s = 50 - 30 = 20m`
 - 因为最后一个决策是 STOP，所以**不追加** `DECISION_END`
 
-最终输出 `decisionPoints`（按顺序）：
+最终输出 `pathDecisionPoints`（按顺序）：
 
 1. `DECISION_START (s=20, l=0)`
 2. `DECISION_STOP (s=50, l=0)`
@@ -378,7 +378,7 @@ $$
 
 ### 3.5 下游如何使用这些决策点生成连续局部路径
 
-`LocalPathPlanner::generateLocalPath()`（../src/planning_core/src/local_planner/local_path/local_path_planner.cpp）对 `decisionPoints` 的使用方式可以概括为：
+`LocalPathPlanner::generateLocalPath()`（../src/planning_core/src/local_planner/local_path/local_path_planner.cpp）对 `pathDecisionPoints` 的使用方式可以概括为：
 
 1. 在 $s$ 轴上采样局部路径点（按 ego 当前 `s` 往前推进）。
 2. 对每个采样点 `wayPoint_s`，找到它落在哪两个相邻决策点 `[j, j+1]` 之间。

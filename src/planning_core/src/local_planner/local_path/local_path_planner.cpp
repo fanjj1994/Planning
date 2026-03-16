@@ -46,19 +46,19 @@ namespace Planning
       localPathPointTmp.ddl_ds = 0.0;
 
       // compute l and dl/ds for localPathPointTmp
-      const int32 decisionPointSize = static_cast<int32>(decision->getDecisionPoints().size());
+      const int32 decisionPointSize = static_cast<int32>(decision->getPathDecisionPoints().size());
       for (int32 j = 0; j < decisionPointSize - 1; j++)
       {
         // check if the local path point is between two decision points
-        const float64 segmentStart_s = decision->getDecisionPoints().at(j).s;
-        const float64 segmentStart_l = decision->getDecisionPoints().at(j).l;
+        const float64 segmentStart_s = decision->getPathDecisionPoints().at(j).s;
+        const float64 segmentStart_l = decision->getPathDecisionPoints().at(j).l;
         const float64 segmentStart_dlds = 0.0;
         const float64 segmentStart_ddlds = 0.0;
-        const float64 segmentEnd_s = decision->getDecisionPoints().at(j + 1).s;
-        const float64 segmentEnd_l = decision->getDecisionPoints().at(j + 1).l;
+        const float64 segmentEnd_s = decision->getPathDecisionPoints().at(j + 1).s;
+        const float64 segmentEnd_l = decision->getPathDecisionPoints().at(j + 1).l;
         const float64 segmentEnd_dlds = 0.0;
         const float64 segmentEnd_ddlds = 0.0;
-        if (wayPoint_s >= segmentStart_s && wayPoint_s < segmentEnd_s)
+        if ((wayPoint_s >= segmentStart_s) && (wayPoint_s < segmentEnd_s))
         {
           // utilize 5th-order polynomial to compute l, dl/ds and ddl/ds for localPathPointTmp
           const Eigen::Vector<float64, 6U> coeffsA = PolynomialCurve::computeQuinticPolynomialCoefficients(

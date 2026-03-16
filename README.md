@@ -39,50 +39,14 @@ In addition to the core planner, the project provides a set of supporting module
 
 ## Dependencies
 
-Before building the project, ensure you have the following dependencies installed:
+Before building the project, ensure you have the following 3rd-party dependencies installed:
 
 - **Eigen 3.4.0**
-- **osqp**
+- **osqp 1.0.0**
+- **osqp-eigen 0.10.0**
 - **yaml-cpp**
 - **matplotlib**
 
-### Install Eigen 3.4.0
-
-https://eigen.tuxfamily.org (recommended version: 3.4.0)
-
-```sh
-sudo mv eigen-3.4.0/ /usr/local/include/
-```
-
-### Install osqp
-
-```sh
-git clone https://github.com/oxfordcontrol/osqp.git
-cd osqp
-mkdir build
-cd build
-cmake ..
-sudo make install
-cd ../..
-```
-
-### Install yaml-cpp
-
-```sh
-git clone https://github.com/jbeder/yaml-cpp.git
-cd yaml-cpp
-mkdir build
-cd build
-cmake ..
-sudo make install
-cd ../..
-```
-
-### Install matplotlib
-
-```sh
-pip install matplotlib
-```
 
 ## Getting Started
 

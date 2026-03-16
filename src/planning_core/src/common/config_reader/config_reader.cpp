@@ -24,7 +24,7 @@ namespace Planning
     vehicle.pose_x_ = planningConfig["vehicle"][vehicleName]["pose_x"].as<float32>();
     vehicle.pose_y_ = planningConfig["vehicle"][vehicleName]["pose_y"].as<float32>();
     vehicle.pose_theta_ = planningConfig["vehicle"][vehicleName]["pose_theta"].as<float32>();
-    vehicle.speed_init_ = planningConfig["vehicle"][vehicleName]["speed_init"].as<float32>();
+    vehicle.set_speed_ = planningConfig["vehicle"][vehicleName]["set_speed"].as<float32>();
 
     if (vehicleName != "ego_car")
     {
