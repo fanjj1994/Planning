@@ -100,6 +100,7 @@ All branches must be named with one of the following prefixes:
 | `test/` | Add Google Test cases to verify functions | Yes |
 | `doc/` | Add comments, Markdown documentation, or Doxygen to improve readability | Yes |
 | `sandbox/` | Prototype / explore an idea for self-validation only | **No** |
+| `tool/` | Improve CI actions, scripts or other support tools | Yes |
 
 **Examples:**
 

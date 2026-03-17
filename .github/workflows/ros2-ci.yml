@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup ROS 2 Humble
         uses: ros-tooling/setup-ros@v0.7
@@ -21,14 +21,14 @@ jobs:
 
       # 缓存 apt 包
       - name: Cache apt packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /var/cache/apt/archives
           key: ${{ runner.os }}-apt-${{ hashFiles('.github/workflows/ros2-ci.yml') }}
 
       # 缓存编译的三方库
       - name: Cache third-party libraries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache-libs
         with:
           path: |
