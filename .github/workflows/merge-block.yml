@@ -1,0 +1,34 @@
+name: Merge Block
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  check-merge-block:
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
+
+    steps:
+      - name: Check for do-not-merge label
+        id: check-label
+        run: |
+          LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+          if [[ "$LABELS" == *"do-not-merge"* ]]; then
+            echo "has-do-not-merge=true" >> $GITHUB_OUTPUT
+          else
+            echo "has-do-not-merge=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Block merge if label present
+        if: steps.check-label.outputs.has-do-not-merge == 'true'
+        run: |
+          echo "❌ This PR is blocked from merging due to 'do-not-merge' label."
+          echo "Please remove the label before merging."
+          exit 1
+
+      - name: Approve merge
+        if: steps.check-label.outputs.has-do-not-merge == 'false'
+        run: |
+          echo "✅ This PR can be merged. The 'do-not-merge' label is not present."
