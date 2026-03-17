@@ -16,7 +16,7 @@ namespace Planning
     vehicleWidth = static_cast<float64>(vehicleInfoConfigReader->getVehiclePairs().at(id).width_);
     vehicleID = vehicleInfoConfigReader->getVehiclePairs().at(id).id_;
     vehicleTheta = static_cast<float64>(vehicleInfoConfigReader->getVehiclePairs().at(id).pose_theta_);
-    vehicleVelocity = static_cast<float64>(vehicleInfoConfigReader->getVehiclePairs().at(id).speed_init_);
+    vehicleVelocity = static_cast<float64>(vehicleInfoConfigReader->getVehiclePairs().at(id).set_speed_);
 
     // initialize tp cars' pose
     tf2::Quaternion qtn;

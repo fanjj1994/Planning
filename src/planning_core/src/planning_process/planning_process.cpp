@@ -227,9 +227,15 @@ namespace Planning
     }
 
     // speeds decision making
+    decisionCenter->makeSpeedDecision(egoCar, TpCarsInROI);
 
     // local speeds planning
-    base_msgs::msg::LocalSpeeds localSpeeds_;
+    const auto localSpeeds_ = localSpeedsPlanner->planLocalSpeeds(decisionCenter);
+    if (localSpeeds_.local_speeds.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(), "local speeds is empty!");
+      return;
+    }
 
     // compose trajectory
     const auto localTrajectory_ = localTrajectoryCombiner->combineLocalTrajectory(localPath_, localSpeeds_);

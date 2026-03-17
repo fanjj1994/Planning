@@ -18,7 +18,7 @@ namespace Planning
     float32 pose_x_{ 0.0F }; // unit: m
     float32 pose_y_{ 0.0F }; // unit: m
     float32 pose_theta_{ 0.0F };
-    float32 speed_init_{ 0.0F };
+    float32 set_speed_{ 0.0F };
   };
 
   struct PNCMapStruct

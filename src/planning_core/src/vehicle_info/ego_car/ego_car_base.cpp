@@ -16,7 +16,7 @@ namespace Planning
     vehicleWidth = static_cast<float64>(vehicleInfoConfigReader->getEgoCar().width_);
     vehicleID = vehicleInfoConfigReader->getEgoCar().id_;
     vehicleTheta = static_cast<float64>(vehicleInfoConfigReader->getEgoCar().pose_theta_);
-    vehicleVelocity = static_cast<float64>(vehicleInfoConfigReader->getEgoCar().speed_init_);
+    vehicleVelocity = static_cast<float64>(vehicleInfoConfigReader->getEgoCar().set_speed_);
 
     // initialize ego car's pose
     tf2::Quaternion qtn;

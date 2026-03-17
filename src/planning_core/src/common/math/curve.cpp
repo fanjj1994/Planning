@@ -100,15 +100,17 @@ namespace Planning
     // delta_theta' = A * curvature / cos(delta_theta) - kappa_r
     const float64 delta_theta_prime = A * cartesian.curvature / cos_delta_theta - projectedPoint.rkappa;
 
-    frenet.ddl_ds_2path = -kappa_l_prime * tan_delta_theta + A * delta_theta_prime / (cos_delta_theta * cos_delta_theta);
+    frenet.ddl_ds_2path =
+        -kappa_l_prime * tan_delta_theta + A * delta_theta_prime / (cos_delta_theta * cos_delta_theta);
 
     //================5. calculate sdot = ds/dt================
     frenet.ds_dt_2path = cartesian.speed * cos_delta_theta / A;
 
     //================6. calculate sddot = d^2s/dt^2================
-    frenet.dds_dt_2path = (cartesian.acceleration * cos_delta_theta -
-                     (frenet.ds_dt_2path * frenet.ds_dt_2path) * (frenet.dl_ds_2path * delta_theta_prime - kappa_l_prime)) /
-                    A;
+    frenet.dds_dt_2path =
+        (cartesian.acceleration * cos_delta_theta -
+         (frenet.ds_dt_2path * frenet.ds_dt_2path) * (frenet.dl_ds_2path * delta_theta_prime - kappa_l_prime)) /
+        A;
 
     //================7. calculate ldot = dl/dt================
     frenet.dl_dt_2path = cartesian.speed * sin_delta_theta;

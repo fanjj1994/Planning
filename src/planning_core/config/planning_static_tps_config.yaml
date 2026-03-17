@@ -7,7 +7,7 @@ vehicle:
     pose_x: 0.0 #  ego car x
     pose_y: 0.0 #　ego car y
     pose_theta: 0.0 #　ego car heading
-    speed_init: 1.0 #　ego car init speed
+    set_speed: 1.0 #　ego car set speed
   obs_car1:
     id: 1 #　car id
     frame: "base_footprint_tp1" #  coordinate name
@@ -16,7 +16,7 @@ vehicle:
     pose_x: 60.0 #  obs car x
     pose_y: 0.0 #　obs car y
     pose_theta: 0.0 #  obs car heading
-    speed_init: 0.0 #  obs car init speed
+    set_speed: 0.0 #  obs car set speed
   obs_car2:
     id: 2
     frame: "base_footprint_tp2"
@@ -25,7 +25,7 @@ vehicle:
     pose_x: 120.0
     pose_y: 17.0
     pose_theta: 1.0
-    speed_init: 0.0
+    set_speed: 0.0
   obs_car3:
     id: 3
     frame: "base_footprint_tp3"
@@ -34,7 +34,7 @@ vehicle:
     pose_x: 85.0
     pose_y: 4.0
     pose_theta: 0.0
-    speed_init: 0.0
+    set_speed: 0.0
 
 pnc_map:
   frame: "map" # coordinate name
