@@ -15,7 +15,7 @@ namespace Planning
 {
   DecisionCenter::DecisionCenter() : pathDecisionPoints()
   {
-    RCLCPP_INFO(rclcpp::get_logger("decision_center"), "DecisionCenter is running");
+    RCLCPP_INFO(rclcpp::get_logger("decision_center"), "[Constructor] DecisionCenter is running");
 
     // Read config file for decision center component
     decisionConfigReader = std::make_unique<ConfigReader>();
@@ -27,7 +27,7 @@ namespace Planning
   {
     if (tpInfoList.empty())
     {
-      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "No traffic participant information available");
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "[Constructor] No traffic participant information available");
       return;
     }
 
@@ -78,24 +78,29 @@ namespace Planning
 
     // Core: compute decision points based on the traffic participant information and the ego car information
     RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                "Decision params: leftBound = %.2f, rightBound = %.2f, refLineEnd=%.2f, dmLeastDist=%.2f, tpCount=%zu",
+                "[Path Decision] Decision params: leftBound = %.2f, rightBound = %.2f, refLineEnd=%.2f, "
+                "dmLeastDist=%.2f, tpCount=%zu",
                 leftBoundaryDistance, rightBoundaryDistance, referenceLineEndDistance, decisionMakingLeastDistance,
                 tpInfoList.size());
+    RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                "[Path Decision] Ego car: s=%.2f, l=%.2f, ds_dt=%.2f, dl_dt=%.2f", egoCarInfo->getS(),
+                egoCarInfo->getL(), egoCarInfo->getDsDt(), egoCarInfo->getDlDt());
     for (const auto& tpInfo : tpInfoList)
     {
       /* Longitudinal separation between the TP and the ego vehicle in Frenet coordinates.
          Positive value means the TP is ahead of the ego vehicle. */
       const float64 distanceToEgoCar = tpInfo->getS() - egoCarInfo->getS();
       RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                  "TP[%d]: s=%.2f, l=%.2f, ds_dt=%.2f, dl_dt=%.2f, distToEgo=%.2f", tpInfo->getVehicleID(),
-                  tpInfo->getS(), tpInfo->getL(), tpInfo->getDsDt(), tpInfo->getDlDt(), distanceToEgoCar);
+                  "[Path Decision] TP[%d]: s=%.2f, l=%.2f, ds_dt=%.2f, dl_dt=%.2f, distToEgo=%.2f",
+                  tpInfo->getVehicleID(), tpInfo->getS(), tpInfo->getL(), tpInfo->getDsDt(), tpInfo->getDlDt(),
+                  distanceToEgoCar);
 
       /* Longitudinal range filter: skip TPs that are
          - beyond the reference line end (too far ahead to act on), or
          - more than decisionMakingLeastDistance behind the ego vehicle (already passed). */
       if ((distanceToEgoCar > referenceLineEndDistance) || (distanceToEgoCar < -decisionMakingLeastDistance))
       {
-        RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> filtered: longitudinal range");
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"), "[Path Decision] -> filtered: longitudinal range");
         continue;
       }
       // Tp is inside the corridor boundary or called road
@@ -134,9 +139,9 @@ namespace Planning
              right side; if neither side can be overtaken, then stop at the current position
              ============================================================================================================*/
           /* Left overtake feasibility: the gap to the left boundary must accommodate the ego vehicle width
-             plus one safety margin on each side (2 × safe_dis_lat). */
+             plus one safety margin on each side (2 × lat_safe_margin). */
           if (tpDistanceToLeftBoundary >
-              egoCarInfo->getVehicleWidth() + decisionConfigReader->getDecision().safe_dis_lat_ * 2.0)
+              egoCarInfo->getVehicleWidth() + decisionConfigReader->getDecision().lat_safe_margin_ * 2.0)
           {
             /* Target lateral position is the midpoint between the left road boundary and the TP's
                left bounding-box edge, placing the ego vehicle in the center of the available gap. */
@@ -147,7 +152,7 @@ namespace Planning
           /* Right overtake feasibility: same clearance check on the right side. Only evaluated when
              left overtake is not feasible (strict priority: left > right > stop). */
           else if (tpDistanceToRightBoundary >
-                   egoCarInfo->getVehicleWidth() + decisionConfigReader->getDecision().safe_dis_lat_ * 2.0)
+                   egoCarInfo->getVehicleWidth() + decisionConfigReader->getDecision().lat_safe_margin_ * 2.0)
           {
             /* Target lateral position is the midpoint between the right road boundary and the TP's
                right bounding-box edge. */
@@ -156,16 +161,16 @@ namespace Planning
             pathDecisionPoints.emplace_back(p);
           }
           /* Stop decision: neither side provides sufficient clearance. The ego vehicle is commanded
-             to stop safe_dis_lon metres ahead of the predicted encounter point and wait for the TP
+             to stop long_safe_margin metres ahead of the predicted encounter point and wait for the TP
              to clear the path. Processing subsequent TPs is aborted because a stop supersedes all
              further decisions. */
           else
           {
             p.l = 0.0f;
-            p.s = p.s - decisionConfigReader->getDecision().safe_dis_lon_;
+            p.s = p.s - decisionConfigReader->getDecision().long_safe_margin_;
             p.type = SLPointType::DECISION_STOP;
             RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                        "Traffic participant ID %d cannot be overtaken and is blocking the path. "
+                        "[Path Decision] Traffic participant ID %d cannot be overtaken and is blocking the path. "
                         "Decide to stop at s = %.2f m, l = %.2f m.",
                         tpInfo->getVehicleID(), p.s, p.l);
             pathDecisionPoints.emplace_back(p);
@@ -178,7 +183,7 @@ namespace Planning
         else
         {
           RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                      " -> filtered: TP is moving at relatively high longitudinal speed or with lateral "
+                      "[Path Decision] -> filtered: TP is moving at relatively high longitudinal speed or with lateral "
                       "speed(dl/dt=%.3f, ds/dt=%.2f)",
                       tpInfo->getDlDt(), tpInfo->getDsDt());
           // Todo: add this kind of active tp decision logic.
@@ -188,7 +193,7 @@ namespace Planning
       else
       {
         RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                    " -> filtered: outside corridor (l=%.2f, need %.2f < l < %.2f)", tpInfo->getL(),
+                    "[Path Decision] -> filtered: outside corridor (l=%.2f, need %.2f < l < %.2f)", tpInfo->getL(),
                     rightBoundaryDistance, leftBoundaryDistance);
         // do nothing.
       }
@@ -196,7 +201,7 @@ namespace Planning
 
     if (pathDecisionPoints.empty())
     {
-      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "No decision point generated in this cycle");
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "[Path Decision] No decision point generated in this cycle");
       return;
     }
 
@@ -232,7 +237,8 @@ namespace Planning
   {
     if (tpInfoList.empty())
     {
-      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "No traffic participant information available");
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                  "[Speed Decision] No traffic participant information available");
       return;
     }
 
@@ -265,16 +271,16 @@ namespace Planning
          Adding egoCarInfo->getDsDt() compensates for this offset and recovers the true separation:
            tpSDistanceToEgoCar = (s_TP_on_path - path_start_s) + ds_dt
                               = s_TP_on_path - ego_s */
-      const float64 tpSDistanceToEgoCar = tpInfo->getS2Path() + egoCarInfo->getDsDt();
+      const float64 tpSDistanceToEgoCar = tpInfo->getS2Path() + egoCarInfo->getVehicleVelocity();
 
       /* Longitudinal range filter: skip TPs that are beyond the decision horizon or already well behind ego.
-         The rear margin equals safe_dis_lon to suppress oscillating yield/stop decisions near the ego bumper. */
+         The rear margin equals long_safe_margin to suppress oscillating yield/stop decisions near the ego bumper. */
       if ((tpSDistanceToEgoCar > decisionMakingLeastDistance) ||
-          (tpSDistanceToEgoCar < -(decisionConfigReader->getDecision().safe_dis_lon_)))
+          (tpSDistanceToEgoCar < -(decisionConfigReader->getDecision().long_safe_margin_)))
       {
         RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                    " -> filtered: longitudinal range (tpDistToEgo=%.2f, leastDist=%.2f)", tpSDistanceToEgoCar,
-                    decisionMakingLeastDistance);
+                    "[Speed Decision] -> filtered: longitudinal range (tpDistToEgo=%.2f, leastDist=%.2f)",
+                    tpSDistanceToEgoCar, decisionMakingLeastDistance);
         continue;
       }
 
@@ -282,7 +288,7 @@ namespace Planning
       float64 t_out{ 0.0 };
 
       /* ─── Branch 1: TP currently overlaps the path cross-section laterally ─── */
-      if (std::fabs(tpInfo->getL2Path()) < tpInfo->getVehicleWidth() / 2.0)
+      if (std::fabs(tpInfo->getL2Path()) < (tpInfo->getVehicleWidth() / 2.0))
       {
         /* Sub-branch 1a: TP is laterally static (dl/dt ≈ 0) — parked or driving straight on the path. */
         if (std::fabs(tpInfo->getDlDt2Path()) < MINSPEED)
@@ -308,16 +314,16 @@ namespace Planning
             t_out = static_cast<float64>(decisionConfigReader->getLocalSpeeds().speeds_size_);
 
             /* Project the safe-following position to the representative mid-window time (t0 + SimpleTTB):
-               s_2path = current_distance - safe_dis_lon + tp_speed × p.t
+               s_2path = current_distance - long_safe_margin + tp_speed × p.t
                This defines the ST vertex the QP must stay below. */
             p.t = p.t0 + SimpleTTB;
-            p.s_2path =
-                tpSDistanceToEgoCar - decisionConfigReader->getDecision().safe_dis_lon_ + tpInfo->getDsDt2Path() * p.t;
+            p.s_2path = tpSDistanceToEgoCar - decisionConfigReader->getDecision().long_safe_margin_ +
+                        tpInfo->getDsDt2Path() * p.t;
             p.ds_dt_2path = tpInfo->getDsDt2Path();
             p.type = STPointType::DECISION_STOP_OR_FOLLOW;
             speedDecisionPoints.emplace_back(p);
             RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                        "TP[%d] occupies path, slower than ego or unpassable. "
+                        "[Speed Decision] TP[%d] occupies path, slower than ego or unpassable. "
                         "STOP_OR_FOLLOW: t=%.2f s=%.2f ds/dt=%.2f (t_in=%.2f t_out=%.2f)",
                         tpInfo->getVehicleID(), p.t, p.s_2path, p.ds_dt_2path, t_in, t_out);
             tpInfo->setTInTOut(p.t, t_in, t_out);
@@ -329,89 +335,86 @@ namespace Planning
            yield (let it clear) or drive through assertively (pass before it arrives). */
         else
         {
-          // Skip if configured set speed is near zero — time-based calculations below would be undefined.
-          if (std::fabs(decisionConfigReader->getEgoCar().set_speed_) < MINSPEED)
-          {
-            continue;
-          }
-
-          /* Estimated time for ego (at set_speed_) to reach the TP's current longitudinal position [frames].
-             Used to determine whether ego arrives before or after the TP clears the path. */
-          const float64 egoCarToTpSTimeUsingSetSpeed =
-              tpSDistanceToEgoCar / decisionConfigReader->getEgoCar().set_speed_;
-
-          /* Time for the TP's lateral centre to reach the path centre-line (l = 0) [frames].
-             A negative value means the TP is already moving away from the path — no future conflict. */
-          const float64 tpToPathTime = (0.0 - tpInfo->getL2Path()) / tpInfo->getDlDt2Path();
-
-          if (tpToPathTime < 0.0)
-          {
-            // TP is diverging from the path. No collision risk; skip this TP.
-            continue;
-          }
-
-          // Anchor the TP's ST trajectory at the current tracking instant.
-          tpInfo->updateT0();
-          p.t0 = tpInfo->getT0();
-          p.s0 = tpSDistanceToEgoCar - decisionMakingLeastDistance;
-
-          /* Build the ST-shadow conflict window [t_in, t_out] with bounding-box safety margins:
-             - timeToCrossHalfWidthOfTp: time for the TP to travel one vehicle half-width laterally.
-             - deltaT: longitudinal safe distance converted to a time margin using set_speed_. */
-          const float64 deltaT =
-              decisionConfigReader->getDecision().safe_dis_lon_ / decisionConfigReader->getEgoCar().set_speed_;
-          const float64 timeToCrossHalfWidthOfTp =
-              (tpInfo->getVehicleWidth() / 2.0) / std::fabs(tpInfo->getDlDt2Path());
-          t_in = tpToPathTime - timeToCrossHalfWidthOfTp;
-          t_out = tpToPathTime + timeToCrossHalfWidthOfTp;
-          RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                      "TP[%d] laterally crossing path: tpToPathTime=%.2f t_in=%.2f t_out=%.2f egoArrivalTime=%.2f",
-                      tpInfo->getVehicleID(), tpToPathTime, t_in, t_out, egoCarToTpSTimeUsingSetSpeed);
-
-          if ((egoCarToTpSTimeUsingSetSpeed > tpToPathTime) && (egoCarToTpSTimeUsingSetSpeed < (t_out + deltaT)))
-          {
-            /* YIELD: ego would arrive while the TP is still crossing (or just after it barely clears).
-               Ego decelerates to wait for the TP to fully exit the path.
-               ST vertex at (t_out, safe_distance_behind_tp) — the earliest time ego may safely proceed. */
-            p.t = t_out;
-            p.s_2path = tpSDistanceToEgoCar - decisionConfigReader->getDecision().safe_dis_lon_;
-            p.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
-            p.type = STPointType::DECISION_YIELD;
-            speedDecisionPoints.emplace_back(p);
-            RCLCPP_INFO(rclcpp::get_logger("decision_center"), " -> YIELD to TP[%d]: wait until t=%.2f, hold at s=%.2f",
-                        tpInfo->getVehicleID(), p.t, p.s_2path);
-            tpInfo->setTInTOut(p.t, t_in, t_out);
-            break; // YIELD supersedes all subsequent TPs.
-          }
-          else if ((egoCarToTpSTimeUsingSetSpeed < tpToPathTime) && (egoCarToTpSTimeUsingSetSpeed > (t_in - deltaT)))
-          {
-            /* ASSERTIVE DRIVE: ego would arrive just before the TP enters the path (within safety buffer).
-               Ego maintains or increases speed to clear the TP's future conflict zone ahead of it.
-               ST vertex at (t_in, safe_distance_ahead_of_tp) — the latest time ego must have passed. */
-            p.t = t_in;
-            p.s_2path = tpSDistanceToEgoCar + decisionConfigReader->getDecision().safe_dis_lon_;
-            p.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
-            p.type = STPointType::DECISION_ASSERTIVE_DRIVE;
-            speedDecisionPoints.emplace_back(p);
-            RCLCPP_INFO(rclcpp::get_logger("decision_center"),
-                        " -> ASSERTIVE DRIVE past TP[%d]: clear before t=%.2f, target s=%.2f", tpInfo->getVehicleID(),
-                        p.t, p.s_2path);
-            tpInfo->setTInTOut(p.t, t_in, t_out);
-            break; // ASSERTIVE_DRIVE supersedes all subsequent TPs.
-          }
-          else
-          {
-            // Ego arrival time is outside the TP's conflict window with safety margin. No action required.
-            continue;
-          }
         }
+      }
+      /* ─── Branch 2: TP currently does not overlap the path cross-section laterally ─── */
+      else
+      {
+        // Skip if configured set speed is near zero — time-based calculations below would be undefined.
+        if (std::fabs(decisionConfigReader->getEgoCar().set_speed_) < MINSPEED)
+        {
+          continue;
+        }
+
+        /* Estimated time for ego (at set_speed_) to reach the TP's current longitudinal position [frames].
+           Used to determine whether ego arrives before or after the TP clears the path. */
+        const float64 egoCarToTpSTimeUsingSetSpeed = tpSDistanceToEgoCar / decisionConfigReader->getEgoCar().set_speed_;
+
+        /* Time for the TP's lateral centre to reach the path centre-line (l = 0) [frames].
+           A negative value means the TP is already moving away from the path — no future conflict. */
+        const float64 tpToPathTime = (0.0 - tpInfo->getL2Path()) / tpInfo->getDlDt2Path();
+
+        if (tpToPathTime < 0.0)
+        {
+          // TP is diverging from the path. No collision risk; skip this TP.
+          continue;
+        }
+
+        // Anchor the TP's ST trajectory at the current tracking instant.
+        tpInfo->updateT0();
+        p.t0 = tpInfo->getT0();
+        p.s0 = tpSDistanceToEgoCar - decisionMakingLeastDistance;
+
+        /* Build the ST-shadow conflict window [t_in, t_out] with bounding-box safety margins:
+           - timeToCrossHalfWidthOfTp: time for the TP to travel one vehicle half-width laterally.
+           - deltaT: longitudinal safe distance converted to a time margin using set_speed_. */
+        const float64 deltaT =
+            decisionConfigReader->getDecision().long_safe_margin_ / decisionConfigReader->getEgoCar().set_speed_;
+        const float64 timeToCrossHalfWidthOfTp = (tpInfo->getVehicleWidth() / 2.0) / std::fabs(tpInfo->getDlDt2Path());
+        t_in = tpToPathTime - timeToCrossHalfWidthOfTp;
+        t_out = tpToPathTime + timeToCrossHalfWidthOfTp;
+        RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                    "[Speed Decision] TP[%d] laterally crossing path: tpToPathTime=%.2f t_in=%.2f t_out=%.2f "
+                    "egoArrivalTime=%.2f",
+                    tpInfo->getVehicleID(), tpToPathTime, t_in, t_out, egoCarToTpSTimeUsingSetSpeed);
+
+        if ((egoCarToTpSTimeUsingSetSpeed > tpToPathTime) && (egoCarToTpSTimeUsingSetSpeed < (t_out + deltaT)))
+        {
+          /* YIELD: ego would arrive while the TP is still crossing (or just after it barely clears).
+             Ego decelerates to wait for the TP to fully exit the path.
+             ST vertex at (t_out, safe_distance_behind_tp) — the earliest time ego may safely proceed. */
+          p.t = t_out;
+          p.s_2path = tpSDistanceToEgoCar - decisionConfigReader->getDecision().long_safe_margin_;
+          p.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
+          p.type = STPointType::DECISION_YIELD;
+          speedDecisionPoints.emplace_back(p);
+          RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                      "[Speed Decision] -> YIELD to TP[%d]: wait until t=%.2f, hold at s=%.2f", tpInfo->getVehicleID(),
+                      p.t, p.s_2path);
+        }
+        else if ((egoCarToTpSTimeUsingSetSpeed < tpToPathTime) && (egoCarToTpSTimeUsingSetSpeed > (t_in - deltaT)))
+        {
+          /* ASSERTIVE DRIVE: ego would arrive just before the TP enters the path (within safety buffer).
+             Ego maintains or increases speed to clear the TP's future conflict zone ahead of it.
+             ST vertex at (t_in, safe_distance_ahead_of_tp) — the latest time ego must have passed. */
+          p.t = t_in;
+          p.s_2path = tpSDistanceToEgoCar + decisionConfigReader->getDecision().long_safe_margin_;
+          p.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
+          p.type = STPointType::DECISION_ASSERTIVE_DRIVE;
+          speedDecisionPoints.emplace_back(p);
+          RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                      "[Speed Decision] -> ASSERTIVE DRIVE past TP[%d]: clear before t=%.2f, target s=%.2f",
+                      tpInfo->getVehicleID(), p.t, p.s_2path);
+        }
+        tpInfo->setTInTOut(p.t, t_in, t_out);
       }
     }
 
     /* ── Post-loop: add DECISION_START and (conditionally) DECISION_END framing points ── */
     if (speedDecisionPoints.empty())
     {
-      RCLCPP_INFO(rclcpp::get_logger("decision_center"), "No speed decision point generated in this cycle");
+      RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                  "[Speed Decision] No speed decision point generated in this cycle");
       return;
     }
 
@@ -425,24 +428,21 @@ namespace Planning
     pStart.s_2path = speedDecisionPoints.front().s0;
     pStart.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
     pStart.type = STPointType::DECISION_START;
-    speedDecisionPoints.insert(speedDecisionPoints.begin(), pStart);
+    speedDecisionPoints.emplace(speedDecisionPoints.begin(), pStart);
 
-    /* Append DECISION_END only for YIELD and ASSERTIVE_DRIVE decisions.
-       For STOP_OR_FOLLOW the constraint runs to the end of the planning window (t_out = speed_size_),
-       so no explicit end marker is added — analogous to DECISION_STOP in path planning. */
-    if (decisionType != STPointType::DECISION_STOP_OR_FOLLOW)
-    {
-      const STPoint& lastPoint = speedDecisionPoints.back();
-      STPoint pEnd{};
-      pEnd.t = static_cast<float64>(decisionConfigReader->getLocalSpeeds().speeds_size_);
-      pEnd.s_2path = lastPoint.s_2path + lastPoint.ds_dt_2path * (pEnd.t - lastPoint.t);
-      pEnd.ds_dt_2path = decisionConfigReader->getEgoCar().set_speed_;
-      pEnd.type = STPointType::DECISION_END;
-      speedDecisionPoints.emplace_back(pEnd);
-    }
+    /* Append DECISION_END: marks where the constrained speed zone ends in the ST graph.
+       Placed at the end of the local speed profile to provide the QP with a smooth ramp-out condition. */
+    STPoint pEnd{};
+    pEnd.t = static_cast<float64>(decisionConfigReader->getLocalSpeeds().speeds_size_);
+    pEnd.s_2path = speedDecisionPoints.back().s_2path +
+                   speedDecisionPoints.back().ds_dt_2path * (pEnd.t - speedDecisionPoints.back().t);
+    pEnd.ds_dt_2path = speedDecisionPoints.back().ds_dt_2path;
+    pEnd.type = STPointType::DECISION_END;
+    speedDecisionPoints.emplace_back(pEnd);
 
-    RCLCPP_INFO(rclcpp::get_logger("decision_center"), "Speed decision finalized: type=%d, total_points=%zu",
-                static_cast<int>(decisionType), speedDecisionPoints.size());
+    RCLCPP_INFO(rclcpp::get_logger("decision_center"),
+                "[Speed Decision] Speed decision finalized: type=%d, total_points=%zu", static_cast<int>(decisionType),
+                speedDecisionPoints.size());
   }
 
   void DecisionCenter::pathDecisionInitialize()

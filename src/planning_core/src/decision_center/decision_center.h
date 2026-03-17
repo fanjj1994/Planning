@@ -108,7 +108,7 @@ namespace Planning
                          ///<   - \c DECISION_ASSERTIVE_DRIVE  : ego trajectory must pass *above* the shadow
                          ///<                                    (accelerate and clear before \c t_in).
                          ///<   - \c DECISION_STOP_OR_FOLLOW   : ego shall not exceed the TP's position by more
-                         ///<                                    than \c safe_dis_lon; degenerates to a hard stop
+                         ///<                                    than \c long_safe_margin; degenerates to a hard stop
                          ///<                                    when \c ds_dt_2path = 0 and to cruise-follow when
                          ///<                                    \c ds_dt_2path > 0.
                          ///<   - \c DECISION_START / \c DECISION_END : delimit the interval over which the
@@ -188,7 +188,7 @@ namespace Planning
     ///         :Set target lateral offset to the center of\nthe right gap between TP and right road boundary;
     ///         :Emit DECISION_RIGHT_OVERTAKE point;
     ///       else (neither side feasible)
-    ///         :Set stop position safe_dis_lon ahead of the TP\nto let the TP clear the path first;
+    ///         :Set stop position long_safe_margin ahead of the TP\nto let the TP clear the path first;
     ///         :Emit DECISION_STOP point;
     ///         :Stop supersedes all further decisions - break loop;
     ///         break
@@ -226,21 +226,23 @@ namespace Planning
     /// \brief Core entry point for speed decisions: generates the STPoint list for one planning cycle.
     ///
     /// Iterates over all traffic participants in \p tpInfoList, applies a longitudinal range filter,
-    /// and for each TP that laterally overlaps the local path decides between three strategies:
+    /// and decides between three strategies based on the TP's lateral relationship with the local path:
     ///
-    /// - **STOP_OR_FOLLOW** (sub-branch 1a): TP is laterally static and slower than ego. Ego must
-    ///   maintain \c safe_dis_lon behind the TP for the entire planning window. Degenerates to a
-    ///   hard stop when the TP's longitudinal speed is near zero.
-    /// - **YIELD** (sub-branch 1b): TP is laterally crossing the path and ego would arrive during
-    ///   the conflict window [t_in, t_out]. Ego decelerates to let the TP clear before proceeding.
-    /// - **ASSERTIVE_DRIVE** (sub-branch 1b): TP is laterally crossing but ego would arrive just
-    ///   before \c t_in (within the longitudinal safety buffer). Ego maintains/increases speed to
-    ///   clear the conflict zone ahead of the TP.
+    /// - **STOP_OR_FOLLOW** (Branch 1 — TP overlaps path, laterally static): TP is already on the
+    ///   path with negligible lateral speed and is slower than ego. Ego must maintain \c long_safe_margin
+    ///   behind the TP for the entire planning window. Degenerates to a hard stop when the TP's
+    ///   longitudinal speed is near zero. This decision breaks the loop immediately.
+    /// - **YIELD** (Branch 2 — TP does not yet overlap path, approaching): TP is laterally outside
+    ///   the path cross-section but approaching. Ego would arrive at the TP's longitudinal position
+    ///   while the TP is still crossing (or just after it barely clears) the conflict window
+    ///   [t_in, t_out]. Ego decelerates to let the TP fully exit the path.
+    /// - **ASSERTIVE_DRIVE** (Branch 2 — TP does not yet overlap path, approaching): Same geometry
+    ///   as YIELD, but ego would arrive just before \c t_in (within the longitudinal safety buffer).
+    ///   Ego maintains or increases speed to clear the conflict zone ahead of the TP.
     ///
-    /// Only the first qualifying TP generates a decision; the loop breaks immediately after emitting
-    /// an STPoint. After the loop, a DECISION_START framing point is always prepended. A
-    /// DECISION_END framing point is appended for YIELD and ASSERTIVE_DRIVE decisions only
-    /// (analogous to how DECISION_STOP in path planning omits an end marker).
+    /// After the loop, a DECISION_START framing point is always prepended at the TP's tracking
+    /// origin (t0, s0), and a DECISION_END framing point is always appended at the end of the
+    /// planning window, extrapolated from the last decision point's velocity.
     ///
     /// @startuml
     /// start
@@ -268,47 +270,42 @@ namespace Planning
     ///         :STOP_OR_FOLLOW supersedes all further decisions - break loop;
     ///         break
     ///       endif
-    ///     else (TP is laterally moving)
-    ///       if (Ego configured set speed is near zero?) then (yes)
-    ///         :Ignore TP - time calculation undefined at zero speed;
-    ///       else
-    ///         :Estimate time for ego to reach TP longitudinal position at set speed;
-    ///         :Compute time for TP lateral centre to reach path centre-line;
-    ///         if (Is TP moving away from the path?) then (yes)
-    ///           :Ignore TP - diverging, no future conflict;
-    ///         else (TP is approaching the path)
-    ///           :Record TP tracking time anchor and ST reference line origin;
-    ///           :Compute conflict window start and end\nusing TP half-width and longitudinal safety margin;
-    ///           if (Ego would arrive during or just after the conflict window?) then (yes)
-    ///             :Place ST vertex at conflict window exit time\nat safe distance behind TP;
-    ///             :Set reference speed to configured set speed;
-    ///             :Emit DECISION_YIELD point;
-    ///             :YIELD supersedes all further decisions - break loop;
-    ///             break
-    ///           elseif (Ego would arrive just before the conflict window?) then (yes)
-    ///             :Place ST vertex at conflict window entry time\nat safe distance ahead of TP;
-    ///             :Set reference speed to configured set speed;
-    ///             :Emit DECISION_ASSERTIVE_DRIVE point;
-    ///             :ASSERTIVE_DRIVE supersedes all further decisions - break loop;
-    ///             break
-    ///           else (Ego arrival is safely outside conflict window)
-    ///             :Ignore TP - no collision risk;
-    ///           endif
+    ///     else (TP is laterally moving while on path)
+    ///       :No action - TP is already crossing and handled\nby path decision; skip;
+    ///     endif
+    ///   else (TP does not overlap path laterally)
+    ///     if (Ego configured set speed is near zero?) then (yes)
+    ///       :Ignore TP - time calculation undefined at zero speed;
+    ///     else
+    ///       :Estimate time for ego to reach TP longitudinal position at set speed;
+    ///       :Compute time for TP lateral centre to reach path centre-line;
+    ///       if (Is TP moving away from the path?) then (yes)
+    ///         :Ignore TP - diverging, no future conflict;
+    ///       else (TP is approaching the path)
+    ///         :Record TP tracking time anchor and ST reference line origin;
+    ///         :Compute conflict window [t_in, t_out]\nusing TP half-width and longitudinal safety margin;
+    ///         if (Ego would arrive during or just after the conflict window?) then (yes)
+    ///           :Place ST vertex at conflict window exit time\nat safe distance behind TP;
+    ///           :Set reference speed to configured set speed;
+    ///           :Emit DECISION_YIELD point;
+    ///         elseif (Ego would arrive just before the conflict window?) then (yes)
+    ///           :Place ST vertex at conflict window entry time\nat safe distance ahead of TP;
+    ///           :Set reference speed to configured set speed;
+    ///           :Emit DECISION_ASSERTIVE_DRIVE point;
+    ///         else (Ego arrival is safely outside conflict window)
+    ///           :No action needed;
     ///         endif
+    ///         :Store conflict window times on TP;
     ///       endif
     ///     endif
-    ///   else (TP does not overlap path)
-    ///     :Ignore TP - not in path cross-section;
     ///   endif
     /// endwhile (all TPs processed)
     /// if (Any speed decision points generated?) then (no)
     ///   :Log and return - free drive, no action needed;
     ///   stop
     /// endif
-    /// :Prepend DECISION_START point at TP tracking origin\nto give the QP a smooth ramp-in condition;
-    /// if (Decision type is not STOP_OR_FOLLOW?) then (yes)
-    ///   :Append DECISION_END point at end of planning window\nextrapolated at configured set speed;
-    /// endif
+    /// :Prepend DECISION_START point at TP tracking origin\n(t0, s0) with set_speed;
+    /// :Append DECISION_END point at end of planning window\nextrapolated from last decision point's velocity;
     /// stop
     /// @enduml
     ///
