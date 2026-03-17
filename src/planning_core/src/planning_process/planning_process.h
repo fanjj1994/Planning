@@ -4,6 +4,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include "base_msgs/msg/pnc_map.hpp"
 #include "base_msgs/msg/local_trajectory.hpp"
+#include "base_msgs/msg/obs_info.hpp"
+#include "base_msgs/msg/plot_info.hpp"
 #include "base_msgs/srv/pnc_map_service.hpp"
 #include "base_msgs/srv/global_path_service.hpp"
 #include "nav_msgs/msg/path.hpp"
@@ -66,7 +68,7 @@ namespace Planning
     std::shared_ptr<VehicleInfoBase> egoCar;                   // ego car
     std::vector<std::shared_ptr<VehicleInfoBase>> TpCars;      // other traffic participants (cars)
     std::vector<std::shared_ptr<VehicleInfoBase>> TpCarsInROI; // other traffic participants (cars) in ROI
-    float64 obsDis;                                            // obstacle distance
+    float64 perceptionRange;                                   // ego car perception range
 
     // tf broadcaster: broadcast vehicle's initial information (e.g., pose info) to control module
     std::shared_ptr<tf2_ros::StaticTransformBroadcaster> tfBroadcaster;
@@ -96,6 +98,9 @@ namespace Planning
 
     // local trajectory publisher
     rclcpp::Publisher<base_msgs::msg::LocalTrajectory>::SharedPtr localTrajectoryPublisher;
+
+    // data plot publisher
+    rclcpp::Publisher<base_msgs::msg::PlotInfo>::SharedPtr dataPlotPublisher;
 
     rclcpp::TimerBase::SharedPtr runtime; // runtime for planning process module
   };

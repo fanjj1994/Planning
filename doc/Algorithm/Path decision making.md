@@ -98,8 +98,8 @@
 
 关键配置来源：../src/planning_core/config/planning_static_tps_config.yaml
 
-- `decision.safe_dis_lat`：侧向安全裕度（左右各一份）。
-- `decision.safe_dis_lon`：纵向安全裕度（停车点提前量）。
+- `decision.lat_safe_margin`：侧向安全裕度（左右各一份）。
+- `decision.long_safe_margin`：纵向安全裕度（停车点提前量）。
 - `pnc_map.road_half_width`：道路半宽。
 - `reference_line.front_size` 与 `pnc_map.segment_len`：参考线前向长度。
 - `local_path.path_size`：局部路径点数，用于推导决策视野。
@@ -218,7 +218,7 @@
 - 将障碍物在 Frenet 坐标系的横向占据近似为一个区间 $[l_{tp}-w_{tp}/2,\ l_{tp}+w_{tp}/2]$（即上一步的 `tpRightEdge` 到 `tpLeftEdge`）。
 - 将道路边界视为“硬约束边界”（不可穿越），并计算障碍物到道路边界的可通行净空（`gapLeft/gapRight`）。
 - 用净空是否足够容纳“ego 车辆宽度 + 两侧安全裕度”来判断绕行是否会产生横向碰撞风险。
-- 当左右两侧都不满足净空要求时，采用**纵向安全缓冲**触发停车：停车点的纵向位置取 $s_{stop}=s_{meet}-d_{lon}$，其中 $s_{meet}$ 来自 Step 6 的相遇点预测（变量 `p.s`），$d_{lon}$ 来自配置 `decision.safe_dis_lon`。
+- 当左右两侧都不满足净空要求时，采用**纵向安全缓冲**触发停车：停车点的纵向位置取 $s_{stop}=s_{meet}-d_{lon}$，其中 $s_{meet}$ 来自 Step 6 的相遇点预测（变量 `p.s`），$d_{lon}$ 来自配置 `decision.long_safe_margin`。
 
 具体到代码（见 [decision_center.cpp](../src/planning_core/src/decision_center/decision_center.cpp)），判定阈值为：
 
@@ -229,7 +229,7 @@ $$
 其中：
 
 - $w_{ego}$ 对应 `egoCarInfo->getVehicleWidth()`
-- $d_{lat}$ 对应配置 `decision.safe_dis_lat`
+- $d_{lat}$ 对应配置 `decision.lat_safe_margin`
 
 左右绕行可行性的判定即：
 
@@ -248,7 +248,7 @@ $$
 
 判定阈值采用“ego 宽度 + 双侧安全裕度”：
 
-- 可绕行条件：`gap > ego.width + 2 * safe_dis_lat`
+- 可绕行条件：`gap > ego.width + 2 * lat_safe_margin`
 
 1) **左绕行（优先）**
 
@@ -267,7 +267,7 @@ $$
 - 否则：
 	- `p.type = DECISION_STOP`
 	- `p.l = 0`
-	- `p.s = p.s - safe_dis_lon`（在预测相遇点前方预留纵向安全距离；实现为减法，表示“提前停车”）
+	- `p.s = p.s - long_safe_margin`（在预测相遇点前方预留纵向安全距离；实现为减法，表示“提前停车”）
 	- 并 `break`：停车决策优先级最高，直接终止后续 TP 处理。
 
 > 实现细节提示：代码中的做法是“取中点”:
@@ -297,7 +297,7 @@ $$
 - 地图/道路：`road_half_width = 4.0m`
 	- `leftBoundaryDistance = 1.5 * road_half_width = 6.0m`
 	- `rightBoundaryDistance = -(0.5 * road_half_width) = -2.0m`（右边界在参考线右侧，Frenet 坐标为负值）
-- 安全距离：`safe_dis_lat = 0.5m`，`safe_dis_lon = 10.0m`
+- 安全距离：`lat_safe_margin = 0.5m`，`long_safe_margin = 10.0m`
 - 局部路径点数：`local_path.path_size = 80`
 	- `decisionMakingLeadPoint = clamp(80 - 50, 30, 40) = 30`
 - Ego 状态：`ego.s = 50.0m`，`ego.ds/dt = 1.0m/s`，`ego.width = 1.5m`
@@ -331,7 +331,7 @@ $$
 
 - `tpLeftEdge = tp.l + tpHalfWidth = 2.3 + 0.8 = 3.1m`
 - `gapLeft = leftBoundaryDistance - tpLeftEdge = 6.0 - 3.1 = 2.9m`
-- 左侧绕行阈值：`ego.width + 2 * safe_dis_lat = 1.5 + 1.0 = 2.5m`
+- 左侧绕行阈值：`ego.width + 2 * lat_safe_margin = 1.5 + 1.0 = 2.5m`
 - `gapLeft = 2.9 > 2.5`，因此触发 **左绕行**。
 
 5) **生成决策点**：
@@ -365,7 +365,7 @@ $$
 因此走“停车”分支：
 
 - `p.type = DECISION_STOP`
-- `p.s = predicted_meet_s - safe_dis_lon = 60 - 10 = 50m`
+- `p.s = predicted_meet_s - long_safe_margin = 60 - 10 = 50m`
 - 插入 `DECISION_START.s = 50 - 30 = 20m`
 - 因为最后一个决策是 STOP，所以**不追加** `DECISION_END`
 

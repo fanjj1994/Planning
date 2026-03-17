@@ -10,7 +10,7 @@ namespace Planning
     // Read config file for planning process
     configReaderProcess = std::make_unique<ConfigReader>();
     configReaderProcess->readProcessConfig();
-    obsDis = configReaderProcess->getProcess().obs_dis_;
+    perceptionRange = configReaderProcess->getProcess().perception_range_;
 
     // create ego car and other tps
     egoCar = std::make_shared<EgoCar>();
@@ -54,6 +54,9 @@ namespace Planning
 
     // create local trajectory publisher
     localTrajectoryPublisher = this->create_publisher<base_msgs::msg::LocalTrajectory>("local_trajectory", 10);
+
+    // create data plot publisher
+    dataPlotPublisher = this->create_publisher<base_msgs::msg::PlotInfo>("plot_info", 10);
   }
 
   boolean PlanningProcess::process()
@@ -177,7 +180,8 @@ namespace Planning
     {
       getVehicleLocation(tpCar);
       if (std::hypot(egoCar->getVehiclePose().pose.position.x - tpCar->getVehiclePose().pose.position.x,
-                     egoCar->getVehiclePose().pose.position.y - tpCar->getVehiclePose().pose.position.y) <= obsDis)
+                     egoCar->getVehiclePose().pose.position.y - tpCar->getVehiclePose().pose.position.y) <=
+          perceptionRange)
       {
         TpCarsInROI.emplace_back(tpCar);
       }
@@ -247,6 +251,25 @@ namespace Planning
     localTrajectoryPublisher->publish(localTrajectory_); // publish local trajectory
 
     // update data plotting
+    base_msgs::msg::PlotInfo plotInfo;
+    plotInfo.header.stamp = this->get_clock()->now();
+    plotInfo.header.frame_id = configReaderProcess->getPNCMap().frame_;
+    plotInfo.trajectory_info = localTrajectory_;
+
+    base_msgs::msg::ObsInfo tpInfo;
+    for (const auto& tpCar : TpCarsInROI)
+    {
+      tpInfo.obs_length = tpCar->getVehicleLength();
+      tpInfo.obs_width = tpCar->getVehicleWidth();
+      tpInfo.l = tpCar->getL();
+      tpInfo.s = tpCar->getS();
+      tpInfo.s_2path = tpCar->getS2Path();
+      tpInfo.ds_dt_2path = tpCar->getDsDt2Path();
+      tpInfo.t_in = tpCar->getTIn();
+      tpInfo.t_out = tpCar->getTOut();
+      plotInfo.obs_info.emplace_back(tpInfo);
+    }
+    dataPlotPublisher->publish(plotInfo); // publish data plot
 
     // update vehicle's info
     egoCar->updateCartesianInfo(localTrajectory_.local_trajectory.front());

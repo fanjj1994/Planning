@@ -13,7 +13,7 @@ namespace Planning
   {
   public:
     PNCMapServer();
-    PNCMapServer(const PNCMapServer&) = delete;
+    PNCMapServer(const PNCMapServer &) = delete;
     ~PNCMapServer() = default;
 
   private:
