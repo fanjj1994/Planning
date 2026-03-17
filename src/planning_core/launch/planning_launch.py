@@ -66,10 +66,18 @@ def generate_launch_description():
         )
 
 
+    # launch rviz2 node
     rviz2 = Node(
         package="rviz2",
         executable="rviz2",
         arguments=["-d", rviz_conf_path]
+    )
+
+    # launch data plot node
+    data_plot = Node(
+        package="data_plot",
+        executable="data_plot",
+        name="data_plot"
     )
 
     # launch pnc map server
@@ -134,4 +142,4 @@ def generate_launch_description():
         ]
     )
 
-    return LaunchDescription([car_main, tp_car, rviz2, planning])
+    return LaunchDescription([car_main, tp_car, rviz2, data_plot, planning])
