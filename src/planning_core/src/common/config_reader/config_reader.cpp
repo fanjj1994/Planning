@@ -38,9 +38,9 @@ namespace Planning
     {
       readPNCMapConfig();
       readVehicleConfig(egoCar, "ego_car");
-      readVehicleConfig(tpCar1, "obs_car1");
-      readVehicleConfig(tpCar2, "obs_car2");
-      readVehicleConfig(tpCar3, "obs_car3");
+      readVehicleConfig(tpCar1, "tp_car1");
+      readVehicleConfig(tpCar2, "tp_car2");
+      readVehicleConfig(tpCar3, "tp_car3");
     }
     catch (const YAML::Exception& e)
     {
@@ -129,8 +129,8 @@ namespace Planning
       readLocalPathConfig();
       readLocalSpeedsConfig();
 
-      decision.safe_dis_lat_ = planningConfig["decision"]["safe_dis_lat"].as<float32>();
-      decision.safe_dis_lon_ = planningConfig["decision"]["safe_dis_lon"].as<float32>();
+      decision.lat_safe_margin_ = planningConfig["decision"]["lat_safe_margin"].as<float32>();
+      decision.long_safe_margin_ = planningConfig["decision"]["long_safe_margin"].as<float32>();
     }
     catch (const YAML::Exception& e)
     {
@@ -146,7 +146,7 @@ namespace Planning
       readGlobalPathConfig();
       readVehiclesConfig();
 
-      process.obs_dis_ = planningConfig["planning_process"]["obs_dis"].as<float32>();
+      process.perception_range_ = planningConfig["planning_process"]["perception_range"].as<float32>();
     }
     catch (const YAML::Exception& e)
     {

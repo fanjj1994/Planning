@@ -8,16 +8,16 @@ vehicle:
     pose_y: 0.0 #　ego car y
     pose_theta: 0.0 #　ego car heading
     set_speed: 1.0 #　ego car set speed
-  obs_car1:
+  tp_car1:
     id: 1 #　car id
     frame: "base_footprint_tp1" #  coordinate name
-    length: 8.0 #　obs car length
-    width: 2.6 #  obs car width
-    pose_x: 65.0 #  obs car x
-    pose_y: 30.0 #　obs car y
-    pose_theta: -1.57 #  obs car heading
-    set_speed: 0.5 #  obs car set speed
-  obs_car2:
+    length: 8.0 # tp car length
+    width: 2.6 #  tp car width
+    pose_x: 65.0 #  tp car x
+    pose_y: 30.0 #　tp car y
+    pose_theta: -1.57 #  tp car heading
+    set_speed: 0.5 #  tp car set speed
+  tp_car2:
     id: 2
     frame: "base_footprint_tp2"
     length: 6.0
@@ -26,7 +26,7 @@ vehicle:
     pose_y: -75.0
     pose_theta: 1.57
     set_speed: 0.5
-  obs_car3:
+  tp_car3:
     id: 3
     frame: "base_footprint_tp3"
     length: 3.0
@@ -60,10 +60,10 @@ reference_line:
   back_size: 80 #  back size point size
 
 decision:
-  safe_dis_lat: 0.5 #　lateral safe margin
-  safe_dis_lon: 20.0 #　longitudinal safe margin
+  lat_safe_margin: 0.5 #　lateral safe margin
+  long_safe_margin: 20.0 #　longitudinal safe margin
 
 planning_process:
-  obs_dis: 100.0 #　obs detection radius
+  perception_range: 100.0 #　perception range
 
 move_cmd:

@@ -56,13 +56,13 @@ namespace Planning
 
   struct DecisionStruct
   {
-    float32 safe_dis_lat_{ 0.0F }; // unit: m
-    float32 safe_dis_lon_{ 0.0F }; // unit: m
+    float32 lat_safe_margin_{ 0.0F };  // unit: m
+    float32 long_safe_margin_{ 0.0F }; // unit: m
   };
 
   struct ProcessStruct
   {
-    float32 obs_dis_{ 0.0F }; // unit: s
+    float32 perception_range_{ 0.0F }; // unit: s
   };
 
   class ConfigReader

@@ -24,7 +24,7 @@ namespace Planning
   {
   public:
     PNCMapCreatorBase() = default;
-    PNCMapCreatorBase(const PNCMapCreatorBase&) = delete;
+    PNCMapCreatorBase(const PNCMapCreatorBase &) = delete;
     virtual ~PNCMapCreatorBase() = default;
 
     virtual base_msgs::msg::PNCMap createPNCMap() = 0; // create pnc map

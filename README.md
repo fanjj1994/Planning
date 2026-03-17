@@ -23,9 +23,10 @@ In addition to the core planner, the project provides a set of supporting module
 
 | Item | Requirement |
 |------|-------------|
-| ROS 2 | **Humble Hawksbill** |
+| ROS 2 | **Humble Hawksbill**(recommended) |
 | OS | Ubuntu **22.04** (recommended) |
 
+* Ubuntu 24.04 plus Jazzy Jalisco may also work for BSAP. Attemption on this set is encouraged.
 
 ## Architecture
 
@@ -47,6 +48,12 @@ Before building the project, ensure you have the following 3rd-party dependencie
 - **yaml-cpp**
 - **matplotlib**
 
+ros2 dependencies installed (if ros2 version is Humble Hawksbill):
+- **python3-colcon-common-extensions**
+- **ros-humble-tf2-tools** 
+- **ros-humble-joint-state-publisher**
+- **ros-humble-joint-state-publisher-gui**
+- **ros-humble-xacro**
 
 ## Getting Started
 
@@ -124,6 +131,23 @@ To format all C++ files locally before committing:
 ```
 
 Note: Make sure the PLANNING_ROOT path inside format_all.sh matches your local workspace before running the script.
+
+### Naming Convention
+
+Names are the primary tool to communicate intent. Confusing naming makes trouble for code maintainers and collaborators, so this repository follows the convention below:
+
+| Category | Convention | Example |
+|:---------|:-----------|:--------|
+| Classes / Structs / Enums / Aliases | Capital CamelCase | `PathPlanner`, `TrafficState` |
+| Local Constants | Lower camelCase | `const double maxSpeed = 30.0;` |
+| Global Constants | UPPER_SNAKE_CASE | `MAX_LANE_WIDTH` |
+| Numeric Literals | Capital type suffix | `0U`, `1.0F`, `3.14L` |
+| Local Variables / Member Variables | Lower camelCase | `laneIndex`, `currentSpeed` |
+| Functions | Lower camelCase | `computePath()`, `getSpeed()` |
+| Parameters / Arguments | Lower camelCase (trailing `_` to avoid shadowing) | `speed`, `speed_` |
+| Include Guards | `FILE_NAME_H` (file name in upper case) | `PATH_PLANNER_H` |
+| Template Arguments — Types | Capital CamelCase | `template <typename NodeType>` |
+| Template Arguments — Constants | Lower camelCase | `template <int maxSize>` |
 
 ---
 
