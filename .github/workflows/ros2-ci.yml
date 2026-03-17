@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup ROS 2 Humble
-        uses: ros-tooling/setup-ros@v0.8
+        uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: humble
 
