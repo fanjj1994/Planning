@@ -1,68 +1,17 @@
 
-# Decision Making（路径决策）
+# 路径决策（Path Decision Making）
 
-本文档说明：
-1) 在一般 ADAS/自动驾驶系统中，“决策模块”是什么、为什么需要路径决策，以及常见决策方法分类；
-2) 本项目中 `DecisionCenter` 如何基于参考线、可通行区域与障碍物生成“粗解决策点”（SLPoint），并与后端局部路径规划衔接。
+本文档说明本项目中 `DecisionCenter` 如何基于参考线、可通行区域与障碍物生成路径决策点（`SLPoint`），并与后端局部路径规划衔接。关于决策模块的整体架构、一般概念与方法分类，见 [DecisionMaking.md](./DecisionMaking.md)；关于速度决策的实现，见 [SpeedDecisionMaking.md](./SpeedDecisionMaking.md)。
 
 > 说明：本文以工程实现为主，描述与代码保持一致；涉及的关键实现位于：
-> - [DecisionCenter 头文件](../src/planning_core/src/decision_center/decision_center.h)
-> - [DecisionCenter实现](../src/planning_core/src/decision_center/decision_center.cpp)
-> - [决策参数配置](../src/planning_core/config/planning_static_tps_config.yaml)
-> - [决策输出如何被局部路径规划使用](../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
+> - [DecisionCenter 头文件](../../src/planning_core/src/decision_center/decision_center.h)
+> - [DecisionCenter 实现](../../src/planning_core/src/decision_center/decision_center.cpp)
+> - [决策参数配置](../../src/planning_core/config/planning_static_tps_config.yaml)
+> - [决策输出如何被局部路径规划使用](../../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
 
 ---
 
-## 1. 简介：ADAS 中的决策模块与路径决策
-
-在典型的 ADAS/自动驾驶软件架构中（简化描述）：
-
-- **感知（Perception）**：输出障碍物、车道线/可通行区域、交通要素等。
-- **预测（Prediction）**：输出动态目标未来轨迹或意图（静态场景可省略或弱化）。
-- **决策（Decision / Behavior Planning）**：在规则、交通约束、安全约束下选择**行为/策略**（例如保持车道、超车、停车、绕行等），并产出后端规划可消化的**目标/约束**。
-- **规划（Planning / Trajectory Planning）**：在给定的目标与约束下生成连续、可控、平滑的轨迹（路径 + 速度 + 时间）。
-- **控制（Control）**：跟踪轨迹。
-
-### 1.1 决策模块的意义
-
-决策模块的核心价值在于：
-
-1. **把“离散选择”前置**：很多驾驶行为天然是离散的（左超、右超、停），后端规划更擅长做连续优化（曲线/速度的平滑与可控）。
-2. **降低后端求解难度**：如果不做路径决策，后端往往需要在更大的空间里同时搜索“该绕哪边/是否停车”，计算量和约束复杂度都会上升。
-3. **显式注入安全与规则**：例如安全距离、道路边界、优先级规则（左>右>停）等，可以在决策层以可审计的方式表达。
-4. **提高工程可控性**：当感知/预测不完美时，决策层可用保守策略兜底（例如停车），提升系统鲁棒性。
-
-### 1.2 为什么需要“路径决策”
-
-路径决策更偏向“几何空间上的行为选择”，典型输出形式是：
-
-- 目标侧向偏移（例如绕障选择左侧通行并给出目标 $l$）；
-- 目标纵向行为（例如设置停车位置 $s$）；
-- 或者输出一组关键“锚点/关键帧”，供后端生成连续曲线。
-
-在本项目中，`DecisionCenter` 产生一组 Frenet 坐标系下的关键点（`SLPoint`），作为局部路径规划（LocalPathPlanner）的“粗解/锚点”。
-
----
-
-## 2. 经典决策方法分类（工程视角）
-
-为了便于对比，这里用“重决策 / 轻决策 / 大模型决策”来做工程分类（并非学术严格分类）。
-
-| 对比维度 | 重决策（规则/离散策略） | 轻决策（代价/搜索/约束驱动） | 大模型决策（数据驱动/端到端） |
-|---|---|---|---|
-| 核心思想 | 把行为选择写成明确规则与优先级，按条件触发离散动作（超车/停车/绕行等） | 用代价函数与约束描述“好坏”，通过搜索/优化得到动作或粗轨迹（决策隐含在求解过程） | 从数据学习策略：输入感知/地图/历史，直接输出行为或轨迹（或输出高层意图再与规划融合） |
-| 典型方法/代表性算法 | 有限状态机（FSM）、决策树、基于规则的 if-else / 优先级仲裁、行为脚本 | A* / Dijkstra、动态规划（DP）、采样 + 评估（lattice）、最短路径/最小代价、（行为层）MPC/约束优化等 | 端到端神经网络（BC/IL/RL）、Transformer/多模态融合策略网络、（学术代表）Transfuser、UniAD、VAD 等；LLM/VLM 决策融合（作为高层意图生成/工具调用） |
-| 可解释性 | **强**：规则透明、可追溯、易做功能安全分析 | **中**：解释依赖代价项设计与约束边界；求解过程相对复杂 | **弱**：难以给出逐条规则解释，需要可解释性与可验证性方案（可视化、对抗测试、形式化约束） |
-| 泛化能力 | **弱-中**：对未覆盖场景易失效，需要持续补规则 | **中**：可通过代价与约束覆盖更多场景，但建模质量决定上限 | **强（潜力）**：可从海量数据学习更丰富场景，但需数据清洗、分布外检测、避免数据污染 |
-| 实时性 | **强**：计算量小、确定性强 | **中**：计算量更大，需权衡分辨率与时延 | **中-弱**：推理依赖 GPU/专用加速；需严格时延预算 |
-| 对感知/建模依赖 | **中-低**：对环境模型要求相对较低，但依赖“关键特征”正确（边界/相对距离） | **高**：需要更准确的环境建模（可通行区域、障碍物占据、约束边界） | **极高**：需要高质量感知/语义输入与训练数据闭环 |
-| 适用场景（典型） | 封闭园区、高速/快速路、结构化道路、需求强调确定性与可审计 | 城市道路、交互更复杂的场景，且允许更高算力与更复杂模型 | 面向更广泛场景的通用能力探索，或作为规则/优化的补充（混合架构） |
-
-> 注：上表中的“代表性网络名称”来自公开论文/开源社区常见方法，工业落地实现会随公司与版本迭代变化；工程上更常见的是**混合架构**（规则兜底 + 搜索/优化 + 学习模块）。
-
----
-
-## 3. 本项目中的应用：`DecisionCenter`（重决策）
+## 1. 本项目中的应用：`DecisionCenter`（重决策）
 
 本项目当前路径决策采用 **重决策（规则优先级）**：
 
@@ -70,7 +19,7 @@
 - 在可通行走廊内，按优先级尝试：**左侧绕行 > 右侧绕行 > 停车**；
 - 输出一组 `SLPoint` 作为局部路径规划的“关键帧”。
 
-### 3.1 决策在系统中的位置（数据流）
+### 1.1 决策在系统中的位置（数据流）
 
 规划主流程中，决策发生在参考线创建与 Frenet 投影之后：
 
@@ -82,11 +31,11 @@
 
 对应代码：
 
-- 规划主流程调用点：../src/planning_core/src/planning_process/planning_process.cpp
-- 决策实现：../src/planning_core/src/decision_center/decision_center.cpp
-- 局部路径使用决策点：../src/planning_core/src/local_planner/local_path/local_path_planner.cpp
+- 规划主流程调用点：[planning_process](../../src/planning_core/src/planning_process/planning_process.cpp)
+- 决策实现：[decision_center](../../src/planning_core/src/decision_center/decision_center.cpp)
+- 局部路径使用决策点：[local_path_planner](../../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
 
-### 3.2 输入/输出定义
+### 1.2 输入/输出定义
 
 #### 输入
 
@@ -96,11 +45,11 @@
 - `tpInfoList`：交通参与者列表（每个 TP 提供 Frenet 状态与尺寸、ID）。
 - 配置参数：由 `ConfigReader::readDecisionConfig()` 从 YAML 加载（例如安全距离、道路宽度、参考线长度）。
 
-关键配置来源：../src/planning_core/config/planning_static_tps_config.yaml
+关键配置来源举例：[config_file](../../src/planning_core/config/planning_static_tps_config.yaml)
 
-- `decision.lat_safe_margin`：侧向安全裕度（左右各一份）。
+- `decision.lat_safe_margin`：横向向安全裕度（左右各一份）。
 - `decision.long_safe_margin`：纵向安全裕度（停车点提前量）。
-- `pnc_map.road_half_width`：道路半宽。
+- `pnc_map.lane_width`：本车道宽度（默认为4米）。
 - `reference_line.front_size` 与 `pnc_map.segment_len`：参考线前向长度。
 - `local_path.path_size`：局部路径点数，用于推导决策视野。
 
@@ -108,7 +57,7 @@
 
 输出为内部成员 `pathDecisionPoints`（`std::vector<SLPoint>`），通过 `getPathDecisionPoints()` 供下游读取。
 
-`SLPoint`（见 ../src/planning_core/src/decision_center/decision_center.h ）字段含义：
+[SLPoint](../../src/planning_core/src/decision_center/decision_center.h)字段含义：
 
 - `s`：沿参考线的纵向位置。
 - `l`：相对参考线的侧向偏移。
@@ -122,9 +71,9 @@
 - `DECISION_STOP`：停车。
 - `DECISION_START / DECISION_END`：标记决策影响区间的开始/结束，用于下游规划做平滑“引入/退出”。
 
-### 3.3 决策逻辑原理与代码对应
+### 1.3 决策逻辑原理与代码对应
 
-下面按实际实现顺序描述 `DecisionCenter::makePathDecision()` 的核心逻辑（见 ../src/planning_core/src/decision_center/decision_center.cpp ）。
+下面按实际实现顺序描述 [makePathDecision](../../src/planning_core/src/decision_center/decision_center.cpp) 的核心逻辑。
 
 #### Step 0：空输入直接返回
 
@@ -155,10 +104,10 @@
 
 #### Step 3：定义可通行走廊（道路边界）
 
-实现里使用 `road_half_width` 推导左右边界阈值：
+实现里使用 `lane_width` 推导左右边界阈值：
 
-- `leftBoundaryDistance = 1.5 * road_half_width`（正值，位于参考线左侧）
-- `rightBoundaryDistance = -(0.5 * road_half_width)`（负值，位于参考线右侧）
+- `leftBoundaryDistance = 1.5 * lane_width`（正值，位于参考线左侧）
+- `rightBoundaryDistance = -(0.5 * lane_width)`（负值，位于参考线右侧）
 
 并以 `rightBoundaryDistance < tp.l < leftBoundaryDistance` 判定 TP 是否位于"道路走廊"内。
 
@@ -220,7 +169,7 @@
 - 用净空是否足够容纳“ego 车辆宽度 + 两侧安全裕度”来判断绕行是否会产生横向碰撞风险。
 - 当左右两侧都不满足净空要求时，采用**纵向安全缓冲**触发停车：停车点的纵向位置取 $s_{stop}=s_{meet}-d_{lon}$，其中 $s_{meet}$ 来自 Step 6 的相遇点预测（变量 `p.s`），$d_{lon}$ 来自配置 `decision.long_safe_margin`。
 
-具体到代码（见 [decision_center.cpp](../src/planning_core/src/decision_center/decision_center.cpp)），判定阈值为：
+具体到代码见 [decision_center.cpp](../../src/planning_core/src/decision_center/decision_center.cpp)，判定阈值为：
 
 $$
 \mathrm{requiredWidth}=w_{ego}+2\cdot d_{lat}
@@ -288,15 +237,15 @@ $$
 
 这样下游规划在进入/退出绕行时有更平滑的“引入/退出”区间。
 
-### 3.4 示例场景：按实现流程走一遍
+### 1.4 示例场景：按实现流程走一遍
 
-下面给出一个“静态障碍物”的数值示例，帮助把上述 Step 0~9 串起来。示例参数尽量采用本项目默认配置（见 [planning_static_tps_config.yaml](../src/planning_core/config/planning_static_tps_config.yaml)），并以当前代码实现为准（见 [decision_center.cpp](../src/planning_core/src/decision_center/decision_center.cpp)）。
+下面给出一个“静态障碍物”的数值示例，帮助把上述 Step 0~9 串起来。示例参数尽量采用本项目默认配置（见 [planning_static_tps_config.yaml](../../src/planning_core/config/planning_static_tps_config.yaml)），并以当前代码实现为准（见 [decision_center.cpp](../../src/planning_core/src/decision_center/decision_center.cpp)）。
 
 #### 示例公共配置/假设
 
-- 地图/道路：`road_half_width = 4.0m`
-	- `leftBoundaryDistance = 1.5 * road_half_width = 6.0m`
-	- `rightBoundaryDistance = -(0.5 * road_half_width) = -2.0m`（右边界在参考线右侧，Frenet 坐标为负值）
+- 地图/道路：`lane_width = 4.0m`
+	- `leftBoundaryDistance = 1.5 * lane_width = 6.0m`
+	- `rightBoundaryDistance = -(0.5 * lane_width) = -2.0m`（右边界在参考线右侧，Frenet 坐标为负值）
 - 安全距离：`lat_safe_margin = 0.5m`，`long_safe_margin = 10.0m`
 - 局部路径点数：`local_path.path_size = 80`
 	- `decisionMakingLeadPoint = clamp(80 - 50, 30, 40) = 30`
@@ -376,9 +325,9 @@ $$
 
 > 额外说明：当前实现中一旦产生 STOP，会 `break` 退出 TP 循环，因此不会再对更远处的其它 TP 继续生成绕行点。
 
-### 3.5 下游如何使用这些决策点生成连续局部路径
+### 1.5 下游如何使用这些决策点生成连续局部路径
 
-`LocalPathPlanner::generateLocalPath()`（../src/planning_core/src/local_planner/local_path/local_path_planner.cpp）对 `pathDecisionPoints` 的使用方式可以概括为：
+[generateLocalPath](../../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)对 `pathDecisionPoints` 的使用方式可以概括为：
 
 1. 在 $s$ 轴上采样局部路径点（按 ego 当前 `s` 往前推进）。
 2. 对每个采样点 `wayPoint_s`，找到它落在哪两个相邻决策点 `[j, j+1]` 之间。
@@ -393,8 +342,8 @@ $$
 
 ---
 
-## 4. 当前实现的边界与后续扩展方向（与代码一致）
+## 2. 当前实现的边界与后续扩展方向（与代码一致）
 
 1. **动态障碍物未处理**：TP 速度较高或存在明显横向运动时，分支为 TODO（未产生决策）。
-2. **`speed_limit` 字段未使用**：`SLPoint::speed_limit` 当前未在 `DecisionCenter` 里赋值，速度决策尚未实现。
+2. **`speed_limit` 字段未使用**：`SLPoint::speed_limit` 当前未在 `makePathDecision()` 中赋值，该字段预留供后续扩展（如限速区域的路径约束）使用。
 3. **走廊与坐标约定依赖工程假设**：左右边界距离的推导基于项目对参考线/车道的假设，理解时以 `l` 的比较条件为准。

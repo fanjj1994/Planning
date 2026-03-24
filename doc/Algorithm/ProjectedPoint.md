@@ -25,8 +25,8 @@ $$
 
 相关代码主要在：
 
-- [src/planning_core/src/common/math/curve.h](../src/planning_core/src/common/math/curve.h)
-- [src/planning_core/src/common/math/curve.cpp](../src/planning_core/src/common/math/curve.cpp)
+- [src/planning_core/src/common/math/curve.h](../../src/planning_core/src/common/math/curve.h)
+- [src/planning_core/src/common/math/curve.cpp](../../src/planning_core/src/common/math/curve.cpp)
 
 ---
 
@@ -102,7 +102,7 @@ $$
 
 投影点（Projected Point）是参考曲线上与 $P$ **最接近**的点（或近似最接近的点）。本项目中采用的是“最近离散点”的近似投影。
 
-在本项目中，投影点最终会被组织为 [src/planning_core/src/common/math/curve.h](../src/planning_core/src/common/math/curve.h) 中的 `ProjectedPointInfo`：
+在本项目中，投影点最终会被组织为 [src/planning_core/src/common/math/curve.h](../../src/planning_core/src/common/math/curve.h) 中的 `ProjectedPointInfo`：
 
 - `rs`：参考曲线上的弧长坐标（沿曲线累计距离）
 - `rx, ry`：投影点在全局坐标系下的位置

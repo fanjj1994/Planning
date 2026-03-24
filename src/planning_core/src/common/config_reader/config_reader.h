@@ -25,10 +25,10 @@ namespace Planning
   {
     std_string frame_{ "" };
     uint8 type_{ 0U };
-    float32 road_length_{ 0.0F };     // unit: m
-    float32 road_half_width_{ 0.0F }; // unit: m
-    float32 segment_len_{ 0.0F };     // unit: m
-    float32 speed_limit_{ 0.0F };     // unit: m/s
+    float32 road_length_{ 0.0F }; // unit: m
+    float32 lane_width_{ 0.0F };  // unit: m
+    float32 segment_len_{ 0.0F }; // unit: m
+    float32 speed_limit_{ 0.0F }; // unit: m/s
   };
 
   struct ReferenceLineStruct

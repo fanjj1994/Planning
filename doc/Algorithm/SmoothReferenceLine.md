@@ -4,8 +4,8 @@
 本文介绍本项目中参考线平滑（Reference Line Smoothing）的方法。该方法基于 Apollo 的参考线平滑思路，构建包含**平滑代价、均匀代价和几何相似代价**的目标函数，将问题转化为带约束的二次规划（QP）问题，并使用 OSQP 求解器求解。
 
 对应代码文件：
-- [reference line smoother header file](../src/planning_core/src/reference_line/reference_line_smoother.h)
-- [reference line smoother cpp file](../src/planning_core/src/reference_line/reference_line_smoother.cpp)
+- [reference line smoother header file](../../src/planning_core/src/reference_line/reference_line_smoother.h)
+- [reference line smoother cpp file](../../src/planning_core/src/reference_line/reference_line_smoother.cpp)
 
 ---
 
