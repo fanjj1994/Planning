@@ -40,7 +40,7 @@ pnc_map:
   frame: "map" # coordinate name
   type: 1 #　enum,　0:straight, 1:sturn
   road_length: 250.0 #  road length
-  road_half_width: 4.0 #  half width of road
+  lane_width: 4.0 #  ego lane width
   segment_len: 0.5 #　segment length
   speed_limit: 1.0 #  speed limit
 

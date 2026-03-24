@@ -11,7 +11,7 @@ namespace Planning
 
     // map start point coordinate
     pCenter.x = -3.0;
-    pCenter.y = pncMapConfig->getPNCMap().road_half_width_ / 2.0;
+    pCenter.y = pncMapConfig->getPNCMap().lane_width_ / 2.0;
     pCenter.z = 0.0;
 
     // length step
@@ -50,7 +50,7 @@ namespace Planning
   {
     pncMap.header.frame_id = pncMapConfig->getPNCMap().frame_;
     pncMap.header.stamp = rclcpp::Clock().now();
-    pncMap.road_half_width = pncMapConfig->getPNCMap().road_half_width_;
+    pncMap.lane_width = pncMapConfig->getPNCMap().lane_width_;
 
     // center line format
     pncMap.midline.header = pncMap.header;
@@ -85,9 +85,9 @@ namespace Planning
     while (lenRuler < length)
     {
       pLeft.x = pCenter.x;
-      pLeft.y = pCenter.y + pncMapConfig->getPNCMap().road_half_width_;
+      pLeft.y = pCenter.y + pncMapConfig->getPNCMap().lane_width_;
       pRight.x = pCenter.x;
-      pRight.y = pCenter.y - pncMapConfig->getPNCMap().road_half_width_;
+      pRight.y = pCenter.y - pncMapConfig->getPNCMap().lane_width_;
 
       pncMap.midline.points.emplace_back(pCenter);
       pncMap.left_boundary.points.emplace_back(pLeft);
@@ -103,10 +103,10 @@ namespace Planning
     float64 thetaRuler{ 0.0 };
     while (thetaRuler < angle)
     {
-      pLeft.x = pCenter.x - pncMapConfig->getPNCMap().road_half_width_ * std::sin(thetaCurrent);
-      pLeft.y = pCenter.y + pncMapConfig->getPNCMap().road_half_width_ * std::cos(thetaCurrent);
-      pRight.x = pCenter.x + pncMapConfig->getPNCMap().road_half_width_ * std::sin(thetaCurrent);
-      pRight.y = pCenter.y - pncMapConfig->getPNCMap().road_half_width_ * std::cos(thetaCurrent);
+      pLeft.x = pCenter.x - pncMapConfig->getPNCMap().lane_width_ * std::sin(thetaCurrent);
+      pLeft.y = pCenter.y + pncMapConfig->getPNCMap().lane_width_ * std::cos(thetaCurrent);
+      pRight.x = pCenter.x + pncMapConfig->getPNCMap().lane_width_ * std::sin(thetaCurrent);
+      pRight.y = pCenter.y - pncMapConfig->getPNCMap().lane_width_ * std::cos(thetaCurrent);
 
       pncMap.midline.points.emplace_back(pCenter);
       pncMap.left_boundary.points.emplace_back(pLeft);

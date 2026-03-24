@@ -8,9 +8,9 @@
 
 对应代码文件：
 
-- [polynomial_curve.h](../src/planning_core/src/common/math/polynomial_curve.h)
-- [polynomial_curve.cpp](../src/planning_core/src/common/math/polynomial_curve.cpp)
-- [local_path_planner.cpp](../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
+- [polynomial_curve.h](../../src/planning_core/src/common/math/polynomial_curve.h)
+- [polynomial_curve.cpp](../../src/planning_core/src/common/math/polynomial_curve.cpp)
+- [local_path_planner.cpp](../../src/planning_core/src/local_planner/local_path/local_path_planner.cpp)
 
 ---
 
@@ -338,7 +338,7 @@ Decision Center 每周期会给出一组按纵向 $s$ 排序的“决策路标�
 
 ### 4.2 本项目如何用五次多项式生成 $l(s)$
 
-在 [local_path_planner.cpp](../src/planning_core/src/local_planner/local_path/local_path_planner.cpp) 中，做法是：
+在 [local_path_planner.cpp](../../src/planning_core/src/local_planner/local_path/local_path_planner.cpp) 中，做法是：
 
 1. 在 Frenet 坐标系下，以 $x=s$、$y=l$ 构造函数 $l(s)$。
 2. 对于每一个局部路径采样点 $s=\text{wayPoint\_s}$，找到其所在的决策区间 $[s_j, s_{j+1})$。

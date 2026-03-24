@@ -43,16 +43,14 @@ namespace Planning
     float64 decisionMakingLeastDistance = 0.0;
 
     // Lateral coordinate from the ego vehicle center to the left road boundary in Frenet coordinates (positive value)
-    // [m]. Derived at construction as 1.5 x road_half_width, assuming the ego vehicle travels in the center of the
+    // [m]. Derived at construction as 1.5 x lane_width, assuming the ego vehicle travels in the center of the
     // right lane on a two-lane road.
-    const float64 leftBoundaryDistance =
-        static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 1.5f);
+    const float64 leftBoundaryDistance = static_cast<float64>(decisionConfigReader->getPNCMap().lane_width_ * 1.5f);
 
     // Lateral coordinate of the right road boundary in Frenet frame (negative value, since right of the reference
-    // line is the negative-l direction) [m]. Derived as -(0.5 x road_half_width), assuming the ego vehicle travels
+    // line is the negative-l direction) [m]. Derived as -(0.5 x lane_width), assuming the ego vehicle travels
     // in the center of the right lane on a two-lane road.
-    const float64 rightBoundaryDistance =
-        -(static_cast<float64>(decisionConfigReader->getPNCMap().road_half_width_ * 0.5f));
+    const float64 rightBoundaryDistance = -(static_cast<float64>(decisionConfigReader->getPNCMap().lane_width_ * 0.5f));
 
     // Number of path points that constitute the "lead" zone ahead of the ego vehicle [-].
     // Clamped to [30U, 40U]. Used to scale #decisionMakingLeastDistance with respect to the ego speed

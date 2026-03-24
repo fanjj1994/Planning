@@ -55,7 +55,7 @@ namespace Planning
       pncMap.frame_ = planningConfig["pnc_map"]["frame"].as<std_string>();
       pncMap.type_ = planningConfig["pnc_map"]["type"].as<uint8>();
       pncMap.road_length_ = planningConfig["pnc_map"]["road_length"].as<float32>();
-      pncMap.road_half_width_ = planningConfig["pnc_map"]["road_half_width"].as<float32>();
+      pncMap.lane_width_ = planningConfig["pnc_map"]["lane_width"].as<float32>();
       pncMap.segment_len_ = planningConfig["pnc_map"]["segment_len"].as<float32>();
       pncMap.speed_limit_ = planningConfig["pnc_map"]["speed_limit"].as<float32>();
     }
