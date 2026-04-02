@@ -6,6 +6,7 @@ from launch.actions import GroupAction
 from launch_ros.actions import PushRosNamespace
 from ament_index_python.packages import get_package_share_directory
 import os
+import yaml
 
 # define a macro switch for gui testing
 JOINT_GUI_DEBUG = False
@@ -21,8 +22,14 @@ def generate_launch_description():
     # rviz config load path
     rviz_conf_path = os.path.join(planning_path, "rviz", "planning.rviz")
 
+    # read scenario config to get tp_num
+    scenario_config_path = os.path.join(planning_path, "config", "scenario_config.yaml")
+    with open(scenario_config_path, 'r') as f:
+        scenario_config = yaml.safe_load(f)
+    tp_num = scenario_config.get("scenario", {}).get("tp_num", 0)
+
     car_para = ParameterValue(Command(["xacro ", car_path]))
-    tp_car_para = ParameterValue(Command(["xacro ", tp_car_path]))
+    tp_car_para = ParameterValue(Command(["xacro ", tp_car_path, " tp_num:=", str(tp_num)]))
 
     car_state_pub = Node(
         package="robot_state_publisher",
@@ -142,4 +149,8 @@ def generate_launch_description():
         ]
     )
 
-    return LaunchDescription([car_main, tp_car, rviz2, data_plot, planning])
+    launch_actions = [car_main, rviz2, data_plot, planning]
+    if tp_num > 0:
+        launch_actions.insert(1, tp_car)
+
+    return LaunchDescription(launch_actions)

@@ -18,8 +18,9 @@
 
 配置文件位于 `src/planning_core/config/` 目录下：
 
-- 静态场景：`planning_static_tps_config.yaml`
-- 动态场景：`planning_dynamic_tps_config.yaml`（编译时通过宏 `USE_DYNAMIC_TPS_CONFIG` 启用）
+- `scenario_config.yaml`：场景选择配置，通过 `type` 字段切换场景（详见 [ProjectConfigIntroduction.md](../Algorithm/ProjectConfigIntroduction.md)）
+- 静态场景（type=0/1）：加载 `planning_static_tps_config.yaml`
+- 动态场景（type=3）：加载 `planning_dynamic_tps_config.yaml`
 
 `pnc_map` 节点的相关字段如下（以静态配置为例）：
 

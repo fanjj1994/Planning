@@ -8,11 +8,40 @@ namespace Planning
     std_string configFilePath = ament_index_cpp::get_package_share_directory("planning_core");
 
     // get config file
-#ifdef USE_DYNAMIC_TPS_CONFIG
-    planningConfig = YAML::LoadFile(configFilePath + "/config/planning_dynamic_tps_config.yaml");
-#else
-    planningConfig = YAML::LoadFile(configFilePath + "/config/planning_static_tps_config.yaml");
-#endif // USE_DYNAMIC_TPS_CONFIG
+    scenario_config = YAML::LoadFile(configFilePath + "/config/scenario_config.yaml");
+
+    // figure out scenario type
+    readScenarioConfig();
+
+    switch (scenario.type_)
+    {
+    case ScenarioType::FOLLOW_LANE:
+    case ScenarioType::STATIC_TP_DETOUR:
+      planningConfig = YAML::LoadFile(configFilePath + "/config/planning_static_tps_config.yaml");
+      break;
+    case ScenarioType::TP_IN_EGO_LANE:
+      planningConfig = YAML::LoadFile(configFilePath + "/config/planning_inlane_tps_config.yaml");
+      break;
+    case ScenarioType::DYNAMIC_TP_DETOUR:
+      planningConfig = YAML::LoadFile(configFilePath + "/config/planning_dynamic_tps_config.yaml");
+      break;
+    default:
+      RCLCPP_ERROR(rclcpp::get_logger("config"), "Invalid scenario type: %d", static_cast<uint8>(scenario.type_));
+      break;
+    }
+  }
+
+  void ConfigReader::readScenarioConfig()
+  {
+    try
+    {
+      scenario.type_ = static_cast<ScenarioType>(scenario_config["scenario"]["type"].as<uint8>());
+      scenario.tp_num_ = scenario_config["scenario"]["tp_num"].as<uint8>();
+    }
+    catch (const YAML::Exception& e)
+    {
+      RCLCPP_ERROR(rclcpp::get_logger("config"), "Failed to load ScenarioConfig: %s", e.what());
+    }
   }
 
   void ConfigReader::readVehicleConfig(VehicleStruct& vehicle, const std_string& vehicleName)

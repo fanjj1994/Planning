@@ -1,6 +1,8 @@
 <!-- Chassis -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tp_car">
-    <xacro:property name="use_dynamic_tps_config" value="true"/>
+    <xacro:arg name="tp_num" default="3"/>
+    <xacro:property name="tp_count" value="$(arg tp_num)"/>
+    <xacro:property name="use_dynamic_tps_config" value="false"/>
     <!-- Color-->
     <material name="blue">
         <color rgba="0.2 0.2 0.8 0.9"/>
@@ -38,18 +40,30 @@
         </joint>
     </xacro:macro>
 
-    <!-- function call -->
+    <!-- function call, controlled by tp_num arg -->
     <!-- static tps config -->
     <xacro:if value="${not use_dynamic_tps_config}">
-      <xacro:create_tp_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
-      <xacro:create_tp_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
-      <xacro:create_tp_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      <xacro:if value="${int(tp_count) >= 1}">
+        <xacro:create_tp_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      </xacro:if>
+      <xacro:if value="${int(tp_count) >= 2}">
+        <xacro:create_tp_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      </xacro:if>
+      <xacro:if value="${int(tp_count) >= 3}">
+        <xacro:create_tp_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+      </xacro:if>
     </xacro:if>
     <!-- dynamic tps config -->
     <xacro:if value="${use_dynamic_tps_config}">
-      <xacro:create_tp_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
-      <xacro:create_tp_car id="2" car_length="6.0" car_width="2.0" car_height="1.2" color="blue"/>
-      <xacro:create_tp_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/>
+      <xacro:if value="${int(tp_count) >= 1}">
+        <xacro:create_tp_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
+      </xacro:if>
+      <xacro:if value="${int(tp_count) >= 2}">
+        <xacro:create_tp_car id="2" car_length="6.0" car_width="2.0" car_height="1.2" color="blue"/>
+      </xacro:if>
+      <xacro:if value="${int(tp_count) >= 3}">
+        <xacro:create_tp_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/>
+      </xacro:if>
     </xacro:if>
 
 </robot>

@@ -72,6 +72,18 @@ To get started with the project, follow these steps:
     source /opt/ros/humble/setup.bash
     colcon build
     ```
+    To build a single package (e.g.`planning_core`):
+    ```sh
+    colcon build --packages-select planning_core
+    ```
+    To build in **Debug** mode (for GDB debugging):
+    ```sh
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug
+    ```
+    To build in **Release** mode:
+    ```sh
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 4. Launch the application (requires two launch files):
     ```sh
     chmod 777 scripts/start_launch.sh
