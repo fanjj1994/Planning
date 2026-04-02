@@ -9,6 +9,19 @@
 
 namespace Planning
 {
+  enum class ScenarioType : uint8
+  {
+    FOLLOW_LANE = 0U,
+    STATIC_TP_DETOUR = 1U,
+    TP_IN_EGO_LANE = 2U,
+    DYNAMIC_TP_DETOUR = 3U
+  };
+
+  struct ScenarioStruct
+  {
+    ScenarioType type_{ ScenarioType::FOLLOW_LANE };
+    uint8 tp_num_{ 0U };
+  };
   struct VehicleStruct
   {
     uint8 id_{ 0U };
@@ -73,6 +86,10 @@ namespace Planning
     ConfigReader& operator=(const ConfigReader&) = delete;
     ~ConfigReader() = default;
 
+    // scenario
+    void readScenarioConfig();
+    inline ScenarioStruct getScenario() const { return scenario; }
+
     // vehicle
     void readVehiclesConfig();
 
@@ -128,6 +145,10 @@ namespace Planning
 
   private:
     YAML::Node planningConfig;
+    YAML::Node scenario_config;
+
+    // scenario
+    ScenarioStruct scenario;
     // vehicle
     VehicleStruct egoCar;
     VehicleStruct tpCar1;

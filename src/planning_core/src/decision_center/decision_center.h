@@ -356,6 +356,9 @@ namespace Planning
     ///< Speed safety margin added to the ego vehicle's speed when evaluating if Tp is faster than ego [m/s].
     static constexpr float32 SPEEDMARGIN{ 0.5f };
 
+    ///< Longitudinal safety margin factor for car following scenario.
+    static constexpr float32 CARFOLLOWINGMARGINFACTOR{ 50.0f };
+
   }; // class DecisionCenter
 } // namespace Planning
 #endif // ! DECISION_CENTER_H_

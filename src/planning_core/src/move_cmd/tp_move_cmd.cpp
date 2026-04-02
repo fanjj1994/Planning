@@ -11,7 +11,7 @@ namespace Planning
     configReaderTp->readMoveCmdConfig();
 
     // initialize tpCarParam
-    for (uint8 i = 0U; i < 3U; i++)
+    for (uint8 i = 0U; i < configReaderTp->getScenario().tp_num_; i++)
     {
       TpParam tpCarParam;
       // traffic participant car, ID starts from 1

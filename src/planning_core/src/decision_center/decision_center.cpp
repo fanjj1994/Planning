@@ -271,6 +271,8 @@ namespace Planning
                               = s_TP_on_path - ego_s */
       const float64 tpSDistanceToEgoCar = tpInfo->getS2Path() + egoCarInfo->getVehicleVelocity();
 
+      const float64 carFollowingSafetyMargin = tpInfo->getDsDt2Path() * CARFOLLOWINGMARGINFACTOR;
+
       /* Longitudinal range filter: skip TPs that are beyond the decision horizon or already well behind ego.
          The rear margin equals long_safe_margin to suppress oscillating yield/stop decisions near the ego bumper. */
       if ((tpSDistanceToEgoCar > decisionMakingLeastDistance) ||
@@ -315,8 +317,7 @@ namespace Planning
                s_2path = current_distance - long_safe_margin + tp_speed × p.t
                This defines the ST vertex the QP must stay below. */
             p.t = p.t0 + SimpleTTB;
-            p.s_2path = tpSDistanceToEgoCar - decisionConfigReader->getDecision().long_safe_margin_ +
-                        tpInfo->getDsDt2Path() * p.t;
+            p.s_2path = tpSDistanceToEgoCar - carFollowingSafetyMargin + tpInfo->getDsDt2Path() * p.t;
             p.ds_dt_2path = tpInfo->getDsDt2Path();
             p.type = STPointType::DECISION_STOP_OR_FOLLOW;
             speedDecisionPoints.emplace_back(p);

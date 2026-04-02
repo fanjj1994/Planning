@@ -40,3 +40,6 @@ log/*
 *.pdf
 *.gv
 .txt
+
+# Do not ignore this specific pdf
+!doc/Architecture/frames_2026-04-02_13.45.32.pdf

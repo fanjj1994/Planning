@@ -1,0 +1,69 @@
+vehicle:
+  ego_car:
+    id: 0                         #　car id
+    frame: "base_footprint"       #　coordinate name
+    length: 3.0                   #　ego car length
+    width: 1.5                    #  ego car width
+    pose_x: 0.0                   #  ego car x pose
+    pose_y: 0.0                   #　ego car y pose
+    pose_theta: 0.0               #　ego car heading
+    set_speed: 1.0                #　ego car set speed, unit: m /frame
+  tp_car1:
+    id: 1
+    frame: "base_footprint_tp1"
+    length: 3.0
+    width: 1.6
+    pose_x: 80.0
+    pose_y: 0.0
+    pose_theta: 0.0
+    set_speed: 0.6
+  tp_car2:
+    id: 2
+    frame: "base_footprint_tp2"
+    length: 3.0
+    width: 1.6
+    pose_x: 120.0
+    pose_y: 16.0
+    pose_theta: 1.0
+    set_speed: 0.0
+  tp_car3:
+    id: 3
+    frame: "base_footprint_tp3"
+    length: 3.0
+    width: 1.6
+    pose_x: 85.0
+    pose_y: 4.0
+    pose_theta: 0.0
+    set_speed: 0.0
+
+pnc_map:
+  frame: "map"                    #　coordinate name
+  type: 0                         #　enum type,　0:straight, 1:turn1, 2:turn2, 3:sturn
+  road_length: 1250.0             #  road length
+  lane_width: 4.0                 #  ego lane width
+  segment_len: 0.5                #  segment length
+  speed_limit: 1.0                #  speed limit, unit: m/frame
+
+global_path:                      #  global path
+  type: 0                         #  type, 0:normal, 1: astar
+
+local_path:                       #  local path
+  curve_type: 2                   #  polynomial type, 0:linear, 1:cubic, 2:quintic
+  path_size: 80                   #  number of path points
+
+local_speeds:                     #  speed
+  speeds_size: 100                #  number of speed points
+
+reference_line:                   #  reference line
+  type: 0                         #  type, 0:normal, 1:stich
+  front_size: 200                 #  number of front points
+  back_size: 80                   #  number of back points
+
+decision:                         #  decision center
+  lat_safe_margin: 0.5            #  lateral safety margin, unit: m
+  long_safe_margin: 20.0          #  longitudinal safety margin, unit: m
+
+planning_process:                 #  planning process
+  perception_range: 100.0         #  perception range, unit: m
+
+move_cmd:                         #  move command

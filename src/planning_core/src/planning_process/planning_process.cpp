@@ -15,7 +15,7 @@ namespace Planning
     // create ego car and other tps
     egoCar = std::make_shared<EgoCar>();
 
-    for (uint i = 0U; i < 3U; i++)
+    for (uint i = 0U; i < configReaderProcess->getScenario().tp_num_; i++)
     {
       // traffic participant car, ID starts from 1
       std::shared_ptr<VehicleInfoBase> tpCar = std::make_shared<TP>(i + 1U);

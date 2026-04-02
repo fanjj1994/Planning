@@ -39,12 +39,6 @@ ament_target_dependencies(${math_target} ${MATH_DEPENDS})
 target_link_libraries(${config_target} yaml-cpp)
 target_link_libraries(${math_target} Eigen3::Eigen)
 
-# macro switch to select between static and dynamic TPS config
-option(USE_DYNAMIC_TPS_CONFIG_MACRO "Enable USE_DYNAMIC_TPS_CONFIG" ON)
-if(USE_DYNAMIC_TPS_CONFIG_MACRO)
-  target_compile_definitions(config_reader PUBLIC USE_DYNAMIC_TPS_CONFIG)
-endif()
-
 # install dynamic lib, node and relevant directory
 install(TARGETS ${config_target} ${math_target}
   LIBRARY DESTINATION lib
