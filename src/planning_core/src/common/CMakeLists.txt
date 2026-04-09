@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 project(common)
 
+find_package(yaml-cpp REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 # set config_reader dependency
 set(CONFIG_DEPENDS
   "rclcpp"
-  "yaml-cpp"
   "ament_index_cpp"
 )
 
