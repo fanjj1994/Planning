@@ -1,3 +1,0 @@
-scenario:
-  type: 1  # 0: follow lane; 1: static tp detour; 2. tp in ego lane; 3. dynamic tp detour
-  tp_num: 3
