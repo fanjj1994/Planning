@@ -48,4 +48,3 @@ install(TARGETS
 install(TARGETS
     global_path_server
     DESTINATION lib/${PLANNING_PACKAGE_NAME})
-    
