@@ -29,4 +29,3 @@ target_link_libraries(${target}
 install(TARGETS
     ${target}
     LIBRARY DESTINATION lib)
-    
