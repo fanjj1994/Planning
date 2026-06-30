@@ -48,3 +48,4 @@ install(TARGETS
 install(TARGETS
     pnc_map_server
     DESTINATION lib/${PLANNING_PACKAGE_NAME})
+    
