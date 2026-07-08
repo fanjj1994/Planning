@@ -1,0 +1,10 @@
+<!-- 整车 -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="main_car">
+    <!-- PI -->
+    <xacro:property name="PI" value="3.141592653"/>
+
+    <!-- 包含子文件, 要在参数定义之后, 子文件才能使用父文件的参数 -->
+    <xacro:include filename="car_base.xacro"/>
+    <xacro:include filename="car_camera.xacro"/>
+    <xacro:include filename="car_radar.xacro"/>
+</robot>

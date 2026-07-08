@@ -11,13 +11,13 @@ set(DEPENDS
 )
 
 # 添加节点
-add_executable(planning_node
+add_executable(planning_process
   ${CMAKE_CURRENT_SOURCE_DIR}/planning_process.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/planning_node.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/planning_process_main.cpp
 )
 
 set(target 
-  planning_node
+  planning_process
 )
 
 # 添加依赖
@@ -25,13 +25,13 @@ ament_target_dependencies(${target}
   ${DEPENDS}
 )
 
-# target_link_libraries(${target}
-#   config_reader
-#   decision_center
-#   vehicle_info
-#   reference_line
-#   local_planner
-# )
+target_link_libraries(${target}
+  config_reader
+  decision_center
+  vehicle_info
+  reference_line
+  local_planner
+)
 
 # 安装动态库、节点和相关目录
 install(TARGETS 

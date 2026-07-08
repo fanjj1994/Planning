@@ -1,0 +1,47 @@
+<!-- 底盘 -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- 车体尺寸 -->
+    <xacro:property name="car_length" value="3.0"/>
+    <xacro:property name="car_width" value="1.5"/>
+    <xacro:property name="car_height" value="0.6"/>
+
+    <!-- 离地间隙 -->
+    <xacro:property name="ground_height" value="0.2"/>
+
+    <!-- 包含子文件, 要在参数定义之后, 子文件才能使用父文件的参数 -->
+    <xacro:include filename="car_wheels.xacro"/>
+
+    <!-- 颜色 -->
+    <material name="yellow">
+        <color rgba="0.9 0.6 0.0 0.7"/>
+    </material>
+
+    <!-- 根坐标 -->
+    <link name="map"/>
+
+    <!-- 底盘在map的投影点 -->
+    <link name="base_footprint"/>
+
+    <!-- 底盘 -->
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${car_length} ${car_width} ${car_height}"/>
+            </geometry>
+            <material name="yellow"/>
+        </visual>
+    </link>
+
+    <!-- 投影点关联到地图 -->
+    <joint name="footprint_to_map" type="fixed">
+        <parent link="map"/>
+        <child link="base_footprint"/>
+    </joint>
+
+    <!-- 底盘关联到投影点 -->
+    <joint name="base_to_footprint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0.0 0.0 ${car_height / 2.0 + ground_height}"/>
+    </joint>
+</robot>

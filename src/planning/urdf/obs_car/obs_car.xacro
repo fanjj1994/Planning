@@ -1,0 +1,48 @@
+<!-- 底盘 -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="obs_car">
+    <!-- 颜色 -->
+    <material name="blue">
+        <color rgba="0.2 0.2 0.8 0.9"/>
+    </material>
+
+    <!-- 根坐标 -->
+    <link name="map"/>
+
+    <!-- 障碍车生成函数, 参数: id号, 长宽高-->
+    <xacro:macro name="create_obs_car" params="id car_length car_width car_height color">
+        <!-- 底盘在map的投影点 -->
+        <link name="base_footprint_obs${id}"/>
+
+        <!-- 底盘 -->
+        <link name="base_link_obs${id}">
+            <visual>
+                <geometry>
+                    <box size="${car_length} ${car_width} ${car_height}"/>
+                </geometry>
+                <material name="${color}"/>
+            </visual>
+        </link>
+
+        <!-- 投影点关联到地图 -->
+        <joint name="footprint${id}_to_map" type="fixed">
+            <parent link="map"/>
+            <child link="base_footprint_obs${id}"/>
+        </joint>
+
+        <!-- 底盘关联到投影点 -->
+        <joint name="base_to_footprint${id}" type="fixed">
+            <parent link="base_footprint_obs${id}"/>
+            <child link="base_link_obs${id}"/>
+            <origin xyz="0.0 0.0 ${car_height / 2.0}"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- 调用函数 -->
+    <!-- <xacro:create_obs_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/> -->
+
+    <xacro:create_obs_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="2" car_length="6.0" car_width="2.0" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/>
+</robot>

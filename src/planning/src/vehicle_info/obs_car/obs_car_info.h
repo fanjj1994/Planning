@@ -1,0 +1,16 @@
+#ifndef OBS_CAR_INFO_H_
+#define OBS_CAR_INFO_H_
+
+#include "vehicle_base.h"
+
+namespace Planning
+{
+  class ObsCar : public VehicleBase // 障碍物车辆信息
+  {
+  public:
+    ObsCar();
+
+  private:
+  };
+} // namespace Planning
+#endif // Obs_CAR_INFO_H_
