@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.28)
 project(base_msgs)
 
 # 设置C和C++标准
@@ -27,28 +27,28 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 
-# # 添加依赖
-# rosidl_generate_interfaces(${PROJECT_NAME}
-#   "srv/GlobalPathService.srv"
-#   "srv/PNCMapService.srv"
-#   "msg/PNCMap.msg"
-#   "msg/ReferlinePoint.msg"
-#   "msg/Referline.msg"
-#   "msg/LocalPathPoint.msg"
-#   "msg/LocalPath.msg"
-#   "msg/LocalSpeedsPoint.msg"
-#   "msg/LocalSpeeds.msg"
-#   "msg/LocalTrajectoryPoint.msg"
-#   "msg/LocalTrajectory.msg"
-#   "msg/ObsInfo.msg"
-#   "msg/PlotInfo.msg"
+# 添加依赖
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "srv/GlobalPathService.srv"
+  "srv/PNCMapService.srv"
+  "msg/PNCMap.msg"
+  "msg/ReferlinePoint.msg"
+  "msg/Referline.msg"
+  "msg/LocalPathPoint.msg"
+  "msg/LocalPath.msg"
+  "msg/LocalSpeedsPoint.msg"
+  "msg/LocalSpeeds.msg"
+  "msg/LocalTrajectoryPoint.msg"
+  "msg/LocalTrajectory.msg"
+  "msg/ObsInfo.msg"
+  "msg/PlotInfo.msg"
 
-#   DEPENDENCIES 
-#   visualization_msgs
-#   std_msgs
-#   geometry_msgs
-#   nav_msgs
-# )
+  DEPENDENCIES 
+  visualization_msgs
+  std_msgs
+  geometry_msgs
+  nav_msgs
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

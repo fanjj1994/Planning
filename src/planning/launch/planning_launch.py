@@ -73,20 +73,20 @@ def generate_launch_description():
     #     name ="data_plot",
     # )
     
-    # # 启动地图服务器节点
-    # pnc_map_server = Node(
-    #     package="planning",
-    #     executable="pnc_map_server",
-    #     name="pnc_map_server",
-    # )
+    # 启动地图服务器节点
+    pnc_map_server = Node(
+        package="planning",
+        executable="pnc_map_server",
+        name="pnc_map_server",
+    )
         
 
-    # # 启动全局路径服务器节点
-    # global_path_server = Node(
-    #     package="planning",
-    #     executable="global_path_server",
-    #     name="global_path_server",
-    # )
+    # 启动全局路径服务器节点
+    global_path_server = Node(
+        package="planning",
+        executable="global_path_server",
+        name="global_path_server",
+    )
 
     # 启动规划节点
     planning_process = Node(
@@ -115,8 +115,8 @@ def generate_launch_description():
         actions=[
             PushRosNamespace("planning"),
             planning_process,
-            # pnc_map_server,
-            # global_path_server
+            pnc_map_server,
+            global_path_server
         ]
     )
 

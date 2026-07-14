@@ -38,7 +38,7 @@ vehicle:                              # 车辆
 
 pnc_map:                              # pnc地图
   frame: "map"                        # 坐标名
-  type: 0                             # 类型， 0:straight 1:sturn
+  type: 1                             # 类型， 0:straight 1:sturn
   road_length: 250.0                  # 道路长度
   road_half_width: 4.0                # 车道半宽
   segment_len: 0.5                    # 分段长度

@@ -1,0 +1,6 @@
+# 地图服务
+
+int8 global_planner_type # 请求 1: 全局规划类型
+PNCMap pnc_map # 请求 2: 地图
+---
+nav_msgs/Path global_path # 响应: 全局路径
