@@ -1,3 +1,4 @@
+format_all.sh
 #!/bin/bash
 # format_all.sh
 

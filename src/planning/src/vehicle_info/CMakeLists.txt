@@ -7,6 +7,7 @@ set(DEPENDS
   "geometry_msgs"
   "nav_msgs"
   "base_msgs"
+  "tf2"
 )
 
 # 添加动态库

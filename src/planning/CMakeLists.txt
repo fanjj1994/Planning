@@ -37,6 +37,7 @@ include_directories(
   src/local_planner/local_path
   src/local_planner/local_speeds
   src/reference_line
+  src/test/osqp_test
   src/vehicle_info
   src/vehicle_info/main_car
   src/vehicle_info/obs_car
@@ -65,6 +66,7 @@ add_subdirectory(src/pnc_map_creator)
 add_subdirectory(src/global_planner)
 add_subdirectory(src/local_planner)
 add_subdirectory(src/reference_line)
+add_subdirectory(src/test)
 add_subdirectory(src/vehicle_info)
 add_subdirectory(src/planning_process)
 add_subdirectory(src/move_cmd)
