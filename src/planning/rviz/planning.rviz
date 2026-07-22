@@ -4,13 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
-        - /MarkerArray1
+        - /ObsCar1
         - /MarkerArray1/Topic1
-        - /Marker1
         - /Marker1/Topic1
-        - /Path1
       Splitter Ratio: 0.49117645621299744
     Tree Height: 555
   - Class: rviz_common/Selection
@@ -51,60 +47,6 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
-    - Class: rviz_default_plugins/TF
-      Enabled: true
-      Filter (blacklist): ""
-      Filter (whitelist): ""
-      Frame Timeout: 15
-      Frames:
-        All Enabled: true
-        base_footprint:
-          Value: true
-        base_link:
-          Value: true
-        camera:
-          Value: true
-        left_front:
-          Value: true
-        left_front_steering_knuckle:
-          Value: true
-        left_rear:
-          Value: true
-        map:
-          Value: true
-        radar:
-          Value: true
-        right_front:
-          Value: true
-        right_front_steering_knuckle:
-          Value: true
-        right_rear:
-          Value: true
-      Marker Scale: 1
-      Name: TF
-      Show Arrows: true
-      Show Axes: true
-      Show Names: false
-      Tree:
-        map:
-          base_footprint:
-            base_link:
-              camera:
-                {}
-              left_front_steering_knuckle:
-                left_front:
-                  {}
-              left_rear:
-                {}
-              radar:
-                {}
-              right_front_steering_knuckle:
-                right_front:
-                  {}
-              right_rear:
-                {}
-      Update Interval: 0
       Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
@@ -178,11 +120,150 @@ Visualization Manager:
       Mass Properties:
         Inertia: false
         Mass: false
-      Name: RobotModel
+      Name: MainCar
       TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /obs_car/robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_footprint_obs1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_footprint_obs2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_footprint_obs3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        base_link_obs1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link_obs2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        base_link_obs3:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        map:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: ObsCar
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_footprint:
+          Value: true
+        base_footprint_obs1:
+          Value: true
+        base_footprint_obs2:
+          Value: true
+        base_footprint_obs3:
+          Value: true
+        base_link:
+          Value: true
+        base_link_obs1:
+          Value: true
+        base_link_obs2:
+          Value: true
+        base_link_obs3:
+          Value: true
+        camera:
+          Value: true
+        left_front:
+          Value: true
+        left_front_steering_knuckle:
+          Value: true
+        left_rear:
+          Value: true
+        map:
+          Value: true
+        radar:
+          Value: true
+        right_front:
+          Value: true
+        right_front_steering_knuckle:
+          Value: true
+        right_rear:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        map:
+          base_footprint:
+            base_link:
+              camera:
+                {}
+              left_front_steering_knuckle:
+                left_front:
+                  {}
+              left_rear:
+                {}
+              radar:
+                {}
+              right_front_steering_knuckle:
+                right_front:
+                  {}
+              right_rear:
+                {}
+          base_footprint_obs1:
+            base_link_obs1:
+              {}
+          base_footprint_obs2:
+            base_link_obs2:
+              {}
+          base_footprint_obs3:
+            base_link_obs3:
+              {}
+      Update Interval: 0
+      Value: true
+    - Class: rviz_default_plugins/Axes
+      Enabled: true
+      Length: 1
+      Name: Axes
+      Radius: 0.10000000149011612
+      Reference Frame: <Fixed Frame>
+      Value: true
     - Class: rviz_default_plugins/MarkerArray
       Enabled: true
       Name: MarkerArray
@@ -218,7 +299,7 @@ Visualization Manager:
       Length: 0.30000001192092896
       Line Style: Billboards
       Line Width: 0.10000000149011612
-      Name: Path
+      Name: Referenceline
       Offset:
         X: 0
         Y: 0
@@ -289,9 +370,9 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.8127701878547668
+        Y: -0.8739172220230103
+        Z: 1.460505723953247
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
@@ -318,5 +399,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 522
-  Y: -31
+  X: 582
+  Y: -29

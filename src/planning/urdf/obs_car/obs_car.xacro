@@ -38,11 +38,11 @@
     </xacro:macro>
 
     <!-- 调用函数 -->
-    <!-- <xacro:create_obs_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="1" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
     <xacro:create_obs_car id="2" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
-    <xacro:create_obs_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/> -->
+    <xacro:create_obs_car id="3" car_length="3.0" car_width="1.6" car_height="1.2" color="blue"/>
 
-    <xacro:create_obs_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
+    <!-- <xacro:create_obs_car id="1" car_length="8.0" car_width="2.6" car_height="1.2" color="blue"/>
     <xacro:create_obs_car id="2" car_length="6.0" car_width="2.0" car_height="1.2" color="blue"/>
-    <xacro:create_obs_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/>
+    <xacro:create_obs_car id="3" car_length="3.0" car_width="7.6" car_height="1.2" color="blue"/> -->
 </robot>

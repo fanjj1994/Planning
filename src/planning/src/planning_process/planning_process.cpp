@@ -13,6 +13,11 @@ namespace Planning
 
     // 创建车辆和障碍物
     car_ = std::make_shared<MainCar>();
+    for(int i = 0; i < 3 ; i++)
+    {
+      auto obs_car_ = std::make_shared<ObsCar>(i+1);
+      obses_spawn_.emplace_back(obs_car_);
+    }
 
     // 坐标广播器
     tf_broadcaster_ = std::make_shared<StaticTransformBroadcaster>(this);
@@ -52,6 +57,10 @@ namespace Planning
   {
     // 生成车辆
     vehicle_spawn(car_);
+    for(const auto &obs : obses_spawn_)
+    {
+      vehicle_spawn(obs);
+    }
 
     // 连接地图服务器
     if (!connect_server(map_client_))

@@ -8,7 +8,7 @@ namespace Planning
   class ObsCar : public VehicleBase // 障碍物车辆信息
   {
   public:
-    ObsCar();
+    ObsCar(const int &id);
 
   private:
   };

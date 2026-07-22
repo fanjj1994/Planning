@@ -23,7 +23,7 @@ vehicle:                              # 车辆
     length: 3.0
     width: 1.6
     pose_x: 120.0
-    pose_y: 16.0
+    pose_y: 18.0
     pose_theta: 1.0
     speed_ori: 0.0
   obs_car3:
