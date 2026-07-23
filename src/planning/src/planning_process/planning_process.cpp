@@ -33,6 +33,9 @@ namespace Planning
     // 创建参考线和参考线的发布器
     refer_line_creator_ = std::make_shared<ReferencelineCreator>();
     refer_line_pub_ = this->create_publisher<Path>("reference_line", 10);
+    
+    // 创建决策器
+    decider_ = std::make_shared<DecisionCenter>();
   }
 
   bool PlanningProcess::process() // 总流程
@@ -231,6 +234,17 @@ namespace Planning
     const auto start_time = this->get_clock()->now();
     // 监听车辆定位
     get_location(car_);
+    obses_.clear();
+    for (const auto &obs : obses_spawn_)
+    {
+      get_location(obs);
+      if (std::hypot(car_->loc_point().pose.position.x - obs->loc_point().pose.position.x,
+                    car_->loc_point().pose.position.y - obs->loc_point().pose.position.y) > obs_dis_ )
+      {
+        continue;
+      }
+      obses_.emplace_back(obs);
+    }
 
     // 参考线
     const auto refer_line = refer_line_creator_->creat_reference_line(global_path_,car_->loc_point());
@@ -243,10 +257,19 @@ namespace Planning
     refer_line_pub_->publish(refer_line_rviz);// 发布参考线
 
     // 主车和障碍物向参考线投影
+    car_->vehicle_cartesian_to_frenet(refer_line);
+    for (const auto &obs : obses_)
+    {
+      obs->vehicle_cartesian_to_frenet(refer_line);
+    }
 
     // 障碍物按s值排序
+    std::sort(obses_.begin(), obses_.end(),
+              [](const std::shared_ptr<VehicleBase> &obs1,const std::shared_ptr<VehicleBase> &obs2)
+              { return obs1->s() < obs2->s(); });
 
     // 路径决策
+    decider_->make_path_decision(car_,obses_);
 
     // 路径规划
 

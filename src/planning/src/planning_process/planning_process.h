@@ -77,6 +77,8 @@ namespace Planning
     std::shared_ptr<ReferencelineCreator> refer_line_creator_; // 参考线创建器（给rviz用的）
     rclcpp::Publisher<Path>::SharedPtr refer_line_pub_;        // 参考线发布器（给rviz用的）
 
+    std::shared_ptr<DecisionCenter> decider_; //决策器
+    
     rclcpp::TimerBase::SharedPtr timer_; // 定时器
   };
 } // namespace Planning
