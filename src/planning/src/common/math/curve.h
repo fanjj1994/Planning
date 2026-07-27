@@ -43,16 +43,22 @@ namespace Planning
 
     // 找匹配点下标
     static int find_match_point(const Path &path, const int &last_match_point_index,
-                                const PoseStamped &target_point);                        // 利用上一帧
+                                const PoseStamped &target_point);                              // 利用上一帧
     static int find_match_point(const Referline &refer_line, const PoseStamped &target_point); // 在参考线上查找匹配点
-
+    static int find_match_point(const LocalPath &path, const PoseStamped &target_point); // 在路径上查找匹配点下标
+    static int find_match_point(const Referline &path, const double &rs);                // 通过rs找匹配点下标
     // 找到投影点
-    static void find_projection_point(const Referline &referline, const PoseStamped &target_point, // 输入：参考线，目标点
+    static void find_projection_point(const Referline &referline,
+                                      const PoseStamped &target_point, // 输入：参考线，目标点
+                                      double &rs, double &rx, double &ry, double &rtheta, double &rkappa,
+                                      double &rdkappa); // 输出：投影点的rs，rx，ry，rtheta，rkappa，rdkappa
+    static void find_projection_point(const LocalPath &path, const PoseStamped &target_point, // 输入：路径，目标点
                                       double &rs, double &rx, double &ry, double &rtheta, double &rkappa,
                                       double &rdkappa); // 输出：投影点的rs，rx，ry，rtheta，rkappa，rdkappa
 
     // 计算投影点下标
     static void cal_projection_param(Referline &refer_line); // 参考线
+    static void cal_projection_param(LocalPath &local_path); // 路径
   };
 } // namespace Planning
 #endif // CURVE_H_
