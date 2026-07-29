@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "base_msgs/msg/referline.hpp"
+#include "base_msgs/msg/local_trajectory_point.hpp"
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "nav_msgs/msg/path.hpp"
@@ -13,6 +14,7 @@
 
 namespace Planning
 {
+  using base_msgs::msg::LocalTrajectoryPoint;
   using base_msgs::msg::Referline;
   using geometry_msgs::msg::PoseStamped;
   using geometry_msgs::msg::TransformStamped;
@@ -23,6 +25,14 @@ namespace Planning
   public:
     // 更新参数
     inline void update_location(const PoseStamped &loc) { loc_point_ = loc; }
+    inline void updata_cartesian_info(const LocalTrajectoryPoint &point)
+    {
+      theta_ = point.path_point.theta;
+      kappa_ = point.path_point.kappa;
+      dkappa_ = point.path_point.dkappa;
+      // speed_ = point.speed_point.speed;
+      // acceleration_ = point.speed_point.acceleration;
+    }
 
     // 定位点转frenet
     virtual void vehicle_cartesian_to_frenet(const Referline &refer_line) = 0; //定位点在参考线上的投影点参数

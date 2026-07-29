@@ -41,12 +41,16 @@ namespace Planning
     local_path_planner_ = std::make_shared<LocalPathPlanner>();
     local_speeds_planner_ = std::make_shared<LocalSpeedsPlanner>();
     local_path_pub_ = this->create_publisher<Path>("local_path",10);
+
+    // 创建轨迹合成器和发布器
+    local_trajectory_combiner_ = std::make_shared<LocalTrajectoryCombiner> ();
+    local_trajectory_pub_ = this->create_publisher<LocalTrajectory>("local_trajectory",10);
   }
 
   bool PlanningProcess::process() // 总流程
   {
     // 阻塞1s，等待rviz和xacro模型先启动
-    rclcpp::Rate rate(0.5); 
+    rclcpp::Rate rate(1); 
     rate.sleep();
 
     // 初始化
@@ -291,13 +295,21 @@ namespace Planning
     // 速度决策
 
     // 速度规划
+    LocalSpeeds local_speeds;
 
     // 合成轨迹
+    const auto local_trajectory = local_trajectory_combiner_->combin_trajectory(local_path,local_speeds);
+    if(local_trajectory.local_trajectory.empty())
+    {
+      RCLCPP_ERROR(this->get_logger(),"local trajectory empty!");
+      return;
+    }
+    local_trajectory_pub_->publish(local_trajectory);
 
     // 更新绘图信息
 
     // 更新车辆信息
-
+    car_->updata_cartesian_info(local_trajectory.local_trajectory[0]);
     RCLCPP_INFO(this->get_logger(), "-----------car state : loc:(%.2f,%.2f),speed:%.2f,a:%.2f,theta:%.2f,kappa:%.2f",
                 car_->loc_point().pose.position.x, car_->loc_point().pose.position.y, car_->speed(),
                 car_->acceleration(), car_->theta(), car_->kappa());

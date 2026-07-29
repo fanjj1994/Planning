@@ -4,7 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /ObsCar1
+        - /Axes1
         - /MarkerArray1/Topic1
         - /Marker1/Topic1
         - /LocalPath1
@@ -263,13 +265,13 @@ Visualization Manager:
       Length: 1
       Name: Axes
       Radius: 0.10000000149011612
-      Reference Frame: <Fixed Frame>
+      Reference Frame: base_footprint
       Value: true
     - Class: rviz_default_plugins/MarkerArray
       Enabled: true
       Name: MarkerArray
       Namespaces:
-        pnc_map: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -281,7 +283,7 @@ Visualization Manager:
       Enabled: true
       Name: Marker
       Namespaces:
-        global_path: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -349,7 +351,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: map
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
@@ -428,5 +430,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: -3
-  Y: 45
+  X: 270
+  Y: 67

@@ -46,7 +46,7 @@ namespace Planning
         const double obs_left_bound_l = obs->l() + obs->width() / 2.0;              // 障碍物左边界
         const double obs_right_bound_l = obs->l() - obs->width() / 2.0;             // 障碍物右边界
         const double left_width = left_bound_l - obs_left_bound_l;                  // 左边宽度
-        const double right_width = right_bound_l - obs_right_bound_l;               // 右边宽度
+        const double right_width = obs_right_bound_l - right_bound_l;               // 右边宽度
         
         if(left_width > car->width() + decision_config_->decision().safe_dis_l_ * 2.0)//如果左边宽度能够通过
         {
