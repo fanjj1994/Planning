@@ -1,0 +1,69 @@
+vehicle:                          #　车辆
+  main_car:                       #　主车
+    id: 0                         #　序列号
+    frame: "base_footprint"       #　坐标名
+    length: 3.0                   #　长度
+    width: 1.5                    #　宽度
+    pose_x: 0.0                   #　x坐标
+    pose_y: 0.0                   #　y坐标
+    pose_theta: 0.0               #　航向角
+    speed_ori: 1.0                #　初速度
+  obs_car1:                       #　第1辆障碍物
+    id: 1
+    frame: "base_footprint_obs1"
+    length: 8.0
+    width: 2.6
+    pose_x: 65.0
+    pose_y: 45.0
+    pose_theta: -1.57
+    speed_ori: 0.5
+  obs_car2:                       #　第2辆障碍物
+    id: 2
+    frame: "base_footprint_obs2"
+    length: 6.0
+    width: 2.0
+    pose_x: 120.0
+    pose_y: -60.0
+    pose_theta: 1.57
+    speed_ori: 0.5
+  obs_car3:                       #　第3辆障碍物
+    id: 3
+    frame: "base_footprint_obs3"
+    length: 3.0
+    width: 7.6
+    pose_x: 180.0
+    pose_y: 0.0
+    pose_theta: 0.0
+    speed_ori: 0.0
+
+pnc_map:                          #　pnc地图
+  frame: "map"                    #　坐标名
+  type: 0                         #　类型,　0:straight, 1:sturn
+  road_length: 1250.0             #　道路长度
+  road_half_width: 4.0            #　车道半宽
+  segment_len: 0.5                #　分段长度
+  speed_limit: 1.0                #　道路限速
+
+global_path:                      #　全局路径
+  type: 0                         #　类型,　0:normal, 1: astar
+
+local_path:                       #　局部路径
+  curve_type: 2                   #　多项式类型,　0:一次, 1:三次, 2:五次 
+  path_size: 80                   #　路径点数
+
+local_speed:                      #　速度
+  speed_size: 100                 #　速度点数
+
+reference_line:                   #　参考线
+  type: 0                         #　类型,　0:normal, 1:stich(拼接)
+  front_size: 200                 #　前方点数
+  back_size: 80                   #　后方点数
+
+decision:                         #　决策中心
+  safe_dis_l: 0.5                 #　横向安全距离
+  safe_dis_s: 20.0                #　纵向安全距离
+
+planning_process:                 #　规划总流程
+  obs_dis: 100.0                  #　检测障碍物的半径范围
+
+move_cmd:                         #　运动指令

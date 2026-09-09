@@ -47,4 +47,14 @@ namespace Planning
                               rs,rx,ry,rtheta,rkappa,rdkappa,
                               s_,ds_dt_,dds_dt_,l_,dl_ds_,dl_dt_,ddl_ds_,ddl_dt_);
   }
+
+  //向路径投影
+  void MainCar::vehicle_cartesian_to_frenet_2path(const LocalPath &local_path, const Referline &refer_line,
+                                                  const std::shared_ptr<VehicleBase> &car)
+  {
+    //主车不需要向路径投影
+    (void)local_path;
+    (void)refer_line;
+    (void)car;
+  }
 } // namespace Planning

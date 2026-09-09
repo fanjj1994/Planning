@@ -12,7 +12,9 @@ namespace Planning
 
     //定位点转frenet
     void vehicle_cartesian_to_frenet(const Referline &refer_line) override;
-
+    void vehicle_cartesian_to_frenet_2path(const LocalPath &local_path, 
+                                        const Referline &refer_line, 
+                                        const std::shared_ptr<VehicleBase> &car) override ; //输出：定位点在路径上的投影点参数
   private:
   };
 } // namespace Planning

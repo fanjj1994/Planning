@@ -291,7 +291,11 @@ namespace Planning
     local_path_pub_->publish(local_path_rviz);
     
     // 障碍物向路径投影
-
+    for (const auto &obs : obses_)
+    {
+      obs->vehicle_cartesian_to_frenet_2path(local_path,refer_line,car_);
+    }
+    
     // 速度决策
 
     // 速度规划

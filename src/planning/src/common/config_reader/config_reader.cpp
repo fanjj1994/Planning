@@ -9,7 +9,8 @@ namespace Planning
     std::string planning_share_directory = ament_index_cpp ::get_package_share_directory("planning");
 
     // 然后获取配置文件
-    planning_config = YAML::LoadFile(planning_share_directory + "/config/planning_static_obs_config.yaml");
+    // planning_config = YAML::LoadFile(planning_share_directory + "/config/planning_static_obs_config.yaml");
+    planning_config = YAML::LoadFile(planning_share_directory + "/config/planning_dynamic_obs_config.yaml");
   }
 
   /************ vehicle ************/
@@ -114,7 +115,7 @@ namespace Planning
   {
     try
     {
-      read_pnc_map_config();
+      read_vehicles_config();
       local_speeds_.speed_size_ = planning_config["local_speed"]["speed_size"].as<int>();
     }
     catch (const YAML::Exception &e)
