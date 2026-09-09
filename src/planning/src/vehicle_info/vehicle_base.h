@@ -32,6 +32,7 @@ namespace Planning
       dkappa_ = point.path_point.dkappa;
       speed_ = point.speed_point.speed;
       acceleration_ = point.speed_point.acceleration;
+      dacceleration_ = point.speed_point.dacceleration;
     }
 
     inline void update_t0(const double t0) { t0_ -= 1.0; }
